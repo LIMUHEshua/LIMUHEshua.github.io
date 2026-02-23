@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hello World | LIMUHEshua博客</title>
+  <link rel="stylesheet" href="/css/main.css">
+<meta name="generator" content="Hexo 8.1.1"></head>
+<body>
+  <header>
+    <div class="container">
+      <h1><a href="https://LIMUHEshua.github.io">LIMUHEshua博客</a></h1>
+      <p class="subtitle">探索技术，分享知识</p>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="搜索文章标题或内容...">
+        <button onclick="searchPosts()">搜索</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-content">
+    <main>
+      <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">Hello World</h1>
+    <div class="post-meta">
+      <time class="post-time" itemprop="datePublished" datetime="2026-02-23T09:35:16.262Z" content="2026-02-23">
+        2026-02-23
+      </time>
+      
+    </div>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+
+  </div>
+
+  <footer class="post-footer">
+    
+  </footer>
+
+  <div class="comments-section">
+    <h3>评论区</h3>
+    <div class="comment-form">
+      <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+      <button onclick="submitComment()">发表评论</button>
+    </div>
+    <div id="comments-list"></div>
+  </div>
+</article>
+
+<script>
+  var postId = '2026/02/23/hello-world/';
+  
+  function loadComments() {
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var postComments = comments.filter(function(comment) {
+      return comment.postId === postId;
+    });
+    
+    var commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+    
+    postComments.forEach(function(comment) {
+      var commentElement = createCommentElement(comment);
+      commentsList.appendChild(commentElement);
+    });
+  }
+  
+  function createCommentElement(comment, isReply = false) {
+    var div = document.createElement('div');
+    div.className = 'comment' + (isReply ? ' comment-reply' : '');
+    
+    var content = document.createElement('div');
+    content.className = 'comment-content';
+    content.textContent = comment.content;
+    
+    var meta = document.createElement('div');
+    meta.className = 'comment-meta';
+    meta.textContent = '匿名用户 • ' + comment.date;
+    
+    var actions = document.createElement('div');
+    actions.className = 'comment-actions';
+    
+    var replyButton = document.createElement('button');
+    replyButton.textContent = '回复';
+    replyButton.onclick = function() {
+      showReplyForm(comment.id);
+    };
+    actions.appendChild(replyButton);
+    
+    div.appendChild(content);
+    div.appendChild(meta);
+    div.appendChild(actions);
+    
+    if (comment.replies && comment.replies.length > 0) {
+      var repliesContainer = document.createElement('div');
+      repliesContainer.className = 'comment-replies';
+      
+      comment.replies.forEach(function(reply) {
+        var replyElement = createCommentElement(reply, true);
+        repliesContainer.appendChild(replyElement);
+      });
+      
+      div.appendChild(repliesContainer);
+    }
+    
+    return div;
+  }
+  
+  function submitComment(parentId = null) {
+    var input = document.getElementById('comment-input');
+    var content = input.value.trim();
+    
+    if (!content) {
+      alert('请输入评论内容');
+      return;
+    }
+    
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var newComment = {
+      id: Date.now(),
+      postId: postId,
+      content: content,
+      date: new Date().toLocaleString('zh-CN'),
+      replies: []
+    };
+    
+    if (parentId) {
+      var parentComment = comments.find(function(comment) {
+        return comment.id === parentId;
+      });
+      
+      if (parentComment) {
+        parentComment.replies.push({
+          id: Date.now(),
+          content: content,
+          date: new Date().toLocaleString('zh-CN')
+        });
+      }
+    } else {
+      comments.push(newComment);
+    }
+    
+    localStorage.setItem('comments', JSON.stringify(comments));
+    input.value = '';
+    
+    if (parentId) {
+      hideReplyForm();
+    }
+    
+    loadComments();
+    updateCommentCount();
+  }
+  
+  function showReplyForm(commentId) {
+    var existingForm = document.getElementById('reply-form-' + commentId);
+    if (existingForm) {
+      existingForm.remove();
+      return;
+    }
+    
+    var commentElement = document.querySelector('[data-comment-id="' + commentId + '"]');
+    if (!commentElement) return;
+    
+    var replyForm = document.createElement('div');
+    replyForm.id = 'reply-form-' + commentId;
+    replyForm.className = 'reply-form';
+    
+    var textarea = document.createElement('textarea');
+    textarea.placeholder = '回复评论...';
+    textarea.id = 'reply-input-' + commentId;
+    
+    var button = document.createElement('button');
+    button.textContent = '回复';
+    button.onclick = function() {
+      var input = document.getElementById('reply-input-' + commentId);
+      if (input.value.trim()) {
+        submitComment(commentId);
+      }
+    };
+    
+    var cancelButton = document.createElement('button');
+    cancelButton.textContent = '取消';
+    cancelButton.onclick = function() {
+      hideReplyForm();
+    };
+    
+    replyForm.appendChild(textarea);
+    replyForm.appendChild(button);
+    replyForm.appendChild(cancelButton);
+    
+    commentElement.appendChild(replyForm);
+  }
+  
+  function hideReplyForm() {
+    var replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(function(form) {
+      form.remove();
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadComments);
+</script>
+    </main>
+
+    <aside>
+      <div class="sidebar-section">
+        <h3>网站统计</h3>
+        <div class="site-stats">
+          <div class="stat-item">
+            <span class="stat-label">文章数目</span>
+            <span class="stat-value">2</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">评论数</span>
+            <span class="stat-value" id="comment-count">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">网站运行时间</span>
+            <span class="stat-value" id="site-uptime">计算中...</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">最新更新</span>
+            <span class="stat-value">无</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">访客总数</span>
+            <span class="stat-value" id="visitor-count">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">响应时间</span>
+            <span class="stat-value" id="response-time">0ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">内存占用</span>
+            <span class="stat-value" id="memory-usage">0MB</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">渲染耗时</span>
+            <span class="stat-value" id="render-time">0ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>关于我</h3>
+        <p>专注于 AI、Python、大模型应用、前端框架搭建与硬件开发。分享学习心得和实践经验。</p>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>分类</h3>
+        <ul>
+          
+          <li><a href="/categories/Python/">Python</a></li>
+          
+          <li><a href="/categories/Python/AI/">AI</a></li>
+          
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>最新文章</h3>
+        <ul>
+          
+          <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
+          
+          <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
+          
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 LIMUHEshua博客. 保留所有权利。</p>
+  </footer>
+
+  <script>
+    var startTime = performance.now();
+    
+    window.onload = function() {
+      var endTime = performance.now();
+      var renderTime = (endTime - startTime).toFixed(2);
+      document.getElementById('render-time').textContent = renderTime + 'ms';
+      
+      calculateSiteUptime();
+      updateVisitorCount();
+      updateCommentCount();
+      updateMemoryUsage();
+      updateResponseTime();
+    };
+    
+    function calculateSiteUptime() {
+      var startDate = new Date('2026-02-23');
+      var currentDate = new Date();
+      var diffTime = Math.abs(currentDate - startDate);
+      var diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      var diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+      
+      document.getElementById('site-uptime').textContent = diffDays + '天 ' + diffHours + '小时 ' + diffMinutes + '分钟';
+    }
+    
+    function updateVisitorCount() {
+      var visitorCount = localStorage.getItem('visitorCount') || 0;
+      visitorCount = parseInt(visitorCount) + 1;
+      localStorage.setItem('visitorCount', visitorCount);
+      document.getElementById('visitor-count').textContent = visitorCount;
+    }
+    
+    function updateCommentCount() {
+      var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+      document.getElementById('comment-count').textContent = comments.length;
+    }
+    
+    function updateMemoryUsage() {
+      if (performance.memory) {
+        var memoryUsage = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+        document.getElementById('memory-usage').textContent = memoryUsage + 'MB';
+      } else {
+        document.getElementById('memory-usage').textContent = 'N/A';
+      }
+    }
+    
+    function updateResponseTime() {
+      var responseTime = (performance.timing.responseEnd - performance.timing.requestStart).toFixed(2);
+      if (responseTime > 0) {
+        document.getElementById('response-time').textContent = responseTime + 'ms';
+      }
+    }
+    
+    function searchPosts() {
+      var query = document.getElementById('search-input').value.toLowerCase();
+      var posts = document.querySelectorAll('.post-container, .post-archive');
+      var results = [];
+      
+      posts.forEach(function(post) {
+        var title = post.querySelector('h1, h2').textContent.toLowerCase();
+        var content = post.querySelector('.post-content, .post-excerpt') ? post.querySelector('.post-content, .post-excerpt').textContent.toLowerCase() : '';
+        
+        if (title.includes(query) || content.includes(query)) {
+          post.style.display = 'block';
+          results.push(post);
+        } else {
+          post.style.display = 'none';
+        }
+      });
+      
+      if (results.length === 0) {
+        alert('没有找到匹配的文章');
+      }
+    }
+    
+    document.getElementById('search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchPosts();
+      }
+    });
+  </script>
+</body>
+</html>
