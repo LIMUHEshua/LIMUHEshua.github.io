@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>基于 DeepSeek 的本地部署大模型助手 | LIMUHEshua博客</title>
+  <link rel="stylesheet" href="/css/main.css">
+<meta name="generator" content="Hexo 8.1.1"></head>
+<body>
+  <header>
+    <div class="container">
+      <h1><a href="https://LIMUHEshua.github.io">LIMUHEshua博客</a></h1>
+      <p class="subtitle">探索技术，分享知识</p>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="搜索文章标题或内容...">
+        <button onclick="searchPosts()">搜索</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-content">
+    <main>
+      <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">基于 DeepSeek 的本地部署大模型助手</h1>
+    <div class="post-meta">
+      <time class="post-time" itemprop="datePublished" datetime="2026-02-23T10:00:00.000Z" content="2026-02-23">
+        2026-02-23
+      </time>
+      
+      <span class="post-category">
+        | 
+          <a href="/categories/Python/">Python</a>
+        
+          <a href="/categories/Python/AI/">AI</a>
+        
+      </span>
+      
+    </div>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <p>在人工智能快速发展的今天，本地部署大语言模型成为了越来越多开发者的选择。本文将介绍如何使用 Python 和 Gradio 框架，基于 DeepSeek 模型搭建一个本地部署的大语言模型助手。我们从简单的文本处理功能开始，逐步构建完整的 AI 对话系统。</p>
+<h2 id="技术栈介绍"><a href="#技术栈介绍" class="headerlink" title="技术栈介绍"></a>技术栈介绍</h2><p>本项目使用以下技术：</p>
+<ul>
+<li><strong>Python</strong>：主要的编程语言</li>
+<li><strong>Gradio</strong>：快速构建机器学习模型的 Web 界面</li>
+<li><strong>DeepSeek</strong>：开源的大语言模型</li>
+</ul>
+<h2 id="从简单开始：文本倒序工具"><a href="#从简单开始：文本倒序工具" class="headerlink" title="从简单开始：文本倒序工具"></a>从简单开始：文本倒序工具</h2><p>让我们从一个简单的例子开始，使用 Gradio 创建一个文本倒序工具。这帮助我们理解 Gradio 的基本用法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reverse_text</span>(<span class="params">text</span>):</span><br><span class="line">    <span class="keyword">return</span> text[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">demo = gr.Interface(</span><br><span class="line">    fn=reverse_text,</span><br><span class="line">    inputs=<span class="string">&quot;text&quot;</span>,</span><br><span class="line">    outputs=<span class="string">&quot;text&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
+
+<p>这段代码创建了一个简单的 Web 界面，用户输入文本后，系统会返回倒序后的文本。Gradio 的 <code>Interface</code> 类让这个过程变得非常简单。</p>
+<h2 id="进阶功能：文本处理工具"><a href="#进阶功能：文本处理工具" class="headerlink" title="进阶功能：文本处理工具"></a>进阶功能：文本处理工具</h2><p>接下来，我们扩展功能，创建一个能够同时返回倒序文本和文本长度的工具。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reverse_and_count</span>(<span class="params">text</span>):</span><br><span class="line">    reversed_text = text[::-<span class="number">1</span>]</span><br><span class="line">    length = <span class="built_in">len</span>(text)</span><br><span class="line">    <span class="keyword">return</span> reversed_text, length</span><br><span class="line"></span><br><span class="line">demo = gr.Interface(</span><br><span class="line">    fn=reverse_and_count,</span><br><span class="line">    inputs=<span class="string">&quot;text&quot;</span>,</span><br><span class="line">    outputs=[<span class="string">&quot;text&quot;</span>, <span class="string">&quot;number&quot;</span>],</span><br><span class="line">    title=<span class="string">&quot;文本处理工具&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;输入一段文字，查看其倒序形式及字符数。&quot;</span>,</span><br><span class="line">    examples=[[<span class="string">&quot;你好,世界&quot;</span>], [<span class="string">&quot;hello world&quot;</span>]]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
+
+<p>这个版本的改进包括：</p>
+<ul>
+<li>增加了字符统计功能</li>
+<li>添加了界面标题和描述</li>
+<li>提供了示例输入，方便用户快速体验</li>
+<li>支持多个输出类型</li>
+</ul>
+<h2 id="集成-DeepSeek-模型"><a href="#集成-DeepSeek-模型" class="headerlink" title="集成 DeepSeek 模型"></a>集成 DeepSeek 模型</h2><p>在掌握了 Gradio 的基础用法后，我们可以将其与 DeepSeek 模型集成，创建一个完整的 AI 助手。以下是集成 DeepSeek 的核心代码框架：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"><span class="keyword">from</span> deepseek <span class="keyword">import</span> DeepSeekModel</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chat_with_deepseek</span>(<span class="params">message, history</span>):</span><br><span class="line">    model = DeepSeekModel()</span><br><span class="line">    response = model.generate(message)</span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line"></span><br><span class="line">demo = gr.ChatInterface(</span><br><span class="line">    fn=chat_with_deepseek,</span><br><span class="line">    title=<span class="string">&quot;DeepSeek AI 助手&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;基于 DeepSeek 模型的本地 AI 对话助手&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
+
+<h2 id="项目优势"><a href="#项目优势" class="headerlink" title="项目优势"></a>项目优势</h2><p>本地部署大模型有以下优势：</p>
+<ul>
+<li><strong>数据隐私</strong>：所有数据在本地处理，保护用户隐私</li>
+<li><strong>无需联网</strong>：离线环境也能使用 AI 功能</li>
+<li><strong>成本控制</strong>：避免 API 调用费用</li>
+<li><strong>定制化</strong>：可以根据需求调整模型参数</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过本文的介绍，我们学习了如何使用 Gradio 和 DeepSeek 构建本地 AI 助手。从简单的文本处理开始，逐步构建完整的应用。这种方法不仅适用于 DeepSeek，也可以扩展到其他开源大模型。</p>
+<p>在未来的文章中，我将分享更多关于模型优化、性能提升和功能扩展的内容。欢迎继续关注！</p>
+
+  </div>
+
+  <footer class="post-footer">
+    
+    <div class="post-tags">
+      
+      <a href="/tags/Python/#Python">#Python</a>
+      
+      <a href="/tags/Gradio/#Gradio">#Gradio</a>
+      
+      <a href="/tags/DeepSeek/#DeepSeek">#DeepSeek</a>
+      
+      <a href="/tags/AI/#AI">#AI</a>
+      
+    </div>
+    
+  </footer>
+
+  <div class="comments-section">
+    <h3>评论区</h3>
+    <div class="comment-form">
+      <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+      <button onclick="submitComment()">发表评论</button>
+    </div>
+    <div id="comments-list"></div>
+  </div>
+</article>
+
+<script>
+  var postId = '2026/02/23/deepseek-local-deployment/';
+  
+  function loadComments() {
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var postComments = comments.filter(function(comment) {
+      return comment.postId === postId;
+    });
+    
+    var commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+    
+    postComments.forEach(function(comment) {
+      var commentElement = createCommentElement(comment);
+      commentsList.appendChild(commentElement);
+    });
+  }
+  
+  function createCommentElement(comment, isReply = false) {
+    var div = document.createElement('div');
+    div.className = 'comment' + (isReply ? ' comment-reply' : '');
+    
+    var content = document.createElement('div');
+    content.className = 'comment-content';
+    content.textContent = comment.content;
+    
+    var meta = document.createElement('div');
+    meta.className = 'comment-meta';
+    meta.textContent = '匿名用户 • ' + comment.date;
+    
+    var actions = document.createElement('div');
+    actions.className = 'comment-actions';
+    
+    var replyButton = document.createElement('button');
+    replyButton.textContent = '回复';
+    replyButton.onclick = function() {
+      showReplyForm(comment.id);
+    };
+    actions.appendChild(replyButton);
+    
+    div.appendChild(content);
+    div.appendChild(meta);
+    div.appendChild(actions);
+    
+    if (comment.replies && comment.replies.length > 0) {
+      var repliesContainer = document.createElement('div');
+      repliesContainer.className = 'comment-replies';
+      
+      comment.replies.forEach(function(reply) {
+        var replyElement = createCommentElement(reply, true);
+        repliesContainer.appendChild(replyElement);
+      });
+      
+      div.appendChild(repliesContainer);
+    }
+    
+    return div;
+  }
+  
+  function submitComment(parentId = null) {
+    var input = document.getElementById('comment-input');
+    var content = input.value.trim();
+    
+    if (!content) {
+      alert('请输入评论内容');
+      return;
+    }
+    
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var newComment = {
+      id: Date.now(),
+      postId: postId,
+      content: content,
+      date: new Date().toLocaleString('zh-CN'),
+      replies: []
+    };
+    
+    if (parentId) {
+      var parentComment = comments.find(function(comment) {
+        return comment.id === parentId;
+      });
+      
+      if (parentComment) {
+        parentComment.replies.push({
+          id: Date.now(),
+          content: content,
+          date: new Date().toLocaleString('zh-CN')
+        });
+      }
+    } else {
+      comments.push(newComment);
+    }
+    
+    localStorage.setItem('comments', JSON.stringify(comments));
+    input.value = '';
+    
+    if (parentId) {
+      hideReplyForm();
+    }
+    
+    loadComments();
+    updateCommentCount();
+  }
+  
+  function showReplyForm(commentId) {
+    var existingForm = document.getElementById('reply-form-' + commentId);
+    if (existingForm) {
+      existingForm.remove();
+      return;
+    }
+    
+    var commentElement = document.querySelector('[data-comment-id="' + commentId + '"]');
+    if (!commentElement) return;
+    
+    var replyForm = document.createElement('div');
+    replyForm.id = 'reply-form-' + commentId;
+    replyForm.className = 'reply-form';
+    
+    var textarea = document.createElement('textarea');
+    textarea.placeholder = '回复评论...';
+    textarea.id = 'reply-input-' + commentId;
+    
+    var button = document.createElement('button');
+    button.textContent = '回复';
+    button.onclick = function() {
+      var input = document.getElementById('reply-input-' + commentId);
+      if (input.value.trim()) {
+        submitComment(commentId);
+      }
+    };
+    
+    var cancelButton = document.createElement('button');
+    cancelButton.textContent = '取消';
+    cancelButton.onclick = function() {
+      hideReplyForm();
+    };
+    
+    replyForm.appendChild(textarea);
+    replyForm.appendChild(button);
+    replyForm.appendChild(cancelButton);
+    
+    commentElement.appendChild(replyForm);
+  }
+  
+  function hideReplyForm() {
+    var replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(function(form) {
+      form.remove();
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadComments);
+</script>
+    </main>
+
+    <aside>
+      <div class="sidebar-section">
+        <h3>网站统计</h3>
+        <div class="site-stats">
+          <div class="stat-item">
+            <span class="stat-label">文章数目</span>
+            <span class="stat-value">2</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">评论数</span>
+            <span class="stat-value" id="comment-count">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">网站运行时间</span>
+            <span class="stat-value" id="site-uptime">计算中...</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">最新更新</span>
+            <span class="stat-value">无</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">访客总数</span>
+            <span class="stat-value" id="visitor-count">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">响应时间</span>
+            <span class="stat-value" id="response-time">0ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">内存占用</span>
+            <span class="stat-value" id="memory-usage">0MB</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">渲染耗时</span>
+            <span class="stat-value" id="render-time">0ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>关于我</h3>
+        <p>专注于 AI、Python、大模型应用、前端框架搭建与硬件开发。分享学习心得和实践经验。</p>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>分类</h3>
+        <ul>
+          
+          <li><a href="/categories/Python/">Python</a></li>
+          
+          <li><a href="/categories/Python/AI/">AI</a></li>
+          
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>最新文章</h3>
+        <ul>
+          
+          <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
+          
+          <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
+          
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 LIMUHEshua博客. 保留所有权利。</p>
+  </footer>
+
+  <script>
+    var startTime = performance.now();
+    
+    window.onload = function() {
+      var endTime = performance.now();
+      var renderTime = (endTime - startTime).toFixed(2);
+      document.getElementById('render-time').textContent = renderTime + 'ms';
+      
+      calculateSiteUptime();
+      updateVisitorCount();
+      updateCommentCount();
+      updateMemoryUsage();
+      updateResponseTime();
+    };
+    
+    function calculateSiteUptime() {
+      var startDate = new Date('2026-02-23');
+      var currentDate = new Date();
+      var diffTime = Math.abs(currentDate - startDate);
+      var diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      var diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+      
+      document.getElementById('site-uptime').textContent = diffDays + '天 ' + diffHours + '小时 ' + diffMinutes + '分钟';
+    }
+    
+    function updateVisitorCount() {
+      var visitorCount = localStorage.getItem('visitorCount') || 0;
+      visitorCount = parseInt(visitorCount) + 1;
+      localStorage.setItem('visitorCount', visitorCount);
+      document.getElementById('visitor-count').textContent = visitorCount;
+    }
+    
+    function updateCommentCount() {
+      var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+      document.getElementById('comment-count').textContent = comments.length;
+    }
+    
+    function updateMemoryUsage() {
+      if (performance.memory) {
+        var memoryUsage = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+        document.getElementById('memory-usage').textContent = memoryUsage + 'MB';
+      } else {
+        document.getElementById('memory-usage').textContent = 'N/A';
+      }
+    }
+    
+    function updateResponseTime() {
+      var responseTime = (performance.timing.responseEnd - performance.timing.requestStart).toFixed(2);
+      if (responseTime > 0) {
+        document.getElementById('response-time').textContent = responseTime + 'ms';
+      }
+    }
+    
+    function searchPosts() {
+      var query = document.getElementById('search-input').value.toLowerCase();
+      var posts = document.querySelectorAll('.post-container, .post-archive');
+      var results = [];
+      
+      posts.forEach(function(post) {
+        var title = post.querySelector('h1, h2').textContent.toLowerCase();
+        var content = post.querySelector('.post-content, .post-excerpt') ? post.querySelector('.post-content, .post-excerpt').textContent.toLowerCase() : '';
+        
+        if (title.includes(query) || content.includes(query)) {
+          post.style.display = 'block';
+          results.push(post);
+        } else {
+          post.style.display = 'none';
+        }
+      });
+      
+      if (results.length === 0) {
+        alert('没有找到匹配的文章');
+      }
+    }
+    
+    document.getElementById('search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchPosts();
+      }
+    });
+  </script>
+</body>
+</html>
