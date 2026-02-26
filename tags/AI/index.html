@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>LIMUHEshua博客</title>
   <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/auto-update.css">
+  <link rel="stylesheet" href="/css/update-logger.css">
 <meta name="generator" content="Hexo 8.1.1"></head>
 <body>
   <header>
@@ -148,9 +150,9 @@
           
           <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
           
-          <li><a href="/2026/02/26/pencil-sketch-converter/">使用Gradio创建图片铅笔画转换工具</a></li>
-          
           <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
+          
+          <li><a href="/2026/02/26/pencil-sketch-converter/">使用Gradio创建图片铅笔画转换工具</a></li>
           
         </ul>
       </div>
@@ -161,6 +163,8 @@
     <p>&copy; 2026 LIMUHEshua博客. 保留所有权利。</p>
   </footer>
 
+  <script src="/js/content-detector.js"></script>
+  <script src="/js/update-logger.js"></script>
   <script>
     var startTime = performance.now();
     
@@ -174,6 +178,18 @@
       updateCommentCount();
       updateMemoryUsage();
       updateResponseTime();
+      
+      // 初始化自动更新系统
+      if (window.ContentDetector) {
+        window.contentDetector = new ContentDetector();
+        window.contentDetector.init();
+      }
+      
+      // 初始化更新日志系统
+      if (window.UpdateLogger) {
+        window.updateLogger = new UpdateLogger();
+        window.updateLogger.init();
+      }
     };
     
     function calculateSiteUptime() {
