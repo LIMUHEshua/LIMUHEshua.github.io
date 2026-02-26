@@ -107,6 +107,7 @@
   justify-content: center;
   z-index: 10001;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
@@ -220,11 +221,13 @@
   justify-content: center;
   z-index: 10002;
   opacity: 0;
+  pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
 .refresh-indicator.show {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .refresh-indicator.hide {
@@ -281,6 +284,7 @@
 
 .refresh-error.show {
   opacity: 1;
+  pointer-events: auto;
 }
 
 .refresh-error-content {
@@ -438,4 +442,5 @@
   .refresh-indicator {
     background: rgba(0, 0, 0, 0.95);
   }
+}
 }
