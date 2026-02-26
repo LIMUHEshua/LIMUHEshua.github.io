@@ -1,0 +1,194 @@
+<article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline"><%= page.title %></h1>
+    <div class="post-meta">
+      <time class="post-time" itemprop="datePublished" datetime="<%= page.date.toISOString() %>" content="<%= page.date.format('YYYY-MM-DD') %>">
+        <%= page.date.format('YYYY-MM-DD') %>
+      </time>
+      <% if (page.categories && page.categories.length > 0) { %>
+      <span class="post-category">
+        | <% page.categories.each(function(cat) { %>
+          <a href="<%= url_for(cat.path) %>"><%= cat.name %></a>
+        <% }); %>
+      </span>
+      <% } %>
+    </div>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <%- page.content %>
+  </div>
+
+  <footer class="post-footer">
+    <% if (page.tags && page.tags.length > 0) { %>
+    <div class="post-tags">
+      <% page.tags.each(function(tag) { %>
+      <a href="<%= url_for(tag.path) %>#<%= tag.name %>">#<%= tag.name %></a>
+      <% }); %>
+    </div>
+    <% } %>
+  </footer>
+
+  <div class="comments-section">
+    <h3>评论区</h3>
+    <div class="comment-form">
+      <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+      <button onclick="submitComment()">发表评论</button>
+    </div>
+    <div id="comments-list"></div>
+  </div>
+</article>
+
+<script>
+  var postId = '<%= page.path %>';
+  
+  function loadComments() {
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var postComments = comments.filter(function(comment) {
+      return comment.postId === postId;
+    });
+    
+    var commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+    
+    postComments.forEach(function(comment) {
+      var commentElement = createCommentElement(comment);
+      commentsList.appendChild(commentElement);
+    });
+  }
+  
+  function createCommentElement(comment, isReply = false) {
+    var div = document.createElement('div');
+    div.className = 'comment' + (isReply ? ' comment-reply' : '');
+    
+    var content = document.createElement('div');
+    content.className = 'comment-content';
+    content.textContent = comment.content;
+    
+    var meta = document.createElement('div');
+    meta.className = 'comment-meta';
+    meta.textContent = '匿名用户 • ' + comment.date;
+    
+    var actions = document.createElement('div');
+    actions.className = 'comment-actions';
+    
+    var replyButton = document.createElement('button');
+    replyButton.textContent = '回复';
+    replyButton.onclick = function() {
+      showReplyForm(comment.id);
+    };
+    actions.appendChild(replyButton);
+    
+    div.appendChild(content);
+    div.appendChild(meta);
+    div.appendChild(actions);
+    
+    if (comment.replies && comment.replies.length > 0) {
+      var repliesContainer = document.createElement('div');
+      repliesContainer.className = 'comment-replies';
+      
+      comment.replies.forEach(function(reply) {
+        var replyElement = createCommentElement(reply, true);
+        repliesContainer.appendChild(replyElement);
+      });
+      
+      div.appendChild(repliesContainer);
+    }
+    
+    return div;
+  }
+  
+  function submitComment(parentId = null) {
+    var input = document.getElementById('comment-input');
+    var content = input.value.trim();
+    
+    if (!content) {
+      alert('请输入评论内容');
+      return;
+    }
+    
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var newComment = {
+      id: Date.now(),
+      postId: postId,
+      content: content,
+      date: new Date().toLocaleString('zh-CN'),
+      replies: []
+    };
+    
+    if (parentId) {
+      var parentComment = comments.find(function(comment) {
+        return comment.id === parentId;
+      });
+      
+      if (parentComment) {
+        parentComment.replies.push({
+          id: Date.now(),
+          content: content,
+          date: new Date().toLocaleString('zh-CN')
+        });
+      }
+    } else {
+      comments.push(newComment);
+    }
+    
+    localStorage.setItem('comments', JSON.stringify(comments));
+    input.value = '';
+    
+    if (parentId) {
+      hideReplyForm();
+    }
+    
+    loadComments();
+    updateCommentCount();
+  }
+  
+  function showReplyForm(commentId) {
+    var existingForm = document.getElementById('reply-form-' + commentId);
+    if (existingForm) {
+      existingForm.remove();
+      return;
+    }
+    
+    var commentElement = document.querySelector('[data-comment-id="' + commentId + '"]');
+    if (!commentElement) return;
+    
+    var replyForm = document.createElement('div');
+    replyForm.id = 'reply-form-' + commentId;
+    replyForm.className = 'reply-form';
+    
+    var textarea = document.createElement('textarea');
+    textarea.placeholder = '回复评论...';
+    textarea.id = 'reply-input-' + commentId;
+    
+    var button = document.createElement('button');
+    button.textContent = '回复';
+    button.onclick = function() {
+      var input = document.getElementById('reply-input-' + commentId);
+      if (input.value.trim()) {
+        submitComment(commentId);
+      }
+    };
+    
+    var cancelButton = document.createElement('button');
+    cancelButton.textContent = '取消';
+    cancelButton.onclick = function() {
+      hideReplyForm();
+    };
+    
+    replyForm.appendChild(textarea);
+    replyForm.appendChild(button);
+    replyForm.appendChild(cancelButton);
+    
+    commentElement.appendChild(replyForm);
+  }
+  
+  function hideReplyForm() {
+    var replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(function(form) {
+      form.remove();
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadComments);
+</script>

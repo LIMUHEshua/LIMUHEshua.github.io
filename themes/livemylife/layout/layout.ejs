@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="<%= page.lang || config.language %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><% if (page.title) { %><%= page.title %> | <% } %><%= config.title %></title>
+  <link rel="stylesheet" href="<%= url_for('/css/main.css') %>">
+</head>
+<body>
+  <header>
+    <div class="container">
+      <h1><a href="<%= config.url %>"><%= config.title %></a></h1>
+      <p class="subtitle"><%= config.subtitle %></p>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="搜索文章标题或内容...">
+        <button onclick="searchPosts()">搜索</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-content">
+    <main>
+      <%- body %>
+    </main>
+
+    <aside>
+      <div class="sidebar-section">
+        <h3>网站统计</h3>
+        <div class="site-stats">
+          <div class="stat-item">
+            <span class="stat-label">文章数目</span>
+            <span class="stat-value"><%= site.posts.length %></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">评论数</span>
+            <span class="stat-value" id="comment-count">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">网站运行时间</span>
+            <span class="stat-value" id="site-uptime">计算中...</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">最新更新</span>
+            <span class="stat-value"><%= site.posts.lastUpdated ? site.posts.lastUpdated.date.format('YYYY-MM-DD') : '无' %></span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">访客总数</span>
+            <span class="stat-value" id="visitor-count">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">响应时间</span>
+            <span class="stat-value" id="response-time">0ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">内存占用</span>
+            <span class="stat-value" id="memory-usage">0MB</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">渲染耗时</span>
+            <span class="stat-value" id="render-time">0ms</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>关于我</h3>
+        <p><%= config.description %></p>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>分类</h3>
+        <ul>
+          <% site.categories.each(function(category) { %>
+          <li><a href="<%= url_for(category.path) %>"><%= category.name %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>最新文章</h3>
+        <ul>
+          <% site.posts.limit(5).forEach(function(post) { %>
+          <li><a href="<%= url_for(post.path) %>"><%= post.title %></a></li>
+          <% }); %>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <p>&copy; <%= moment().format('YYYY') %> <%= config.title %>. 保留所有权利。</p>
+  </footer>
+
+  <script>
+    var startTime = performance.now();
+    
+    window.onload = function() {
+      var endTime = performance.now();
+      var renderTime = (endTime - startTime).toFixed(2);
+      document.getElementById('render-time').textContent = renderTime + 'ms';
+      
+      calculateSiteUptime();
+      updateVisitorCount();
+      updateCommentCount();
+      updateMemoryUsage();
+      updateResponseTime();
+    };
+    
+    function calculateSiteUptime() {
+      var startDate = new Date('2026-02-23');
+      var currentDate = new Date();
+      var diffTime = Math.abs(currentDate - startDate);
+      var diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      var diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+      
+      document.getElementById('site-uptime').textContent = diffDays + '天 ' + diffHours + '小时 ' + diffMinutes + '分钟';
+    }
+    
+    function updateVisitorCount() {
+      var visitorCount = localStorage.getItem('visitorCount') || 0;
+      visitorCount = parseInt(visitorCount) + 1;
+      localStorage.setItem('visitorCount', visitorCount);
+      document.getElementById('visitor-count').textContent = visitorCount;
+    }
+    
+    function updateCommentCount() {
+      var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+      document.getElementById('comment-count').textContent = comments.length;
+    }
+    
+    function updateMemoryUsage() {
+      if (performance.memory) {
+        var memoryUsage = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+        document.getElementById('memory-usage').textContent = memoryUsage + 'MB';
+      } else {
+        document.getElementById('memory-usage').textContent = 'N/A';
+      }
+    }
+    
+    function updateResponseTime() {
+      var responseTime = (performance.timing.responseEnd - performance.timing.requestStart).toFixed(2);
+      if (responseTime > 0) {
+        document.getElementById('response-time').textContent = responseTime + 'ms';
+      }
+    }
+    
+    function searchPosts() {
+      var query = document.getElementById('search-input').value.toLowerCase();
+      var posts = document.querySelectorAll('.post-container, .post-archive');
+      var results = [];
+      
+      posts.forEach(function(post) {
+        var title = post.querySelector('h1, h2').textContent.toLowerCase();
+        var content = post.querySelector('.post-content, .post-excerpt') ? post.querySelector('.post-content, .post-excerpt').textContent.toLowerCase() : '';
+        
+        if (title.includes(query) || content.includes(query)) {
+          post.style.display = 'block';
+          results.push(post);
+        } else {
+          post.style.display = 'none';
+        }
+      });
+      
+      if (results.length === 0) {
+        alert('没有找到匹配的文章');
+      }
+    }
+    
+    document.getElementById('search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchPosts();
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+# LiveMyLife 主题配置文件
+# 请先手动克隆主题：cd hexo-blog/themes && git clone https://github.com/V-Vincen/hexo-theme-livemylife.git livemylife
+
+# Site
+SEOTitle: 我的技术博客 | 探索技术，分享知识
+email: 14778471462@sina.cn
+description: "热爱技术的开发者，专注于 AI、Python 和大模型应用开发。分享学习心得和实践经验。"
+keywords: "Python,AI, DeepSeek,Gradio,技术博客"
+
+# Header
+header-img: img/header_img/home-bg.jpg
+
+# Sidebar
+sidebar: true
+sidebar-about-description: "I don't know where I am going, but I am on my way..."
+sidebar-avatar: img/avatar/avatar.jpg
+
+# Widgets
+widgets:
+- featured-tags
+- short-about
+- recent-posts
+- friends-blog
+- archive
+- category
+
+# Featured Tags
+featured-tags: true
+featured-condition-size: 1
+
+# Friends
+friends:
+- title: "Coding Horror"
+  href: "https://blog.codinghorror.com/"
+
+# SNS
+github_username: LIMUHEshua
+gitee_username: oneernt
+
+# Archive
+archive_type: 'monthly'
+show_count: true

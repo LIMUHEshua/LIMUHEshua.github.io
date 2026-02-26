@@ -1,0 +1,39 @@
+<% page.posts.forEach(function(post) { %>
+<article class="post-container">
+  <header class="post-header">
+    <h2><a href="<%= url_for(post.path) %>"><%= post.title %></a></h2>
+    <div class="post-meta">
+      <time class="post-time"><%= post.date.format('YYYY-MM-DD') %></time>
+      <% if (post.categories && post.categories.length > 0) { %>
+      <span class="post-category">
+        | <% post.categories.each(function(cat) { %>
+          <a href="<%= url_for(cat.path) %>"><%= cat.name %></a>
+        <% }); %>
+      </span>
+      <% } %>
+    </div>
+  </header>
+
+  <div class="post-content">
+    <%- post.excerpt %>
+  </div>
+
+  <div class="read-more">
+    <a href="<%= url_for(post.path) %>">阅读全文 →</a>
+  </div>
+</article>
+<% }); %>
+
+<% if (page.total > 1) { %>
+<div class="pagination">
+  <% if (page.prev) { %>
+  <a href="<%= url_for(page.prev_link) %>" class="prev">← 上一页</a>
+  <% } %>
+  
+  <span class="page-number">第 <%= page.current %> 页，共 <%= page.total %> 页</span>
+  
+  <% if (page.next) { %>
+  <a href="<%= url_for(page.next_link) %>" class="next">下一页 →</a>
+  <% } %>
+</div>
+<% } %>
