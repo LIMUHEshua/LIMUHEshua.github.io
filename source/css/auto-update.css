@@ -1,0 +1,441 @@
+/* 自动更新通知样式 */
+
+.update-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--bg-primary);
+  border: 2px solid var(--primary-color);
+  border-radius: 8px;
+  box-shadow: var(--shadow-lg);
+  padding: 20px;
+  max-width: 400px;
+  z-index: 10000;
+  opacity: 0;
+  transform: translateY(-20px);
+  transition: all 0.3s ease;
+}
+
+.update-notification.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.update-notification-content {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.update-icon {
+  font-size: 2em;
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.update-message {
+  flex: 1;
+}
+
+.update-message strong {
+  color: var(--primary-color);
+  font-size: 1.1em;
+  margin-bottom: 5px;
+}
+
+.update-message p {
+  color: var(--text-secondary);
+  font-size: 0.9em;
+  margin: 0;
+}
+
+.update-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-refresh,
+.btn-later {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9em;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-refresh {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-refresh:hover {
+  background: var(--secondary-color);
+}
+
+.btn-later {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-later:hover {
+  background: var(--bg-tertiary);
+}
+
+/* 刷新对话框样式 */
+
+.refresh-dialog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10001;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.refresh-dialog.show {
+  opacity: 1;
+}
+
+.refresh-dialog-content {
+  background: var(--bg-primary);
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-50px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.refresh-dialog-content h3 {
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  font-size: 1.3em;
+}
+
+.refresh-dialog-content p {
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+}
+
+.refresh-dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-tertiary {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--secondary-color);
+}
+
+.btn-secondary {
+  background: var(--accent-color);
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: var(--primary-color);
+}
+
+.btn-tertiary {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-tertiary:hover {
+  background: var(--bg-tertiary);
+}
+
+.refresh-remember {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+}
+
+.refresh-remember input[type="checkbox"] {
+  cursor: pointer;
+}
+
+/* 刷新指示器样式 */
+
+.refresh-indicator {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10002;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.refresh-indicator.show {
+  opacity: 1;
+}
+
+.refresh-indicator.hide {
+  opacity: 0;
+}
+
+.refresh-indicator-content {
+  text-align: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 15px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.refresh-indicator p {
+  color: var(--text-primary);
+  font-size: 1.1em;
+  margin: 0;
+}
+
+/* 刷新错误样式 */
+
+.refresh-error {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: var(--bg-primary);
+  border: 2px solid #dc3545;
+  border-radius: 8px;
+  padding: 30px;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: var(--shadow-lg);
+  z-index: 10003;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.refresh-error.show {
+  opacity: 1;
+}
+
+.refresh-error-content {
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 3em;
+  margin-bottom: 15px;
+}
+
+.error-message {
+  margin-bottom: 20px;
+}
+
+.error-message strong {
+  color: #dc3545;
+  font-size: 1.2em;
+  margin-bottom: 10px;
+}
+
+.error-message p {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.error-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.btn-retry,
+.btn-manual {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-retry {
+  background: var(--primary-color);
+  color: white;
+}
+
+.btn-retry:hover {
+  background: var(--secondary-color);
+}
+
+.btn-manual {
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.btn-manual:hover {
+  background: var(--bg-tertiary);
+}
+
+/* 响应式设计 */
+
+@media (max-width: 768px) {
+  .update-notification {
+    top: 10px;
+    right: 10px;
+    left: 10px;
+    max-width: none;
+  }
+  
+  .refresh-dialog-content {
+    padding: 20px;
+  }
+  
+  .refresh-error {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .update-notification-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .update-actions {
+    flex-direction: column;
+  }
+  
+  .btn-refresh,
+  .btn-later {
+    width: 100%;
+  }
+  
+  .refresh-dialog-actions {
+    gap: 8px;
+  }
+  
+  .btn-primary,
+  .btn-secondary,
+  .btn-tertiary {
+    width: 100%;
+  }
+  
+  .error-actions {
+    gap: 8px;
+  }
+  
+  .btn-retry,
+  .btn-manual {
+    width: 100%;
+  }
+}
+
+/* 动画优化 */
+
+@media (prefers-reduced-motion: reduce) {
+  .update-icon {
+    animation: none;
+  }
+  
+  .spinner {
+    animation: none;
+  }
+  
+  .refresh-dialog-content,
+  .refresh-error {
+    animation: none;
+  }
+}
+
+/* 打印样式 */
+
+@media print {
+  .update-notification,
+  .refresh-dialog,
+  .refresh-indicator,
+  .refresh-error {
+    display: none;
+  }
+}
+
+/* 深色模式支持 */
+
+@media (prefers-color-scheme: dark) {
+  .update-notification,
+  .refresh-dialog-content,
+  .refresh-error {
+    background: #1a1a1a;
+    border-color: #333;
+  }
+  
+  .refresh-indicator {
+    background: rgba(0, 0, 0, 0.95);
+  }
+}

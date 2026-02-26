@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><% if (page.title) { %><%= page.title %> | <% } %><%= config.title %></title>
   <link rel="stylesheet" href="<%= url_for('/css/main.css') %>">
+  <link rel="stylesheet" href="<%= url_for('/css/auto-update.css') %>">
+  <link rel="stylesheet" href="<%= url_for('/css/update-logger.css') %>">
 </head>
 <body>
   <header>
@@ -91,6 +93,8 @@
     <p>&copy; <%= moment().format('YYYY') %> <%= config.title %>. 保留所有权利。</p>
   </footer>
 
+  <script src="<%= url_for('/js/content-detector.js') %>"></script>
+  <script src="<%= url_for('/js/update-logger.js') %>"></script>
   <script>
     var startTime = performance.now();
     
@@ -104,6 +108,18 @@
       updateCommentCount();
       updateMemoryUsage();
       updateResponseTime();
+      
+      // 初始化自动更新系统
+      if (window.ContentDetector) {
+        window.contentDetector = new ContentDetector();
+        window.contentDetector.init();
+      }
+      
+      // 初始化更新日志系统
+      if (window.UpdateLogger) {
+        window.updateLogger = new UpdateLogger();
+        window.updateLogger.init();
+      }
     };
     
     function calculateSiteUptime() {
