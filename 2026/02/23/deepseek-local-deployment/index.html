@@ -262,7 +262,7 @@
     <aside>
       <div class="sidebar-section">
         <h3>网站统计</h3>
-        <div class="site-stats">
+        <div class="site-stats" id="site-stats">
           <div class="stat-item">
             <span class="stat-label">文章数目</span>
             <span class="stat-value">4</span>
@@ -277,11 +277,11 @@
           </div>
           <div class="stat-item">
             <span class="stat-label">最新更新</span>
-            <span class="stat-value">无</span>
+            <span class="stat-value">加载中...</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">访客总数</span>
-            <span class="stat-value" id="visitor-count">0</span>
+            <span class="stat-value">加载中...</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">响应时间</span>
@@ -309,9 +309,9 @@
           
           <li><a href="/categories/Python/">Python</a></li>
           
-          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
-          
           <li><a href="/categories/Python/AI/">AI</a></li>
+          
+          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
           
           <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/%E5%89%8D%E7%AB%AF/">前端</a></li>
           
@@ -324,9 +324,9 @@
           
           <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
           
-          <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
-          
           <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
+          
+          <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
           
           <li><a href="/2026/03/04/weather-query-tool/">天气查询工具</a></li>
           
@@ -341,6 +341,7 @@
 
   <script src="/js/content-detector.js"></script>
   <script src="/js/update-logger.js"></script>
+  <script src="/js/site-stats.js"></script>
   <script>
     var startTime = performance.now();
     
@@ -350,7 +351,6 @@
       document.getElementById('render-time').textContent = renderTime + 'ms';
       
       calculateSiteUptime();
-      updateVisitorCount();
       updateCommentCount();
       updateMemoryUsage();
       updateResponseTime();
@@ -379,12 +379,7 @@
       document.getElementById('site-uptime').textContent = diffDays + '天 ' + diffHours + '小时 ' + diffMinutes + '分钟';
     }
     
-    function updateVisitorCount() {
-      var visitorCount = localStorage.getItem('visitorCount') || 0;
-      visitorCount = parseInt(visitorCount) + 1;
-      localStorage.setItem('visitorCount', visitorCount);
-      document.getElementById('visitor-count').textContent = visitorCount;
-    }
+    // 访客计数现在由SiteStats类管理
     
     function updateCommentCount() {
       var comments = JSON.parse(localStorage.getItem('comments') || '[]');
