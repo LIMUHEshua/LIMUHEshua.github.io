@@ -143,7 +143,9 @@ class SiteStats {
   // 分析性能数据
   analyzePerformanceData() {
     const data = this.getPerformanceData();
+    console.log('性能数据总量:', data.length);
     if (data.length === 0) {
+      console.log('没有性能数据');
       return null;
     }
 
@@ -156,13 +158,18 @@ class SiteStats {
              item.performance.renderTime >= 0;
     });
 
+    console.log('有效性能数据量:', validData.length);
     if (validData.length === 0) {
+      console.log('没有有效性能数据');
       return null;
     }
 
     // 计算平均值
     const avgResponseTime = validData.reduce((sum, item) => sum + item.performance.responseTime, 0) / validData.length;
     const avgRenderTime = validData.reduce((sum, item) => sum + item.performance.renderTime, 0) / validData.length;
+
+    console.log('平均响应时间:', avgResponseTime);
+    console.log('平均渲染时间:', avgRenderTime);
 
     return {
       average: {
