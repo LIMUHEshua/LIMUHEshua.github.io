@@ -206,11 +206,23 @@ class SiteStats {
 
 // 初始化统计功能
 document.addEventListener('DOMContentLoaded', async () => {
-  const stats = new SiteStats();
-  await stats.recordVisit();
-  
-  // 暴露全局方法，以便其他脚本调用
-  window.SiteStats = stats;
+  console.log('DOM加载完成，初始化SiteStats');
+  try {
+    const stats = new SiteStats();
+    console.log('SiteStats实例创建成功');
+    await stats.recordVisit();
+    console.log('访问记录成功');
+    
+    // 立即更新性能统计显示，避免显示"加载中..."
+    stats.updatePerformanceDisplay();
+    console.log('性能统计显示初始化成功');
+    
+    // 暴露全局方法，以便其他脚本调用
+    window.SiteStats = stats;
+    console.log('SiteStats实例已暴露到全局');
+  } catch (error) {
+    console.error('SiteStats初始化过程中出错:', error);
+  }
 });
 
 // 页面加载完成后采集性能数据
@@ -227,6 +239,10 @@ window.addEventListener('load', () => {
       console.log('性能数据显示更新成功');
     } catch (error) {
       console.error('性能数据采集和显示过程中出错:', error);
+      // 出错时也更新显示，确保不会一直显示"加载中..."
+      if (window.SiteStats) {
+        window.SiteStats.updatePerformanceDisplay();
+      }
     }
   } else {
     console.error('SiteStats实例不存在');
