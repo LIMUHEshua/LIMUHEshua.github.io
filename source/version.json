@@ -1,9 +1,9 @@
 {
-  "version": "1.0.2",
-  "lastUpdated": "2026-02-26T18:56:10+08:00",
-  "buildTime": "2026-02-26T18:55:00+08:00",
+  "version": "1.0.3",
+  "lastUpdated": "2026-02-26T19:30:00+08:00",
+  "buildTime": "2026-02-26T19:30:00+08:00",
   "posts": {
-    "total": 4,
+    "total": 3,
     "latest": "2026-02-26T18:34:00+08:00",
     "list": [
       {
@@ -12,13 +12,6 @@
         "path": "/2026/02/26/gradio-image-processing-guide/",
         "categories": ["Python", "AI"],
         "tags": ["Python", "AI", "Gradio", "教程"]
-      },
-      {
-        "title": "使用Gradio创建图片铅笔画转换工具",
-        "date": "2026-02-26T18:34:00+08:00",
-        "path": "/2026/02/26/pencil-sketch-converter/",
-        "categories": ["Python", "AI"],
-        "tags": ["Python", "AI", "Gradio", "图像处理"]
       },
       {
         "title": "基于 DeepSeek 的本地部署大模型助手",
@@ -41,38 +34,33 @@
     "list": [
       {
         "name": "Python",
-        "count": 3,
+        "count": 2,
         "path": "/categories/Python/"
       },
       {
         "name": "AI",
-        "count": 3,
+        "count": 2,
         "path": "/categories/Python/AI/"
       }
     ]
   },
   "tags": {
-    "total": 6,
+    "total": 5,
     "list": [
       {
         "name": "Python",
-        "count": 3,
+        "count": 2,
         "path": "/tags/Python/"
       },
       {
         "name": "AI",
-        "count": 3,
+        "count": 2,
         "path": "/tags/AI/"
       },
       {
         "name": "Gradio",
-        "count": 2,
-        "path": "/tags/Gradio/"
-      },
-      {
-        "name": "图像处理",
         "count": 1,
-        "path": "/tags/图像处理/"
+        "path": "/tags/Gradio/"
       },
       {
         "name": "教程",
@@ -87,6 +75,15 @@
     ]
   },
   "changelog": [
+    {
+      "version": "1.0.3",
+      "date": "2026-02-26T19:30:00+08:00",
+      "changes": [
+        "修复页面交互功能失效问题",
+        "删除pencil-sketch-converter文章",
+        "优化自动更新机制CSS样式"
+      ]
+    },
     {
       "version": "1.0.2",
       "date": "2026-02-26T18:56:10+08:00",

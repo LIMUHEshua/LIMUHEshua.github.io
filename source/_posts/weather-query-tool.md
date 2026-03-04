@@ -1,0 +1,111 @@
+---
+title: 天气查询工具
+date: 2026-03-04 19:50:00
+categories:
+  - Python
+  - 工具
+  - 前端
+tags:
+  - 天气查询
+  - FastAPI
+  - JavaScript
+  - CSS
+---
+
+# 天气查询工具
+
+## 项目介绍
+
+天气查询工具是一个基于FastAPI和前端技术开发的实时天气查询系统，支持城市天气查询、实时天气显示和未来3天天气预报功能。
+
+## 功能特性
+
+- 🔍 支持城市天气查询
+- 📱 响应式设计，适配移动端
+- 📊 实时天气数据显示
+- 🌤 未来3天天气预报
+- ⏰ 搜索历史记录
+- 🎨 现代化UI设计，与博客风格一致
+
+## 技术栈
+
+- **后端**: Python, FastAPI, httpx
+- **前端**: HTML, CSS, JavaScript
+- **样式**: 基于博客主题的响应式设计
+- **API**: 第三方天气API
+
+## 项目结构
+
+```
+weather/
+├── static/
+│   └── weather.css      # 样式文件
+├── templates/
+│   └── weather.html     # 前端模板
+└── main.py              # 后端API服务
+```
+
+## 使用方法
+
+1. 启动后端服务
+
+```bash
+# 安装依赖
+pip install fastapi uvicorn httpx python-dotenv
+
+# 启动服务
+python main.py
+```
+
+2. 访问天气查询页面
+
+打开浏览器，访问 `http://localhost:5001` 即可使用天气查询功能。
+
+## 核心功能
+
+### 1. 城市天气查询
+
+输入城市名称，点击查询按钮即可获取该城市的实时天气和未来3天预报。
+
+### 2. 搜索历史记录
+
+系统会自动记录最近5次的搜索历史，点击历史记录可以快速重新查询该城市的天气。
+
+### 3. 响应式设计
+
+页面在不同设备上都能正常显示，包括桌面端、平板和手机。
+
+## 界面预览
+
+### 桌面端效果
+
+![天气查询工具桌面端](https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=weather%20query%20tool%20desktop%20interface%20with%20modern%20design%2C%20showing%20current%20weather%20and%20forecast&image_size=landscape_16_9)
+
+### 移动端效果
+
+![天气查询工具移动端](https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=weather%20query%20tool%20mobile%20interface%20with%20responsive%20design&image_size=portrait_4_3)
+
+## 实现细节
+
+### 后端API
+
+后端使用FastAPI框架提供RESTful API，支持异步请求和缓存机制，提高查询效率。
+
+### 前端实现
+
+前端使用原生HTML、CSS和JavaScript实现，结合Font Awesome图标库提供天气图标，使用localStorage存储搜索历史。
+
+### 样式设计
+
+采用与博客一致的设计风格，使用CSS变量管理颜色和样式，确保视觉一致性。
+
+## 未来计划
+
+- 添加更多城市的天气数据支持
+- 实现天气数据可视化
+- 增加天气预警功能
+- 优化API请求性能
+
+## 总结
+
+天气查询工具是一个功能完整、界面美观的天气查询系统，不仅提供了实用的天气查询功能，还与博客的设计风格保持一致，为用户提供了良好的使用体验。
