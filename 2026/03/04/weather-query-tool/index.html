@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hello World | LIMUHEshua博客</title>
+  <title>天气查询工具 | LIMUHEshua博客</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/auto-update.css">
   <link rel="stylesheet" href="/css/update-logger.css">
@@ -24,33 +24,83 @@
     <main>
       <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">Hello World</h1>
+    <h1 class="post-title" itemprop="name headline">天气查询工具</h1>
     <div class="post-meta">
-      <time class="post-time" itemprop="datePublished" datetime="2026-02-23T09:35:16.262Z" content="2026-02-23">
-        2026-02-23
+      <time class="post-time" itemprop="datePublished" datetime="2026-03-04T11:50:00.000Z" content="2026-03-04">
+        2026-03-04
       </time>
+      
+      <span class="post-category">
+        | 
+          <a href="/categories/Python/">Python</a>
+        
+          <a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a>
+        
+          <a href="/categories/Python/%E5%B7%A5%E5%85%B7/%E5%89%8D%E7%AB%AF/">前端</a>
+        
+      </span>
       
     </div>
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+    <h1 id="天气查询工具"><a href="#天气查询工具" class="headerlink" title="天气查询工具"></a>天气查询工具</h1><h2 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h2><p>天气查询工具是一个基于FastAPI和前端技术开发的实时天气查询系统，支持城市天气查询、实时天气显示和未来3天天气预报功能。</p>
+<h2 id="功能特性"><a href="#功能特性" class="headerlink" title="功能特性"></a>功能特性</h2><ul>
+<li>🔍 支持城市天气查询</li>
+<li>📱 响应式设计，适配移动端</li>
+<li>📊 实时天气数据显示</li>
+<li>🌤 未来3天天气预报</li>
+<li>⏰ 搜索历史记录</li>
+<li>🎨 现代化UI设计，与博客风格一致</li>
+</ul>
+<h2 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h2><ul>
+<li><strong>后端</strong>: Python, FastAPI, httpx</li>
+<li><strong>前端</strong>: HTML, CSS, JavaScript</li>
+<li><strong>样式</strong>: 基于博客主题的响应式设计</li>
+<li><strong>API</strong>: 第三方天气API</li>
+</ul>
+<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">weather/</span><br><span class="line">├── static/</span><br><span class="line">│   └── weather.css      # 样式文件</span><br><span class="line">├── templates/</span><br><span class="line">│   └── weather.html     # 前端模板</span><br><span class="line">└── main.py              # 后端API服务</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><ol>
+<li>启动后端服务</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">pip install fastapi uvicorn httpx python-dotenv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">python main.py</span><br></pre></td></tr></table></figure>
 
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+<ol start="2">
+<li>访问天气查询页面</li>
+</ol>
+<p>打开浏览器，访问 <code>http://localhost:5001</code> 即可使用天气查询功能。</p>
+<h2 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a>核心功能</h2><h3 id="1-城市天气查询"><a href="#1-城市天气查询" class="headerlink" title="1. 城市天气查询"></a>1. 城市天气查询</h3><p>输入城市名称，点击查询按钮即可获取该城市的实时天气和未来3天预报。</p>
+<h3 id="2-搜索历史记录"><a href="#2-搜索历史记录" class="headerlink" title="2. 搜索历史记录"></a>2. 搜索历史记录</h3><p>系统会自动记录最近5次的搜索历史，点击历史记录可以快速重新查询该城市的天气。</p>
+<h3 id="3-响应式设计"><a href="#3-响应式设计" class="headerlink" title="3. 响应式设计"></a>3. 响应式设计</h3><p>页面在不同设备上都能正常显示，包括桌面端、平板和手机。</p>
+<h2 id="界面预览"><a href="#界面预览" class="headerlink" title="界面预览"></a>界面预览</h2><h3 id="桌面端效果"><a href="#桌面端效果" class="headerlink" title="桌面端效果"></a>桌面端效果</h3><p><img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=weather%20query%20tool%20desktop%20interface%20with%20modern%20design,%20showing%20current%20weather%20and%20forecast&image_size=landscape_16_9" alt="天气查询工具桌面端"></p>
+<h3 id="移动端效果"><a href="#移动端效果" class="headerlink" title="移动端效果"></a>移动端效果</h3><p><img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=weather%20query%20tool%20mobile%20interface%20with%20responsive%20design&image_size=portrait_4_3" alt="天气查询工具移动端"></p>
+<h2 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h2><h3 id="后端API"><a href="#后端API" class="headerlink" title="后端API"></a>后端API</h3><p>后端使用FastAPI框架提供RESTful API，支持异步请求和缓存机制，提高查询效率。</p>
+<h3 id="前端实现"><a href="#前端实现" class="headerlink" title="前端实现"></a>前端实现</h3><p>前端使用原生HTML、CSS和JavaScript实现，结合Font Awesome图标库提供天气图标，使用localStorage存储搜索历史。</p>
+<h3 id="样式设计"><a href="#样式设计" class="headerlink" title="样式设计"></a>样式设计</h3><p>采用与博客一致的设计风格，使用CSS变量管理颜色和样式，确保视觉一致性。</p>
+<h2 id="未来计划"><a href="#未来计划" class="headerlink" title="未来计划"></a>未来计划</h2><ul>
+<li>添加更多城市的天气数据支持</li>
+<li>实现天气数据可视化</li>
+<li>增加天气预警功能</li>
+<li>优化API请求性能</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>天气查询工具是一个功能完整、界面美观的天气查询系统，不仅提供了实用的天气查询功能，还与博客的设计风格保持一致，为用户提供了良好的使用体验。</p>
 
   </div>
 
   <footer class="post-footer">
+    
+    <div class="post-tags">
+      
+      <a href="/tags/%E5%A4%A9%E6%B0%94%E6%9F%A5%E8%AF%A2/#天气查询">#天气查询</a>
+      
+      <a href="/tags/FastAPI/#FastAPI">#FastAPI</a>
+      
+      <a href="/tags/JavaScript/#JavaScript">#JavaScript</a>
+      
+      <a href="/tags/CSS/#CSS">#CSS</a>
+      
+    </div>
     
   </footer>
 
@@ -65,7 +115,7 @@
 </article>
 
 <script>
-  var postId = '2026/02/23/hello-world/';
+  var postId = '2026/03/04/weather-query-tool/';
   
   function loadComments() {
     var comments = JSON.parse(localStorage.getItem('comments') || '[]');
