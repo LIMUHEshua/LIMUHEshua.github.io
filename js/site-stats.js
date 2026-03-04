@@ -2,6 +2,8 @@ class SiteStats {
   constructor() {
     this.statsFile = '/data/stats.json';
     this.visitorIdKey = 'hexo_blog_visitor_id';
+    this.performanceDataKey = 'hexo_blog_performance_data';
+    this.startTime = performance.now();
   }
 
   // 生成唯一访客ID
@@ -83,12 +85,102 @@ class SiteStats {
     }
   }
 
+  // 采集性能数据
+  collectPerformanceData() {
+    const performanceData = {
+      timestamp: new Date().toISOString(),
+      visitorId: this.getVisitorId(),
+      pageUrl: window.location.href,
+      performance: {
+        navigationStart: performance.timing.navigationStart,
+        domLoading: performance.timing.domLoading,
+        domInteractive: performance.timing.domInteractive,
+        domContentLoadedEventEnd: performance.timing.domContentLoadedEventEnd,
+        loadEventEnd: performance.timing.loadEventEnd,
+        responseTime: performance.timing.responseEnd - performance.timing.requestStart,
+        domLoadTime: performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart,
+        pageLoadTime: performance.timing.loadEventEnd - performance.timing.navigationStart,
+        renderTime: performance.now() - this.startTime
+      }
+    };
+    return performanceData;
+  }
+
+  // 存储性能数据
+  savePerformanceData(performanceData) {
+    const existingData = JSON.parse(localStorage.getItem(this.performanceDataKey) || '[]');
+    existingData.push(performanceData);
+    // 只保留最近100条性能数据
+    if (existingData.length > 100) {
+      existingData.shift();
+    }
+    localStorage.setItem(this.performanceDataKey, JSON.stringify(existingData));
+  }
+
+  // 获取性能数据
+  getPerformanceData() {
+    return JSON.parse(localStorage.getItem(this.performanceDataKey) || '[]');
+  }
+
+  // 分析性能数据
+  analyzePerformanceData() {
+    const data = this.getPerformanceData();
+    if (data.length === 0) {
+      return null;
+    }
+
+    // 计算平均值
+    const avgResponseTime = data.reduce((sum, item) => sum + item.performance.responseTime, 0) / data.length;
+    const avgDomLoadTime = data.reduce((sum, item) => sum + item.performance.domLoadTime, 0) / data.length;
+    const avgPageLoadTime = data.reduce((sum, item) => sum + item.performance.pageLoadTime, 0) / data.length;
+    const avgRenderTime = data.reduce((sum, item) => sum + item.performance.renderTime, 0) / data.length;
+
+    return {
+      average: {
+        responseTime: avgResponseTime.toFixed(2),
+        domLoadTime: avgDomLoadTime.toFixed(2),
+        pageLoadTime: avgPageLoadTime.toFixed(2),
+        renderTime: avgRenderTime.toFixed(2)
+      },
+      latest: data[data.length - 1].performance,
+      count: data.length
+    };
+  }
+
   // 更新最新更新时间
   async updateLastUpdated() {
     const stats = await this.loadStats();
     stats.last_updated = new Date().toISOString();
     await this.saveStats(stats);
     this.updateStatsDisplay(stats);
+  }
+
+  // 更新性能数据显示
+  updatePerformanceDisplay() {
+    const performanceAnalysis = this.analyzePerformanceData();
+    if (performanceAnalysis) {
+      const performanceElement = document.getElementById('performance-stats');
+      if (performanceElement) {
+        performanceElement.innerHTML = `
+          <div class="stat-item">
+            <span class="stat-label">平均响应时间：</span>
+            <span class="stat-value">${performanceAnalysis.average.responseTime}ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">平均DOM加载时间：</span>
+            <span class="stat-value">${performanceAnalysis.average.domLoadTime}ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">平均页面加载时间：</span>
+            <span class="stat-value">${performanceAnalysis.average.pageLoadTime}ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">平均渲染时间：</span>
+            <span class="stat-value">${performanceAnalysis.average.renderTime}ms</span>
+          </div>
+        `;
+      }
+    }
   }
 }
 
@@ -99,4 +191,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   
   // 暴露全局方法，以便其他脚本调用
   window.SiteStats = stats;
+});
+
+// 页面加载完成后采集性能数据
+window.addEventListener('load', () => {
+  if (window.SiteStats) {
+    const performanceData = window.SiteStats.collectPerformanceData();
+    window.SiteStats.savePerformanceData(performanceData);
+    window.SiteStats.updatePerformanceDisplay();
+  }
 });
