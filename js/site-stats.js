@@ -1,17 +1,46 @@
+/**
+ * SiteStats 类 - 负责网站统计和性能监控
+ * 功能包括：访客统计、性能数据采集、分析和显示
+ */
 class SiteStats {
   constructor() {
+    /**
+     * 统计文件路径
+     * @type {string}
+     */
     this.statsFile = '/data/stats.json';
+    
+    /**
+     * 访客ID存储键
+     * @type {string}
+     */
     this.visitorIdKey = 'hexo_blog_visitor_id';
+    
+    /**
+     * 性能数据存储键
+     * @type {string}
+     */
     this.performanceDataKey = 'hexo_blog_performance_data';
+    
+    /**
+     * 页面加载开始时间
+     * @type {number}
+     */
     this.startTime = performance.now();
   }
 
-  // 生成唯一访客ID
+  /**
+   * 生成唯一访客ID
+   * @returns {string} 唯一访客ID
+   */
   generateVisitorId() {
     return 'visitor_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
   }
 
-  // 获取访客ID
+  /**
+   * 获取访客ID，不存在则生成新的
+   * @returns {string} 访客ID
+   */
   getVisitorId() {
     let visitorId = localStorage.getItem(this.visitorIdKey);
     if (!visitorId) {
@@ -21,13 +50,17 @@ class SiteStats {
     return visitorId;
   }
 
-  // 加载统计数据
+  /**
+   * 加载统计数据
+   * @returns {Promise<Object>} 统计数据对象
+   */
   async loadStats() {
     try {
       const response = await fetch(this.statsFile);
       if (response.ok) {
         return await response.json();
       }
+      // 返回默认统计数据
       return {
         last_updated: new Date().toISOString(),
         total_visitors: 0,
@@ -35,6 +68,7 @@ class SiteStats {
       };
     } catch (error) {
       console.error('Error loading stats:', error);
+      // 出错时返回默认统计数据
       return {
         last_updated: new Date().toISOString(),
         total_visitors: 0,
@@ -43,15 +77,20 @@ class SiteStats {
     }
   }
 
-  // 保存统计数据
+  /**
+   * 保存统计数据
+   * @param {Object} stats 统计数据对象
+   * @returns {Promise<void>}
+   */
   async saveStats(stats) {
-    // 在客户端环境中，我们无法直接写入文件
-    // 这里我们可以通过API或其他方式将数据发送到服务器
-    // 但由于这是静态网站，我们将使用localStorage作为临时存储
+    // 在客户端环境中，使用localStorage作为临时存储
     localStorage.setItem('site_stats', JSON.stringify(stats));
   }
 
-  // 记录访问
+  /**
+   * 记录访问
+   * @returns {Promise<void>}
+   */
   async recordVisit() {
     const visitorId = this.getVisitorId();
     const stats = await this.loadStats();
@@ -68,7 +107,10 @@ class SiteStats {
     }
   }
 
-  // 更新统计显示
+  /**
+   * 更新统计显示
+   * @param {Object} stats 统计数据对象
+   */
   updateStatsDisplay(stats) {
     const statsElement = document.getElementById('site-stats');
     if (statsElement) {
@@ -85,7 +127,10 @@ class SiteStats {
     }
   }
 
-  // 采集性能数据
+  /**
+   * 采集性能数据
+   * @returns {Object|null} 性能数据对象或null
+   */
   collectPerformanceData() {
     // 验证性能API是否可用
     if (!window.performance || !window.performance.timing) {
@@ -93,18 +138,22 @@ class SiteStats {
       return null;
     }
 
-    // 计算响应时间，确保值有效
+    // 计算响应时间
     let responseTime = 0;
-    if (performance.timing.responseEnd > performance.timing.requestStart) {
+    if (performance.timing.responseEnd && performance.timing.requestStart) {
       responseTime = performance.timing.responseEnd - performance.timing.requestStart;
     }
 
-    // 计算渲染时间，确保值有效
+    // 计算渲染时间
     let renderTime = 0;
     const currentTime = performance.now();
-    if (currentTime > this.startTime) {
+    if (currentTime && this.startTime) {
       renderTime = currentTime - this.startTime;
     }
+
+    // 确保值为正数
+    responseTime = Math.max(0, responseTime);
+    renderTime = Math.max(0, renderTime);
 
     const performanceData = {
       timestamp: new Date().toISOString(),
@@ -115,10 +164,15 @@ class SiteStats {
         renderTime: renderTime
       }
     };
+
+    console.log('采集的性能数据:', performanceData);
     return performanceData;
   }
 
-  // 存储性能数据
+  /**
+   * 存储性能数据
+   * @param {Object} performanceData 性能数据对象
+   */
   savePerformanceData(performanceData) {
     // 确保性能数据有效
     if (!performanceData || !performanceData.performance) {
@@ -126,21 +180,39 @@ class SiteStats {
       return;
     }
 
-    const existingData = JSON.parse(localStorage.getItem(this.performanceDataKey) || '[]');
-    existingData.push(performanceData);
-    // 只保留最近100条性能数据
-    if (existingData.length > 100) {
-      existingData.shift();
+    try {
+      const existingData = JSON.parse(localStorage.getItem(this.performanceDataKey) || '[]');
+      existingData.push(performanceData);
+      // 只保留最近100条性能数据
+      if (existingData.length > 100) {
+        existingData.shift();
+      }
+      localStorage.setItem(this.performanceDataKey, JSON.stringify(existingData));
+      console.log('性能数据保存成功，当前数据量:', existingData.length);
+    } catch (error) {
+      console.error('保存性能数据出错:', error);
     }
-    localStorage.setItem(this.performanceDataKey, JSON.stringify(existingData));
   }
 
-  // 获取性能数据
+  /**
+   * 获取性能数据
+   * @returns {Array} 性能数据数组
+   */
   getPerformanceData() {
-    return JSON.parse(localStorage.getItem(this.performanceDataKey) || '[]');
+    try {
+      const data = JSON.parse(localStorage.getItem(this.performanceDataKey) || '[]');
+      console.log('获取的性能数据量:', data.length);
+      return data;
+    } catch (error) {
+      console.error('获取性能数据出错:', error);
+      return [];
+    }
   }
 
-  // 分析性能数据
+  /**
+   * 分析性能数据
+   * @returns {Object|null} 分析结果对象或null
+   */
   analyzePerformanceData() {
     const data = this.getPerformanceData();
     console.log('性能数据总量:', data.length);
@@ -181,7 +253,10 @@ class SiteStats {
     };
   }
 
-  // 更新最新更新时间
+  /**
+   * 更新最新更新时间
+   * @returns {Promise<void>}
+   */
   async updateLastUpdated() {
     const stats = await this.loadStats();
     stats.last_updated = new Date().toISOString();
@@ -189,12 +264,17 @@ class SiteStats {
     this.updateStatsDisplay(stats);
   }
 
-  // 更新性能数据显示
+  /**
+   * 更新性能数据显示
+   */
   updatePerformanceDisplay() {
+    console.log('开始更新性能统计显示');
     const performanceAnalysis = this.analyzePerformanceData();
     const performanceElement = document.getElementById('performance-stats');
+    
     if (performanceElement) {
       if (performanceAnalysis) {
+        console.log('有性能数据，更新显示');
         performanceElement.innerHTML = `
           <div class="stat-item">
             <span class="stat-label">平均响应时间：</span>
@@ -206,6 +286,7 @@ class SiteStats {
           </div>
         `;
       } else {
+        console.log('没有性能数据，显示默认值');
         // 没有性能数据时显示默认值
         performanceElement.innerHTML = `
           <div class="stat-item">
@@ -218,7 +299,21 @@ class SiteStats {
           </div>
         `;
       }
+    } else {
+      console.error('性能统计元素未找到');
     }
+  }
+
+  /**
+   * 强制更新性能数据
+   */
+  forceUpdatePerformance() {
+    console.log('强制更新性能数据');
+    const performanceData = this.collectPerformanceData();
+    if (performanceData) {
+      this.savePerformanceData(performanceData);
+    }
+    this.updatePerformanceDisplay();
   }
 }
 
@@ -231,7 +326,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await stats.recordVisit();
     console.log('访问记录成功');
     
-    // 立即更新性能统计显示，避免显示"加载中..."
+    // 立即更新性能统计显示
     stats.updatePerformanceDisplay();
     console.log('性能统计显示初始化成功');
     
@@ -262,7 +357,7 @@ window.addEventListener('load', () => {
       console.log('性能数据显示更新成功');
     } catch (error) {
       console.error('性能数据采集和显示过程中出错:', error);
-      // 出错时也更新显示，确保不会一直显示"加载中..."
+      // 出错时也更新显示
       if (window.SiteStats) {
         window.SiteStats.updatePerformanceDisplay();
       }
@@ -271,3 +366,11 @@ window.addEventListener('load', () => {
     console.error('SiteStats实例不存在');
   }
 });
+
+// 定期更新性能数据
+setInterval(() => {
+  if (window.SiteStats) {
+    console.log('定期更新性能数据');
+    window.SiteStats.forceUpdatePerformance();
+  }
+}, 30000); // 每30秒更新一次

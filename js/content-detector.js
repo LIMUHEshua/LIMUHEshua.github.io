@@ -1,14 +1,56 @@
+/**
+ * ContentDetector 类 - 负责检测网站内容更新并自动刷新
+ * 功能包括：版本检查、内容更新检测、自动刷新、错误处理
+ */
 class ContentDetector {
   constructor() {
+    /**
+     * 当前版本
+     * @type {string|null}
+     */
     this.currentVersion = null;
+    
+    /**
+     * 最后检查时间
+     * @type {string|null}
+     */
     this.lastCheckedTime = null;
+    
+    /**
+     * 检查间隔（毫秒）
+     * @type {number}
+     */
     this.checkInterval = 60000; // 60秒检查一次
+    
+    /**
+     * 最大重试次数
+     * @type {number}
+     */
     this.maxRetries = 3;
+    
+    /**
+     * 重试延迟（毫秒）
+     * @type {number}
+     */
     this.retryDelay = 5000;
+    
+    /**
+     * 更新日志
+     * @type {Array}
+     */
     this.updateLog = [];
+    
+    /**
+     * 是否正在检查
+     * @type {boolean}
+     */
     this.isChecking = false;
   }
 
+  /**
+   * 初始化检测器
+   * @returns {Promise<void>}
+   */
   async init() {
     try {
       await this.loadCurrentVersion();
@@ -21,6 +63,10 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 加载当前版本信息
+   * @returns {Promise<Object>} 版本信息对象
+   */
   async loadCurrentVersion() {
     try {
       const response = await fetch('/version.json?' + Date.now(), {
@@ -49,6 +95,10 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 检查是否有更新
+   * @returns {Promise<boolean>} 是否有新内容
+   */
   async checkForUpdates() {
     if (this.isChecking) {
       console.log('[ContentDetector] 正在检查中，跳过本次检查');
@@ -78,6 +128,12 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 检查是否有新内容
+   * @param {Object} remoteVersion 远程版本
+   * @param {string} localVersion 本地版本
+   * @returns {boolean} 是否有新内容
+   */
   hasNewContent(remoteVersion, localVersion) {
     if (!localVersion) {
       return true;
@@ -94,15 +150,28 @@ class ContentDetector {
     return false;
   }
 
+  /**
+   * 获取存储的版本
+   * @returns {string|null} 存储的版本
+   */
   getStoredVersion() {
     return localStorage.getItem('site_version');
   }
 
+  /**
+   * 存储版本
+   * @param {string} version 版本号
+   */
   setStoredVersion(version) {
     localStorage.setItem('site_version', version);
     console.log('[ContentDetector] 保存版本:', version);
   }
 
+  /**
+   * 处理新内容
+   * @param {string} newVersion 新版本
+   * @returns {Promise<void>}
+   */
   async handleNewContent(newVersion) {
     try {
       this.showUpdateNotification();
@@ -122,6 +191,9 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 显示更新通知
+   */
   showUpdateNotification() {
     const notification = document.createElement('div');
     notification.className = 'update-notification';
@@ -150,6 +222,9 @@ class ContentDetector {
     }, 100);
   }
 
+  /**
+   * 关闭通知
+   */
   dismissNotification() {
     const notification = document.querySelector('.update-notification');
     if (notification) {
@@ -160,6 +235,10 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 提示是否刷新
+   * @returns {Promise<boolean>} 是否刷新
+   */
   async promptForRefresh() {
     return new Promise((resolve) => {
       const autoRefresh = localStorage.getItem('auto_refresh');
@@ -218,6 +297,11 @@ class ContentDetector {
     });
   }
 
+  /**
+   * 刷新内容
+   * @param {string} newVersion 新版本
+   * @returns {Promise<void>}
+   */
   async refreshContent(newVersion) {
     try {
       console.log('[ContentDetector] 开始刷新内容');
@@ -240,6 +324,9 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 显示刷新指示器
+   */
   showRefreshIndicator() {
     const indicator = document.createElement('div');
     indicator.className = 'refresh-indicator';
@@ -252,6 +339,9 @@ class ContentDetector {
     document.body.appendChild(indicator);
   }
 
+  /**
+   * 隐藏刷新指示器
+   */
   hideRefreshIndicator() {
     const indicator = document.querySelector('.refresh-indicator');
     if (indicator) {
@@ -262,6 +352,10 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 显示刷新错误
+   * @param {Error} error 错误对象
+   */
   showRefreshError(error) {
     const errorDiv = document.createElement('div');
     errorDiv.className = 'refresh-error';
@@ -289,6 +383,11 @@ class ContentDetector {
     }, 100);
   }
 
+  /**
+   * 获取错误消息
+   * @param {Error} error 错误对象
+   * @returns {string} 错误消息
+   */
   getErrorMessage(error) {
     if (error.message.includes('Failed to fetch')) {
       return '网络连接失败，请检查网络连接';
@@ -303,6 +402,10 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 清除缓存
+   * @returns {Promise<void>}
+   */
   async clearCache() {
     try {
       if ('caches' in window) {
@@ -321,6 +424,10 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 重新加载页面
+   * @returns {Promise<void>}
+   */
   async reloadPage() {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
@@ -330,6 +437,9 @@ class ContentDetector {
     });
   }
 
+  /**
+   * 启动自动检查
+   */
   startAutoCheck() {
     console.log('[ContentDetector] 启动自动检查，间隔:', this.checkInterval / 1000, '秒');
     
@@ -338,10 +448,17 @@ class ContentDetector {
     }, this.checkInterval);
   }
 
+  /**
+   * 停止自动检查
+   */
   stopAutoCheck() {
     console.log('[ContentDetector] 停止自动检查');
   }
 
+  /**
+   * 加载更新日志
+   * @returns {Promise<void>}
+   */
   async loadUpdateLog() {
     try {
       const stored = localStorage.getItem('update_log');
@@ -353,6 +470,10 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 保存更新日志
+   * @returns {Promise<void>}
+   */
   async saveUpdateLog() {
     try {
       localStorage.setItem('update_log', JSON.stringify(this.updateLog));
@@ -362,6 +483,12 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 记录更新
+   * @param {string} version 版本号
+   * @param {string} action 操作
+   * @returns {Promise<void>}
+   */
   async logUpdate(version, action) {
     const logEntry = {
       timestamp: new Date().toISOString(),
@@ -382,6 +509,12 @@ class ContentDetector {
     console.log('[ContentDetector] 记录更新:', logEntry);
   }
 
+  /**
+   * 处理错误
+   * @param {Error} error 错误对象
+   * @param {string} context 上下文
+   * @returns {Promise<void>}
+   */
   async handleError(error, context) {
     const errorLog = {
       timestamp: new Date().toISOString(),
@@ -411,10 +544,18 @@ class ContentDetector {
     console.error('[ContentDetector] 错误已记录:', errorLog);
   }
 
+  /**
+   * 获取更新历史
+   * @returns {Array} 更新历史
+   */
   getUpdateHistory() {
     return this.updateLog;
   }
 
+  /**
+   * 获取错误历史
+   * @returns {Array} 错误历史
+   */
   getErrorHistory() {
     try {
       const stored = localStorage.getItem('error_log');
@@ -424,6 +565,10 @@ class ContentDetector {
     }
   }
 
+  /**
+   * 获取版本信息
+   * @returns {Object} 版本信息
+   */
   getVersionInfo() {
     return {
       current: this.currentVersion,
@@ -432,11 +577,19 @@ class ContentDetector {
     };
   }
 
+  /**
+   * 强制检查更新
+   * @returns {Promise<boolean>} 是否有新内容
+   */
   async forceCheck() {
     console.log('[ContentDetector] 强制检查更新');
     return await this.checkForUpdates();
   }
 
+  /**
+   * 重置检测器
+   * @returns {Promise<void>}
+   */
   async reset() {
     console.log('[ContentDetector] 重置检测器');
     await this.clearCache();

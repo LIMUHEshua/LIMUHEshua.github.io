@@ -1,9 +1,25 @@
+/**
+ * UpdateLogger 类 - 负责更新日志的显示和管理
+ * 功能包括：日志显示、过滤、导出、清除等
+ */
 class UpdateLogger {
   constructor() {
+    /**
+     * 日志容器
+     * @type {HTMLElement|null}
+     */
     this.logContainer = null;
+    
+    /**
+     * 是否已初始化
+     * @type {boolean}
+     */
     this.isInitialized = false;
   }
 
+  /**
+   * 初始化日志记录器
+   */
   init() {
     try {
       this.createLogContainer();
@@ -15,6 +31,9 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 创建日志容器
+   */
   createLogContainer() {
     const container = document.createElement('div');
     container.className = 'update-logger-container';
@@ -54,6 +73,9 @@ class UpdateLogger {
     this.setupEventListeners();
   }
 
+  /**
+   * 设置事件监听器
+   */
   setupEventListeners() {
     document.getElementById('filter-updates').addEventListener('change', () => {
       this.filterLogs();
@@ -64,6 +86,10 @@ class UpdateLogger {
     });
   }
 
+  /**
+   * 加载日志
+   * @returns {Promise<void>}
+   */
   async loadLogs() {
     try {
       const updateLogs = await this.getUpdateLogs();
@@ -81,6 +107,10 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 获取更新日志
+   * @returns {Promise<Array>} 更新日志数组
+   */
   async getUpdateLogs() {
     try {
       const stored = localStorage.getItem('update_log');
@@ -91,6 +121,10 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 获取错误日志
+   * @returns {Promise<Array>} 错误日志数组
+   */
   async getErrorLogs() {
     try {
       const stored = localStorage.getItem('error_log');
@@ -101,6 +135,11 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 显示日志
+   * @param {Array} updateLogs 更新日志数组
+   * @param {Array} errorLogs 错误日志数组
+   */
   displayLogs(updateLogs, errorLogs) {
     const logList = document.getElementById('log-list');
     logList.innerHTML = '';
@@ -148,6 +187,12 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 创建日志项
+   * @param {Object} log 日志对象
+   * @param {string} type 日志类型
+   * @returns {HTMLElement} 日志项元素
+   */
   createLogItem(log, type) {
     const item = document.createElement('div');
     item.className = `log-item log-item-${type}`;
@@ -174,6 +219,11 @@ class UpdateLogger {
     return item;
   }
 
+  /**
+   * 截断用户代理字符串
+   * @param {string} userAgent 用户代理字符串
+   * @returns {string} 截断后的用户代理字符串
+   */
   truncateUserAgent(userAgent) {
     const maxLength = 100;
     if (userAgent.length <= maxLength) {
@@ -182,10 +232,17 @@ class UpdateLogger {
     return userAgent.substring(0, maxLength) + '...';
   }
 
+  /**
+   * 过滤日志
+   */
   filterLogs() {
     this.loadLogs();
   }
 
+  /**
+   * 导出日志
+   * @returns {Promise<void>}
+   */
   async exportLogs() {
     try {
       const updateLogs = await this.getUpdateLogs();
@@ -218,6 +275,10 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 清除日志
+   * @returns {Promise<void>}
+   */
   async clearLogs() {
     if (!confirm('确定要清除所有日志吗？此操作不可恢复。')) {
       return;
@@ -237,20 +298,36 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 切换日志器显示/隐藏
+   */
   toggleLogger() {
     if (this.logContainer) {
       this.logContainer.classList.toggle('show');
     }
   }
 
+  /**
+   * 显示成功消息
+   * @param {string} message 消息内容
+   */
   showSuccess(message) {
     this.showToast(message, 'success');
   }
 
+  /**
+   * 显示错误消息
+   * @param {string} message 消息内容
+   */
   showError(message) {
     this.showToast(message, 'error');
   }
 
+  /**
+   * 显示提示消息
+   * @param {string} message 消息内容
+   * @param {string} type 消息类型
+   */
   showToast(message, type) {
     const toast = document.createElement('div');
     toast.className = `toast toast-${type}`;
@@ -270,6 +347,11 @@ class UpdateLogger {
     }, 3000);
   }
 
+  /**
+   * 添加日志
+   * @param {Object} logData 日志数据
+   * @returns {Promise<void>}
+   */
   async addLog(logData) {
     try {
       let logs = [];
@@ -300,6 +382,10 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 获取统计信息
+   * @returns {Promise<Object|null>} 统计信息对象
+   */
   getStats() {
     return new Promise(async (resolve) => {
       try {
@@ -323,6 +409,11 @@ class UpdateLogger {
     });
   }
 
+  /**
+   * 计算更新频率
+   * @param {Array} updateLogs 更新日志数组
+   * @returns {string} 更新频率
+   */
   calculateUpdateFrequency(updateLogs) {
     if (updateLogs.length < 2) {
       return 'N/A';
@@ -349,6 +440,12 @@ class UpdateLogger {
     }
   }
 
+  /**
+   * 计算错误率
+   * @param {Array} updateLogs 更新日志数组
+   * @param {Array} errorLogs 错误日志数组
+   * @returns {string} 错误率
+   */
   calculateErrorRate(updateLogs, errorLogs) {
     if (updateLogs.length === 0) {
       return 'N/A';
@@ -358,6 +455,9 @@ class UpdateLogger {
     return `${errorRate}%`;
   }
 
+  /**
+   * 销毁日志器
+   */
   destroy() {
     if (this.logContainer) {
       this.logContainer.remove();
