@@ -87,13 +87,32 @@ class SiteStats {
 
   // 采集性能数据
   collectPerformanceData() {
+    // 验证性能API是否可用
+    if (!window.performance || !window.performance.timing) {
+      console.warn('Performance API not available');
+      return null;
+    }
+
+    // 计算响应时间，确保值有效
+    let responseTime = 0;
+    if (performance.timing.responseEnd > performance.timing.requestStart) {
+      responseTime = performance.timing.responseEnd - performance.timing.requestStart;
+    }
+
+    // 计算渲染时间，确保值有效
+    let renderTime = 0;
+    const currentTime = performance.now();
+    if (currentTime > this.startTime) {
+      renderTime = currentTime - this.startTime;
+    }
+
     const performanceData = {
       timestamp: new Date().toISOString(),
       visitorId: this.getVisitorId(),
       pageUrl: window.location.href,
       performance: {
-        responseTime: performance.timing.responseEnd - performance.timing.requestStart,
-        renderTime: performance.now() - this.startTime
+        responseTime: responseTime,
+        renderTime: renderTime
       }
     };
     return performanceData;
@@ -101,6 +120,12 @@ class SiteStats {
 
   // 存储性能数据
   savePerformanceData(performanceData) {
+    // 确保性能数据有效
+    if (!performanceData || !performanceData.performance) {
+      console.warn('Invalid performance data');
+      return;
+    }
+
     const existingData = JSON.parse(localStorage.getItem(this.performanceDataKey) || '[]');
     existingData.push(performanceData);
     // 只保留最近100条性能数据
@@ -122,17 +147,30 @@ class SiteStats {
       return null;
     }
 
+    // 过滤有效数据
+    const validData = data.filter(item => {
+      return item && item.performance && 
+             typeof item.performance.responseTime === 'number' && 
+             typeof item.performance.renderTime === 'number' &&
+             item.performance.responseTime >= 0 &&
+             item.performance.renderTime >= 0;
+    });
+
+    if (validData.length === 0) {
+      return null;
+    }
+
     // 计算平均值
-    const avgResponseTime = data.reduce((sum, item) => sum + item.performance.responseTime, 0) / data.length;
-    const avgRenderTime = data.reduce((sum, item) => sum + item.performance.renderTime, 0) / data.length;
+    const avgResponseTime = validData.reduce((sum, item) => sum + item.performance.responseTime, 0) / validData.length;
+    const avgRenderTime = validData.reduce((sum, item) => sum + item.performance.renderTime, 0) / validData.length;
 
     return {
       average: {
         responseTime: avgResponseTime.toFixed(2),
         renderTime: avgRenderTime.toFixed(2)
       },
-      latest: data[data.length - 1].performance,
-      count: data.length
+      latest: validData[validData.length - 1].performance,
+      count: validData.length
     };
   }
 
@@ -205,9 +243,14 @@ window.addEventListener('load', () => {
     console.log('SiteStats实例存在，开始采集性能数据');
     try {
       const performanceData = window.SiteStats.collectPerformanceData();
-      console.log('性能数据采集成功:', performanceData);
-      window.SiteStats.savePerformanceData(performanceData);
-      console.log('性能数据保存成功');
+      if (performanceData) {
+        console.log('性能数据采集成功:', performanceData);
+        window.SiteStats.savePerformanceData(performanceData);
+        console.log('性能数据保存成功');
+      } else {
+        console.warn('性能数据采集失败，跳过保存');
+      }
+      // 无论采集是否成功，都更新显示
       window.SiteStats.updatePerformanceDisplay();
       console.log('性能数据显示更新成功');
     } catch (error) {
