@@ -92,14 +92,7 @@ class SiteStats {
       visitorId: this.getVisitorId(),
       pageUrl: window.location.href,
       performance: {
-        navigationStart: performance.timing.navigationStart,
-        domLoading: performance.timing.domLoading,
-        domInteractive: performance.timing.domInteractive,
-        domContentLoadedEventEnd: performance.timing.domContentLoadedEventEnd,
-        loadEventEnd: performance.timing.loadEventEnd,
         responseTime: performance.timing.responseEnd - performance.timing.requestStart,
-        domLoadTime: performance.timing.domContentLoadedEventEnd - performance.timing.navigationStart,
-        pageLoadTime: performance.timing.loadEventEnd - performance.timing.navigationStart,
         renderTime: performance.now() - this.startTime
       }
     };
@@ -131,15 +124,11 @@ class SiteStats {
 
     // 计算平均值
     const avgResponseTime = data.reduce((sum, item) => sum + item.performance.responseTime, 0) / data.length;
-    const avgDomLoadTime = data.reduce((sum, item) => sum + item.performance.domLoadTime, 0) / data.length;
-    const avgPageLoadTime = data.reduce((sum, item) => sum + item.performance.pageLoadTime, 0) / data.length;
     const avgRenderTime = data.reduce((sum, item) => sum + item.performance.renderTime, 0) / data.length;
 
     return {
       average: {
         responseTime: avgResponseTime.toFixed(2),
-        domLoadTime: avgDomLoadTime.toFixed(2),
-        pageLoadTime: avgPageLoadTime.toFixed(2),
         renderTime: avgRenderTime.toFixed(2)
       },
       latest: data[data.length - 1].performance,
@@ -167,14 +156,6 @@ class SiteStats {
             <span class="stat-value">${performanceAnalysis.average.responseTime}ms</span>
           </div>
           <div class="stat-item">
-            <span class="stat-label">平均DOM加载时间：</span>
-            <span class="stat-value">${performanceAnalysis.average.domLoadTime}ms</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">平均页面加载时间：</span>
-            <span class="stat-value">${performanceAnalysis.average.pageLoadTime}ms</span>
-          </div>
-          <div class="stat-item">
             <span class="stat-label">平均渲染时间：</span>
             <span class="stat-value">${performanceAnalysis.average.renderTime}ms</span>
           </div>
@@ -184,14 +165,6 @@ class SiteStats {
         performanceElement.innerHTML = `
           <div class="stat-item">
             <span class="stat-label">平均响应时间：</span>
-            <span class="stat-value">0ms</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">平均DOM加载时间：</span>
-            <span class="stat-value">0ms</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">平均页面加载时间：</span>
             <span class="stat-value">0ms</span>
           </div>
           <div class="stat-item">
