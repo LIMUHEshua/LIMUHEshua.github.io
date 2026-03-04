@@ -158,9 +158,9 @@ class SiteStats {
   // 更新性能数据显示
   updatePerformanceDisplay() {
     const performanceAnalysis = this.analyzePerformanceData();
-    if (performanceAnalysis) {
-      const performanceElement = document.getElementById('performance-stats');
-      if (performanceElement) {
+    const performanceElement = document.getElementById('performance-stats');
+    if (performanceElement) {
+      if (performanceAnalysis) {
         performanceElement.innerHTML = `
           <div class="stat-item">
             <span class="stat-label">平均响应时间：</span>
@@ -179,6 +179,26 @@ class SiteStats {
             <span class="stat-value">${performanceAnalysis.average.renderTime}ms</span>
           </div>
         `;
+      } else {
+        // 没有性能数据时显示默认值
+        performanceElement.innerHTML = `
+          <div class="stat-item">
+            <span class="stat-label">平均响应时间：</span>
+            <span class="stat-value">0ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">平均DOM加载时间：</span>
+            <span class="stat-value">0ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">平均页面加载时间：</span>
+            <span class="stat-value">0ms</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">平均渲染时间：</span>
+            <span class="stat-value">0ms</span>
+          </div>
+        `;
       }
     }
   }
@@ -195,9 +215,20 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // 页面加载完成后采集性能数据
 window.addEventListener('load', () => {
+  console.log('页面加载完成，开始采集性能数据');
   if (window.SiteStats) {
-    const performanceData = window.SiteStats.collectPerformanceData();
-    window.SiteStats.savePerformanceData(performanceData);
-    window.SiteStats.updatePerformanceDisplay();
+    console.log('SiteStats实例存在，开始采集性能数据');
+    try {
+      const performanceData = window.SiteStats.collectPerformanceData();
+      console.log('性能数据采集成功:', performanceData);
+      window.SiteStats.savePerformanceData(performanceData);
+      console.log('性能数据保存成功');
+      window.SiteStats.updatePerformanceDisplay();
+      console.log('性能数据显示更新成功');
+    } catch (error) {
+      console.error('性能数据采集和显示过程中出错:', error);
+    }
+  } else {
+    console.error('SiteStats实例不存在');
   }
 });
