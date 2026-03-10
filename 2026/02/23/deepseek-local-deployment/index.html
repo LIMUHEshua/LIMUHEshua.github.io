@@ -43,17 +43,17 @@
 
   <div class="post-content" itemprop="articleBody">
     <p>在人工智能快速发展的今天，本地部署大语言模型成为了越来越多开发者的选择。本文将介绍如何使用 Python 和 Gradio 框架，基于 DeepSeek 模型搭建一个本地部署的大语言模型助手。我们从简单的文本处理功能开始，逐步构建完整的 AI 对话系统。</p>
-<h2 id="技术栈介绍"><a href="#技术栈介绍" class="headerlink" title="技术栈介绍"></a>技术栈介绍</h2><p>本项目使用以下技术：</p>
+<h3 id="技术栈介绍"><a href="#技术栈介绍" class="headerlink" title="技术栈介绍"></a>技术栈介绍</h3><p>本项目使用以下技术：</p>
 <ul>
 <li><strong>Python</strong>：主要的编程语言</li>
 <li><strong>Gradio</strong>：快速构建机器学习模型的 Web 界面</li>
 <li><strong>DeepSeek</strong>：开源的大语言模型</li>
 </ul>
-<h2 id="从简单开始：文本倒序工具"><a href="#从简单开始：文本倒序工具" class="headerlink" title="从简单开始：文本倒序工具"></a>从简单开始：文本倒序工具</h2><p>让我们从一个简单的例子开始，使用 Gradio 创建一个文本倒序工具。这帮助我们理解 Gradio 的基本用法。</p>
+<h3 id="从简单开始：文本倒序工具"><a href="#从简单开始：文本倒序工具" class="headerlink" title="从简单开始：文本倒序工具"></a>从简单开始：文本倒序工具</h3><p>让我们从一个简单的例子开始，使用 Gradio 创建一个文本倒序工具。这帮助我们理解 Gradio 的基本用法。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reverse_text</span>(<span class="params">text</span>):</span><br><span class="line">    <span class="keyword">return</span> text[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">demo = gr.Interface(</span><br><span class="line">    fn=reverse_text,</span><br><span class="line">    inputs=<span class="string">&quot;text&quot;</span>,</span><br><span class="line">    outputs=<span class="string">&quot;text&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
 
 <p>这段代码创建了一个简单的 Web 界面，用户输入文本后，系统会返回倒序后的文本。Gradio 的 <code>Interface</code> 类让这个过程变得非常简单。</p>
-<h2 id="进阶功能：文本处理工具"><a href="#进阶功能：文本处理工具" class="headerlink" title="进阶功能：文本处理工具"></a>进阶功能：文本处理工具</h2><p>接下来，我们扩展功能，创建一个能够同时返回倒序文本和文本长度的工具。</p>
+<h3 id="进阶功能：文本处理工具"><a href="#进阶功能：文本处理工具" class="headerlink" title="进阶功能：文本处理工具"></a>进阶功能：文本处理工具</h3><p>接下来，我们扩展功能，创建一个能够同时返回倒序文本和文本长度的工具。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reverse_and_count</span>(<span class="params">text</span>):</span><br><span class="line">    reversed_text = text[::-<span class="number">1</span>]</span><br><span class="line">    length = <span class="built_in">len</span>(text)</span><br><span class="line">    <span class="keyword">return</span> reversed_text, length</span><br><span class="line"></span><br><span class="line">demo = gr.Interface(</span><br><span class="line">    fn=reverse_and_count,</span><br><span class="line">    inputs=<span class="string">&quot;text&quot;</span>,</span><br><span class="line">    outputs=[<span class="string">&quot;text&quot;</span>, <span class="string">&quot;number&quot;</span>],</span><br><span class="line">    title=<span class="string">&quot;文本处理工具&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;输入一段文字，查看其倒序形式及字符数。&quot;</span>,</span><br><span class="line">    examples=[[<span class="string">&quot;你好,世界&quot;</span>], [<span class="string">&quot;hello world&quot;</span>]]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
 
 <p>这个版本的改进包括：</p>
@@ -63,17 +63,17 @@
 <li>提供了示例输入，方便用户快速体验</li>
 <li>支持多个输出类型</li>
 </ul>
-<h2 id="集成-DeepSeek-模型"><a href="#集成-DeepSeek-模型" class="headerlink" title="集成 DeepSeek 模型"></a>集成 DeepSeek 模型</h2><p>在掌握了 Gradio 的基础用法后，我们可以将其与 DeepSeek 模型集成，创建一个完整的 AI 助手。以下是集成 DeepSeek 的核心代码框架：</p>
+<h3 id="集成-DeepSeek-模型"><a href="#集成-DeepSeek-模型" class="headerlink" title="集成 DeepSeek 模型"></a>集成 DeepSeek 模型</h3><p>在掌握了 Gradio 的基础用法后，我们可以将其与 DeepSeek 模型集成，创建一个完整的 AI 助手。以下是集成 DeepSeek 的核心代码框架：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"><span class="keyword">from</span> deepseek <span class="keyword">import</span> DeepSeekModel</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chat_with_deepseek</span>(<span class="params">message, history</span>):</span><br><span class="line">    model = DeepSeekModel()</span><br><span class="line">    response = model.generate(message)</span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line"></span><br><span class="line">demo = gr.ChatInterface(</span><br><span class="line">    fn=chat_with_deepseek,</span><br><span class="line">    title=<span class="string">&quot;DeepSeek AI 助手&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;基于 DeepSeek 模型的本地 AI 对话助手&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
 
-<h2 id="项目优势"><a href="#项目优势" class="headerlink" title="项目优势"></a>项目优势</h2><p>本地部署大模型有以下优势：</p>
+<h3 id="项目优势"><a href="#项目优势" class="headerlink" title="项目优势"></a>项目优势</h3><p>本地部署大模型有以下优势：</p>
 <ul>
 <li><strong>数据隐私</strong>：所有数据在本地处理，保护用户隐私</li>
 <li><strong>无需联网</strong>：离线环境也能使用 AI 功能</li>
 <li><strong>成本控制</strong>：避免 API 调用费用</li>
 <li><strong>定制化</strong>：可以根据需求调整模型参数</li>
 </ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过本文的介绍，我们学习了如何使用 Gradio 和 DeepSeek 构建本地 AI 助手。从简单的文本处理开始，逐步构建完整的应用。这种方法不仅适用于 DeepSeek，也可以扩展到其他开源大模型。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通过本文的介绍，我们学习了如何使用 Gradio 和 DeepSeek 构建本地 AI 助手。从简单的文本处理开始，逐步构建完整的应用。这种方法不仅适用于 DeepSeek，也可以扩展到其他开源大模型。</p>
 <p>在未来的文章中，我将分享更多关于模型优化、性能提升和功能扩展的内容。欢迎继续关注！</p>
 
   </div>
@@ -84,11 +84,11 @@
       
       <a href="/tags/Python/#Python">#Python</a>
       
+      <a href="/tags/AI/#AI">#AI</a>
+      
       <a href="/tags/Gradio/#Gradio">#Gradio</a>
       
       <a href="/tags/DeepSeek/#DeepSeek">#DeepSeek</a>
-      
-      <a href="/tags/AI/#AI">#AI</a>
       
     </div>
     
@@ -265,7 +265,7 @@
         <div class="site-stats" id="site-stats">
           <div class="stat-item">
             <span class="stat-label">文章数目</span>
-            <span class="stat-value">4</span>
+            <span class="stat-value">5</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">评论数</span>
@@ -311,11 +311,17 @@
           
           <li><a href="/categories/Python/">Python</a></li>
           
-          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
           
           <li><a href="/categories/Python/AI/">AI</a></li>
           
+          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a></li>
+          
           <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/%E5%89%8D%E7%AB%AF/">前端</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/STM32/">STM32</a></li>
           
         </ul>
       </div>
@@ -324,11 +330,13 @@
         <h3>最新文章</h3>
         <ul>
           
-          <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
-          
           <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
           
+          <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
+          
           <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
+          
+          <li><a href="/2026/03/10/stm32-smart-fan-control-system/">STM32F103C8T6 智能风扇控制系统</a></li>
           
           <li><a href="/2026/03/04/weather-query-tool/">天气查询工具</a></li>
           

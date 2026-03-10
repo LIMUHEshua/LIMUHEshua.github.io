@@ -44,8 +44,8 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <h1 id="天气查询工具"><a href="#天气查询工具" class="headerlink" title="天气查询工具"></a>天气查询工具</h1><h2 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h2><p>天气查询工具是一个基于FastAPI和前端技术开发的实时天气查询系统，支持城市天气查询、实时天气显示和未来3天天气预报功能。</p>
-<h2 id="功能特性"><a href="#功能特性" class="headerlink" title="功能特性"></a>功能特性</h2><ul>
+    <h3 id="项目介绍"><a href="#项目介绍" class="headerlink" title="项目介绍"></a>项目介绍</h3><p>天气查询工具是一个基于FastAPI和前端技术开发的实时天气查询系统，支持城市天气查询、实时天气显示和未来3天天气预报功能。</p>
+<h3 id="功能特性"><a href="#功能特性" class="headerlink" title="功能特性"></a>功能特性</h3><ul>
 <li>🔍 支持城市天气查询</li>
 <li>📱 响应式设计，适配移动端</li>
 <li>📊 实时天气数据显示</li>
@@ -53,15 +53,15 @@
 <li>⏰ 搜索历史记录</li>
 <li>🎨 现代化UI设计，与博客风格一致</li>
 </ul>
-<h2 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h2><ul>
+<h3 id="技术栈"><a href="#技术栈" class="headerlink" title="技术栈"></a>技术栈</h3><ul>
 <li><strong>后端</strong>: Python, FastAPI, httpx</li>
 <li><strong>前端</strong>: HTML, CSS, JavaScript</li>
 <li><strong>样式</strong>: 基于博客主题的响应式设计</li>
 <li><strong>API</strong>: 第三方天气API</li>
 </ul>
-<h2 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">weather/</span><br><span class="line">├── static/</span><br><span class="line">│   └── weather.css      # 样式文件</span><br><span class="line">├── templates/</span><br><span class="line">│   └── weather.html     # 前端模板</span><br><span class="line">└── main.py              # 后端API服务</span><br></pre></td></tr></table></figure>
+<h3 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">weather/</span><br><span class="line">├── static/</span><br><span class="line">│   └── weather.css      # 样式文件</span><br><span class="line">├── templates/</span><br><span class="line">│   └── weather.html     # 前端模板</span><br><span class="line">└── main.py              # 后端API服务</span><br></pre></td></tr></table></figure>
 
-<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><ol>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><ol>
 <li>启动后端服务</li>
 </ol>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装依赖</span></span><br><span class="line">pip install fastapi uvicorn httpx python-dotenv</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动服务</span></span><br><span class="line">python main.py</span><br></pre></td></tr></table></figure>
@@ -70,21 +70,21 @@
 <li>访问天气查询页面</li>
 </ol>
 <p>打开浏览器，访问 <code>http://localhost:5001</code> 即可使用天气查询功能。</p>
-<h2 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a>核心功能</h2><h3 id="1-城市天气查询"><a href="#1-城市天气查询" class="headerlink" title="1. 城市天气查询"></a>1. 城市天气查询</h3><p>输入城市名称，点击查询按钮即可获取该城市的实时天气和未来3天预报。</p>
-<h3 id="2-搜索历史记录"><a href="#2-搜索历史记录" class="headerlink" title="2. 搜索历史记录"></a>2. 搜索历史记录</h3><p>系统会自动记录最近5次的搜索历史，点击历史记录可以快速重新查询该城市的天气。</p>
-<h3 id="3-响应式设计"><a href="#3-响应式设计" class="headerlink" title="3. 响应式设计"></a>3. 响应式设计</h3><p>页面在不同设备上都能正常显示，包括桌面端、平板和手机。</p>
-<h2 id="界面预览"><a href="#界面预览" class="headerlink" title="界面预览"></a>界面预览</h2><h3 id="桌面端效果"><a href="#桌面端效果" class="headerlink" title="桌面端效果"></a>桌面端效果</h3><p>天气查询工具的桌面端界面采用现代化设计，包含城市搜索框、天气信息显示区和未来3天预报。界面使用与博客一致的蓝色主题，响应式布局确保在不同屏幕尺寸上都能正常显示。</p>
-<h3 id="移动端效果"><a href="#移动端效果" class="headerlink" title="移动端效果"></a>移动端效果</h3><p>移动端界面针对小屏幕进行了优化，搜索框和按钮会自动调整为全屏宽度，天气信息和预报卡片会垂直排列，确保在手机等小屏幕设备上的良好体验。</p>
-<h2 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h2><h3 id="后端API"><a href="#后端API" class="headerlink" title="后端API"></a>后端API</h3><p>后端使用FastAPI框架提供RESTful API，支持异步请求和缓存机制，提高查询效率。</p>
-<h3 id="前端实现"><a href="#前端实现" class="headerlink" title="前端实现"></a>前端实现</h3><p>前端使用原生HTML、CSS和JavaScript实现，结合Font Awesome图标库提供天气图标，使用localStorage存储搜索历史。</p>
-<h3 id="样式设计"><a href="#样式设计" class="headerlink" title="样式设计"></a>样式设计</h3><p>采用与博客一致的设计风格，使用CSS变量管理颜色和样式，确保视觉一致性。</p>
-<h2 id="未来计划"><a href="#未来计划" class="headerlink" title="未来计划"></a>未来计划</h2><ul>
+<h3 id="核心功能"><a href="#核心功能" class="headerlink" title="核心功能"></a>核心功能</h3><h4 id="1-城市天气查询"><a href="#1-城市天气查询" class="headerlink" title="1. 城市天气查询"></a>1. 城市天气查询</h4><p>输入城市名称，点击查询按钮即可获取该城市的实时天气和未来3天预报。</p>
+<h4 id="2-搜索历史记录"><a href="#2-搜索历史记录" class="headerlink" title="2. 搜索历史记录"></a>2. 搜索历史记录</h4><p>系统会自动记录最近5次的搜索历史，点击历史记录可以快速重新查询该城市的天气。</p>
+<h4 id="3-响应式设计"><a href="#3-响应式设计" class="headerlink" title="3. 响应式设计"></a>3. 响应式设计</h4><p>页面在不同设备上都能正常显示，包括桌面端、平板和手机。</p>
+<h3 id="界面预览"><a href="#界面预览" class="headerlink" title="界面预览"></a>界面预览</h3><h4 id="桌面端效果"><a href="#桌面端效果" class="headerlink" title="桌面端效果"></a>桌面端效果</h4><p>天气查询工具的桌面端界面采用现代化设计，包含城市搜索框、天气信息显示区和未来3天预报。界面使用与博客一致的蓝色主题，响应式布局确保在不同屏幕尺寸上都能正常显示。</p>
+<h4 id="移动端效果"><a href="#移动端效果" class="headerlink" title="移动端效果"></a>移动端效果</h4><p>移动端界面针对小屏幕进行了优化，搜索框和按钮会自动调整为全屏宽度，天气信息和预报卡片会垂直排列，确保在手机等小屏幕设备上的良好体验。</p>
+<h3 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h3><h4 id="后端API"><a href="#后端API" class="headerlink" title="后端API"></a>后端API</h4><p>后端使用FastAPI框架提供RESTful API，支持异步请求和缓存机制，提高查询效率。</p>
+<h4 id="前端实现"><a href="#前端实现" class="headerlink" title="前端实现"></a>前端实现</h4><p>前端使用原生HTML、CSS和JavaScript实现，结合Font Awesome图标库提供天气图标，使用localStorage存储搜索历史。</p>
+<h4 id="样式设计"><a href="#样式设计" class="headerlink" title="样式设计"></a>样式设计</h4><p>采用与博客一致的设计风格，使用CSS变量管理颜色和样式，确保视觉一致性。</p>
+<h3 id="未来计划"><a href="#未来计划" class="headerlink" title="未来计划"></a>未来计划</h3><ul>
 <li>添加更多城市的天气数据支持</li>
 <li>实现天气数据可视化</li>
 <li>增加天气预警功能</li>
 <li>优化API请求性能</li>
 </ul>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>天气查询工具是一个功能完整、界面美观的天气查询系统，不仅提供了实用的天气查询功能，还与博客的设计风格保持一致，为用户提供了良好的使用体验。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>天气查询工具是一个功能完整、界面美观的天气查询系统，不仅提供了实用的天气查询功能，还与博客的设计风格保持一致，为用户提供了良好的使用体验。</p>
 
   </div>
 
@@ -275,7 +275,7 @@
         <div class="site-stats" id="site-stats">
           <div class="stat-item">
             <span class="stat-label">文章数目</span>
-            <span class="stat-value">4</span>
+            <span class="stat-value">5</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">评论数</span>
@@ -321,11 +321,17 @@
           
           <li><a href="/categories/Python/">Python</a></li>
           
-          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
           
           <li><a href="/categories/Python/AI/">AI</a></li>
           
+          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a></li>
+          
           <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/%E5%89%8D%E7%AB%AF/">前端</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/STM32/">STM32</a></li>
           
         </ul>
       </div>
@@ -334,11 +340,13 @@
         <h3>最新文章</h3>
         <ul>
           
-          <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
-          
           <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
           
+          <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
+          
           <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
+          
+          <li><a href="/2026/03/10/stm32-smart-fan-control-system/">STM32F103C8T6 智能风扇控制系统</a></li>
           
           <li><a href="/2026/03/04/weather-query-tool/">天气查询工具</a></li>
           
