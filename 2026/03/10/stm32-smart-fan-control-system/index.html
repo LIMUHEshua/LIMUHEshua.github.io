@@ -462,11 +462,11 @@
           </div>
           <div class="stat-item">
             <span class="stat-label">最新更新</span>
-            <span class="stat-value">加载中...</span>
+            <span class="stat-value" id="latest-update">加载中...</span>
           </div>
           <div class="stat-item">
             <span class="stat-label">访客总数</span>
-            <span class="stat-value">加载中...</span>
+            <span class="stat-value" id="visitor-count">0</span>
           </div>
         </div>
       </div>
@@ -475,12 +475,12 @@
         <h3>性能统计</h3>
         <div class="site-stats" id="performance-stats">
           <div class="stat-item">
-            <span class="stat-label">平均响应时间：</span>
-            <span class="stat-value">0ms</span>
+            <span class="stat-label">页面渲染时间：</span>
+            <span class="stat-value" id="render-time">计算中...</span>
           </div>
           <div class="stat-item">
-            <span class="stat-label">平均渲染时间：</span>
-            <span class="stat-value">0ms</span>
+            <span class="stat-label">内存使用：</span>
+            <span class="stat-value" id="memory-usage">计算中...</span>
           </div>
         </div>
       </div>
@@ -500,19 +500,19 @@
           
           <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li>
           
-          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
-          
           <li><a href="/categories/Python/AI/">AI</a></li>
           
           <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">部署指南</a></li>
           
+          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
+          
+          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/%E5%89%8D%E7%AB%AF/">前端</a></li>
+          
           <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a></li>
           
           <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/STM32/">STM32</a></li>
-          
-          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
-          
-          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/%E5%89%8D%E7%AB%AF/">前端</a></li>
           
         </ul>
       </div>
@@ -529,7 +529,7 @@
           
           <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
           
-          <li><a href="/2026/03/10/stm32-smart-fan-control-system/">STM32F103C8T6 智能风扇控制系统</a></li>
+          <li><a href="/2026/03/04/weather-query-tool/">天气查询工具</a></li>
           
         </ul>
       </div>
@@ -552,19 +552,8 @@
       calculateSiteUptime();
       updateCommentCount();
       updateMemoryUsage();
-      updateResponseTime();
-      
-      // 初始化自动更新系统
-      if (window.ContentDetector) {
-        window.contentDetector = new ContentDetector();
-        window.contentDetector.init();
-      }
-      
-      // 初始化更新日志系统
-      if (window.UpdateLogger) {
-        window.updateLogger = new UpdateLogger();
-        window.updateLogger.init();
-      }
+      updateLatestPost();
+      updateVisitorCount();
     };
     
     function calculateSiteUptime() {
@@ -578,7 +567,17 @@
       document.getElementById('site-uptime').textContent = diffDays + '天 ' + diffHours + '小时 ' + diffMinutes + '分钟';
     }
     
-    // 访客计数现在由SiteStats类管理
+    // 访客计数
+    function updateVisitorCount() {
+      var count = localStorage.getItem('visitorCount') || 0;
+      // 如果是新访客，增加计数
+      if (!sessionStorage.getItem('visited')) {
+        count = parseInt(count) + 1;
+        localStorage.setItem('visitorCount', count);
+        sessionStorage.setItem('visited', 'true');
+      }
+      document.getElementById('visitor-count').textContent = count;
+    }
     
     function updateCommentCount() {
       var comments = JSON.parse(localStorage.getItem('comments') || '[]');
@@ -594,11 +593,10 @@
       }
     }
     
-    function updateResponseTime() {
-      var responseTime = (performance.timing.responseEnd - performance.timing.requestStart).toFixed(2);
-      if (responseTime > 0) {
-        document.getElementById('response-time').textContent = responseTime + 'ms';
-      }
+    function updateLatestPost() {
+      // 获取最新文章日期
+      var latestPostDate = '2026-03-15';
+      document.getElementById('latest-update').textContent = latestPostDate;
     }
     
     function searchPosts() {
