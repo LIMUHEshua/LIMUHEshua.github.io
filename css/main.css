@@ -696,7 +696,8 @@ footer p {
   background: var(--secondary-color);
 }
 
-.comment {
+/* 博客评论样式 - 使用更具体的选择器避免与代码高亮冲突 */
+.comments-section .comment {
   background: var(--bg-secondary);
   padding: 15px;
   border-radius: 4px;
@@ -704,7 +705,7 @@ footer p {
   border-left: 3px solid var(--primary-color);
 }
 
-.comment-reply {
+.comments-section .comment-reply {
   margin-left: 20px;
   margin-top: 10px;
   background: var(--bg-tertiary);
@@ -798,11 +799,11 @@ footer p {
     padding-top: 20px;
   }
   
-  .comment {
+  .comments-section .comment {
     padding: 12px;
   }
   
-  .comment-reply {
+  .comments-section .comment-reply {
     margin-left: 15px;
   }
 }
@@ -828,11 +829,11 @@ footer p {
     min-height: 80px;
   }
   
-  .comment {
+  .comments-section .comment {
     padding: 10px;
   }
   
-  .comment-reply {
+  .comments-section .comment-reply {
     margin-left: 10px;
     padding: 10px;
   }
