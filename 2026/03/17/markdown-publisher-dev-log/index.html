@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>基于 DeepSeek 的本地部署大模型助手 | LIMUHEshua博客</title>
+  <title>Markdown多平台发布工具开发记录 | LIMUHEshua博客</title>
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/syntax-highlight.css">
 <meta name="generator" content="Hexo 8.1.1"></head>
@@ -23,17 +23,17 @@
     <main>
       <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
   <header class="post-header">
-    <h1 class="post-title" itemprop="name headline">基于 DeepSeek 的本地部署大模型助手</h1>
+    <h1 class="post-title" itemprop="name headline">Markdown多平台发布工具开发记录</h1>
     <div class="post-meta">
-      <time class="post-time" itemprop="datePublished" datetime="2026-02-23T10:00:00.000Z" content="2026-02-23">
-        2026-02-23
+      <time class="post-time" itemprop="datePublished" datetime="2026-03-17T02:00:00.000Z" content="2026-03-17">
+        2026-03-17
       </time>
       
       <span class="post-category">
         | 
-          <a href="/categories/Python/">Python</a>
+          <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/">项目开发</a>
         
-          <a href="/categories/Python/AI/">AI</a>
+          <a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/">前端技术</a>
         
       </span>
       
@@ -41,39 +41,87 @@
   </header>
 
   <div class="post-content" itemprop="articleBody">
-    <p>在人工智能快速发展的今天，本地部署大语言模型成为了越来越多开发者的选择。本文将介绍如何使用 Python 和 Gradio 框架，基于 DeepSeek 模型搭建一个本地部署的大语言模型助手。我们从简单的文本处理功能开始，逐步构建完整的 AI 对话系统。</p>
-<h3 id="技术栈介绍"><a href="#技术栈介绍" class="headerlink" title="技术栈介绍"></a>技术栈介绍</h3><p>本项目使用以下技术：</p>
-<ul>
-<li><strong>Python</strong>：主要的编程语言</li>
-<li><strong>Gradio</strong>：快速构建机器学习模型的 Web 界面</li>
-<li><strong>DeepSeek</strong>：开源的大语言模型</li>
+    <h3 id="项目简介"><a href="#项目简介" class="headerlink" title="项目简介"></a>项目简介</h3><p>最近开始开发一款Markdown多平台发布工具，旨在解决内容创作者跨平台发布的效率问题。目前已完成前端基础框架搭建。</p>
+<h3 id="核心功能规划"><a href="#核心功能规划" class="headerlink" title="核心功能规划"></a>核心功能规划</h3><h4 id="1-多平台发布支持"><a href="#1-多平台发布支持" class="headerlink" title="1. 多平台发布支持"></a>1. 多平台发布支持</h4><ul>
+<li>微信公众号：富文本HTML生成</li>
+<li>小红书：纯文本&#x2F;富文本格式转换</li>
+<li>知乎：API发布支持</li>
 </ul>
-<h3 id="从简单开始：文本倒序工具"><a href="#从简单开始：文本倒序工具" class="headerlink" title="从简单开始：文本倒序工具"></a>从简单开始：文本倒序工具</h3><p>让我们从一个简单的例子开始，使用 Gradio 创建一个文本倒序工具。这帮助我们理解 Gradio 的基本用法。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reverse_text</span>(<span class="params">text</span>):</span><br><span class="line">    <span class="keyword">return</span> text[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">demo = gr.Interface(</span><br><span class="line">    fn=reverse_text,</span><br><span class="line">    inputs=<span class="string">&quot;text&quot;</span>,</span><br><span class="line">    outputs=<span class="string">&quot;text&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
-
-<p>这段代码创建了一个简单的 Web 界面，用户输入文本后，系统会返回倒序后的文本。Gradio 的 <code>Interface</code> 类让这个过程变得非常简单。</p>
-<h3 id="进阶功能：文本处理工具"><a href="#进阶功能：文本处理工具" class="headerlink" title="进阶功能：文本处理工具"></a>进阶功能：文本处理工具</h3><p>接下来，我们扩展功能，创建一个能够同时返回倒序文本和文本长度的工具。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">reverse_and_count</span>(<span class="params">text</span>):</span><br><span class="line">    reversed_text = text[::-<span class="number">1</span>]</span><br><span class="line">    length = <span class="built_in">len</span>(text)</span><br><span class="line">    <span class="keyword">return</span> reversed_text, length</span><br><span class="line"></span><br><span class="line">demo = gr.Interface(</span><br><span class="line">    fn=reverse_and_count,</span><br><span class="line">    inputs=<span class="string">&quot;text&quot;</span>,</span><br><span class="line">    outputs=[<span class="string">&quot;text&quot;</span>, <span class="string">&quot;number&quot;</span>],</span><br><span class="line">    title=<span class="string">&quot;文本处理工具&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;输入一段文字，查看其倒序形式及字符数。&quot;</span>,</span><br><span class="line">    examples=[[<span class="string">&quot;你好,世界&quot;</span>], [<span class="string">&quot;hello world&quot;</span>]]</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
-
-<p>这个版本的改进包括：</p>
-<ul>
-<li>增加了字符统计功能</li>
-<li>添加了界面标题和描述</li>
-<li>提供了示例输入，方便用户快速体验</li>
-<li>支持多个输出类型</li>
+<h4 id="2-AI智能助手"><a href="#2-AI智能助手" class="headerlink" title="2. AI智能助手"></a>2. AI智能助手</h4><ul>
+<li>标题自动生成</li>
+<li>内容润色优化</li>
+<li>敏感词检测</li>
+<li>自定义Prompt模板</li>
 </ul>
-<h3 id="集成-DeepSeek-模型"><a href="#集成-DeepSeek-模型" class="headerlink" title="集成 DeepSeek 模型"></a>集成 DeepSeek 模型</h3><p>在掌握了 Gradio 的基础用法后，我们可以将其与 DeepSeek 模型集成，创建一个完整的 AI 助手。以下是集成 DeepSeek 的核心代码框架：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gradio <span class="keyword">as</span> gr</span><br><span class="line"><span class="keyword">from</span> deepseek <span class="keyword">import</span> DeepSeekModel</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">chat_with_deepseek</span>(<span class="params">message, history</span>):</span><br><span class="line">    model = DeepSeekModel()</span><br><span class="line">    response = model.generate(message)</span><br><span class="line">    <span class="keyword">return</span> response</span><br><span class="line"></span><br><span class="line">demo = gr.ChatInterface(</span><br><span class="line">    fn=chat_with_deepseek,</span><br><span class="line">    title=<span class="string">&quot;DeepSeek AI 助手&quot;</span>,</span><br><span class="line">    description=<span class="string">&quot;基于 DeepSeek 模型的本地 AI 对话助手&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">demo.launch()</span><br></pre></td></tr></table></figure>
-
-<h3 id="项目优势"><a href="#项目优势" class="headerlink" title="项目优势"></a>项目优势</h3><p>本地部署大模型有以下优势：</p>
-<ul>
-<li><strong>数据隐私</strong>：所有数据在本地处理，保护用户隐私</li>
-<li><strong>无需联网</strong>：离线环境也能使用 AI 功能</li>
-<li><strong>成本控制</strong>：避免 API 调用费用</li>
-<li><strong>定制化</strong>：可以根据需求调整模型参数</li>
+<h4 id="3-编辑器功能"><a href="#3-编辑器功能" class="headerlink" title="3. 编辑器功能"></a>3. 编辑器功能</h4><ul>
+<li>Markdown即时渲染</li>
+<li>代码高亮、表格支持</li>
+<li>图片拖拽上传</li>
+<li>多平台预览切换</li>
 </ul>
-<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>通过本文的介绍，我们学习了如何使用 Gradio 和 DeepSeek 构建本地 AI 助手。从简单的文本处理开始，逐步构建完整的应用。这种方法不仅适用于 DeepSeek，也可以扩展到其他开源大模型。</p>
-<p>在未来的文章中，我将分享更多关于模型优化、性能提升和功能扩展的内容。欢迎继续关注！</p>
+<h3 id="技术选型"><a href="#技术选型" class="headerlink" title="技术选型"></a>技术选型</h3><table>
+<thead>
+<tr>
+<th>层级</th>
+<th>技术栈</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>前端框架</td>
+<td>Vue 3 + TypeScript</td>
+</tr>
+<tr>
+<td>构建工具</td>
+<td>Vite</td>
+</tr>
+<tr>
+<td>UI组件库</td>
+<td>Element Plus</td>
+</tr>
+<tr>
+<td>编辑器</td>
+<td>Vditor</td>
+</tr>
+<tr>
+<td>状态管理</td>
+<td>Pinia</td>
+</tr>
+<tr>
+<td>后端框架</td>
+<td>NestJS（规划中）</td>
+</tr>
+<tr>
+<td>数据库</td>
+<td>PostgreSQL（规划中）</td>
+</tr>
+</tbody></table>
+<h3 id="当前进度"><a href="#当前进度" class="headerlink" title="当前进度"></a>当前进度</h3><h4 id="已完成"><a href="#已完成" class="headerlink" title="已完成"></a>已完成</h4><ul>
+<li><input checked="" disabled="" type="checkbox"> 前端项目初始化</li>
+<li><input checked="" disabled="" type="checkbox"> 基础页面布局</li>
+<li><input checked="" disabled="" type="checkbox"> Markdown编辑器集成</li>
+<li><input checked="" disabled="" type="checkbox"> 组件架构设计</li>
+</ul>
+<h4 id="进行中"><a href="#进行中" class="headerlink" title="进行中"></a>进行中</h4><ul>
+<li><input disabled="" type="checkbox"> 平台转换器开发</li>
+<li><input disabled="" type="checkbox"> AI助手功能接入</li>
+<li><input disabled="" type="checkbox"> 用户认证系统</li>
+</ul>
+<h4 id="待开发"><a href="#待开发" class="headerlink" title="待开发"></a>待开发</h4><ul>
+<li><input disabled="" type="checkbox"> 后端API服务</li>
+<li><input disabled="" type="checkbox"> 数据库设计</li>
+<li><input disabled="" type="checkbox"> 图片上传功能</li>
+<li><input disabled="" type="checkbox"> 数据看板</li>
+</ul>
+<h3 id="项目结构"><a href="#项目结构" class="headerlink" title="项目结构"></a>项目结构</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">src/</span><br><span class="line">├── components/        # 公共组件</span><br><span class="line">│   ├── Editor/        # 编辑器组件</span><br><span class="line">│   ├── Layout/        # 布局组件</span><br><span class="line">│   └── Common/        # 通用组件</span><br><span class="line">├── views/             # 页面视图</span><br><span class="line">│   ├── Editor.vue     # 编辑器主页面</span><br><span class="line">│   ├── Templates.vue  # 模板管理</span><br><span class="line">│   └── Settings.vue   # 设置页面</span><br><span class="line">├── stores/            # 状态管理</span><br><span class="line">└── api/               # API接口</span><br></pre></td></tr></table></figure>
+
+<h3 id="开发计划"><a href="#开发计划" class="headerlink" title="开发计划"></a>开发计划</h3><h4 id="第一阶段：前端完善（当前）"><a href="#第一阶段：前端完善（当前）" class="headerlink" title="第一阶段：前端完善（当前）"></a>第一阶段：前端完善（当前）</h4><p>完善编辑器功能和平台预览模块</p>
+<h4 id="第二阶段：后端开发"><a href="#第二阶段：后端开发" class="headerlink" title="第二阶段：后端开发"></a>第二阶段：后端开发</h4><p>搭建NestJS服务，实现用户系统和数据存储</p>
+<h4 id="第三阶段：功能集成"><a href="#第三阶段：功能集成" class="headerlink" title="第三阶段：功能集成"></a>第三阶段：功能集成</h4><p>集成AI能力，完善发布流程</p>
+<h4 id="第四阶段：测试优化"><a href="#第四阶段：测试优化" class="headerlink" title="第四阶段：测试优化"></a>第四阶段：测试优化</h4><p>性能优化，用户体验改进</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>目前项目处于前端开发阶段，基础框架已经搭建完成。接下来将重点开发平台转换器和AI助手功能，同时准备后端服务的搭建。</p>
+<p>这是一个长期项目，计划在接下来的几个月内逐步完善各项功能，最终打造一款实用的内容创作工具。</p>
+<hr>
+<p><em>项目持续开发中，敬请期待后续更新。</em></p>
 
   </div>
 
@@ -81,13 +129,11 @@
     
     <div class="post-tags">
       
-      <a href="/tags/Python/#Python">#Python</a>
+      <a href="/tags/Vue3/#Vue3">#Vue3</a>
       
-      <a href="/tags/Gradio/#Gradio">#Gradio</a>
+      <a href="/tags/TypeScript/#TypeScript">#TypeScript</a>
       
-      <a href="/tags/DeepSeek/#DeepSeek">#DeepSeek</a>
-      
-      <a href="/tags/AI/#AI">#AI</a>
+      <a href="/tags/Markdown/#Markdown">#Markdown</a>
       
     </div>
     
@@ -104,7 +150,7 @@
 </article>
 
 <script>
-  var postId = '2026/02/23/deepseek-local-deployment/';
+  var postId = '2026/03/17/markdown-publisher-dev-log/';
   
   function loadComments() {
     var comments = JSON.parse(localStorage.getItem('comments') || '[]');
