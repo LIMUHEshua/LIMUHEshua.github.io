@@ -34,7 +34,7 @@
   <header class="post-header">
     <h1 class="post-title" itemprop="name headline"></h1>
     <div class="post-meta">
-      <time class="post-time" itemprop="datePublished" datetime="2026-03-23T12:31:39.818Z" content="2026-03-23">
+      <time class="post-time" itemprop="datePublished" datetime="2026-03-23T12:39:19.855Z" content="2026-03-23">
         2026-03-23
       </time>
       
@@ -47,13 +47,206 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="开发者工具集 - 提供Markdown编辑、代码辅助、天气查询、图像处理等实用工具">
-  <title>开发者工具集 | LIMUHEshua</title>
+  <meta name="description" content="Markdown编辑器 - 支持多平台格式转换的在线编辑工具">
+  <title>Markdown编辑器 | 开发者工具集</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="./assets/css/tools.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.10.4/dist/index.css">
+  <style>
+    /* 编辑器页面特定样式 */
+    .editor-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--spacing-lg);
+      height: calc(100vh - 200px);
+      min-height: 500px;
+    }
+    
+    .editor-panel {
+      background: var(--color-bg-primary);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: var(--spacing-sm) var(--spacing-md);
+      background: var(--color-bg-tertiary);
+      border-bottom: 1px solid var(--color-border);
+    }
+    
+    .panel-title {
+      font-size: var(--font-size-sm);
+      font-weight: 600;
+      color: var(--color-text-primary);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    
+    .panel-actions {
+      display: flex;
+      gap: var(--spacing-xs);
+    }
+    
+    .btn-icon {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: transparent;
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all var(--transition-fast);
+    }
+    
+    .btn-icon:hover {
+      background: var(--color-bg-secondary);
+      color: var(--color-text-primary);
+    }
+    
+    .btn-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    #vditor {
+      flex: 1;
+      overflow: auto;
+    }
+    
+    .preview-panel {
+      flex: 1;
+      overflow: auto;
+      padding: var(--spacing-md);
+      background: var(--color-bg-primary);
+    }
+    
+    .preview-content {
+      max-width: 100%;
+    }
+    
+    /* 平台选择器 */
+    .platform-selector {
+      display: flex;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-sm);
+      background: var(--color-bg-secondary);
+      border-bottom: 1px solid var(--color-border);
+      flex-wrap: wrap;
+    }
+    
+    .platform-btn {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-primary);
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .platform-btn:hover {
+      border-color: var(--color-blue);
+      color: var(--color-blue);
+    }
+    
+    .platform-btn.active {
+      background: var(--color-blue);
+      border-color: var(--color-blue);
+      color: white;
+    }
+    
+    /* 工具栏 */
+    .toolbar {
+      display: flex;
+      gap: var(--spacing-xs);
+      padding: var(--spacing-sm);
+      background: var(--color-bg-secondary);
+      border-bottom: 1px solid var(--color-border);
+      flex-wrap: wrap;
+    }
+    
+    .toolbar-btn {
+      padding: var(--spacing-xs) var(--spacing-sm);
+      border: 1px solid var(--color-border);
+      background: var(--color-bg-primary);
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-sm);
+      font-size: var(--font-size-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: var(--spacing-xs);
+    }
+    
+    .toolbar-btn:hover {
+      border-color: var(--color-blue);
+      color: var(--color-blue);
+    }
+    
+    .toolbar-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+    
+    /* 响应式 */
+    @media (max-width: 1024px) {
+      .editor-container {
+        grid-template-columns: 1fr;
+        grid-template-rows: 1fr 1fr;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .editor-container {
+        height: auto;
+        min-height: 800px;
+      }
+      
+      .platform-selector {
+        justify-content: center;
+      }
+      
+      .toolbar {
+        justify-content: center;
+      }
+    }
+    
+    /* 复制提示 */
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--color-primary);
+      color: white;
+      padding: var(--spacing-sm) var(--spacing-lg);
+      border-radius: var(--radius-md);
+      font-size: var(--font-size-sm);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
 </head>
 <body>
-  <!-- 顶部导航 -->
+  <!-- 导航栏 -->
   <nav class="navbar">
     <div class="container">
       <div class="nav-brand">
@@ -64,181 +257,321 @@
         </svg>
         <span class="brand-text">开发者工具集</span>
       </div>
-      <a href="/" class="nav-back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        返回首页
-      </a>
+      <div style="display: flex; gap: var(--spacing-md);">
+        <a href="./index.html" class="nav-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回工具箱
+        </a>
+      </div>
     </div>
   </nav>
 
-  <!-- 主内容区 -->
-  <main class="main-content">
+  <!-- 主内容 -->
+  <main class="main-content" style="padding: var(--spacing-md) 0;">
     <div class="container">
-      
       <!-- 页面标题 -->
-      <header class="page-header">
-        <h1>实用工具集合</h1>
-        <p class="subtitle">为开发者提供高效、便捷的工具服务</p>
+      <header class="page-header" style="margin-bottom: var(--spacing-lg);">
+        <h1>Markdown编辑器</h1>
+        <p class="subtitle">支持多平台格式转换的在线编辑工具</p>
       </header>
 
-      <!-- 工具网格 -->
-      <section class="tools-grid" aria-label="工具列表">
-        
-        <!-- 工具1: Markdown编辑器 -->
-        <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-blue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <!-- 平台选择器 -->
+      <div class="platform-selector">
+        <button class="platform-btn active" data-platform="default">默认预览</button>
+        <button class="platform-btn" data-platform="wechat">微信公众号</button>
+        <button class="platform-btn" data-platform="zhihu">知乎</button>
+        <button class="platform-btn" data-platform="juejin">掘金</button>
+        <button class="platform-btn" data-platform="csdn">CSDN</button>
+      </div>
+
+      <!-- 工具栏 -->
+      <div class="toolbar">
+        <button class="toolbar-btn" onclick="copyContent()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+          </svg>
+          复制内容
+        </button>
+        <button class="toolbar-btn" onclick="downloadMarkdown()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          下载Markdown
+        </button>
+        <button class="toolbar-btn" onclick="clearContent()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          清空内容
+        </button>
+        <button class="toolbar-btn" onclick="insertTemplate()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="12" y1="18" x2="12" y2="12"></line>
+            <line x1="9" y1="15" x2="15" y2="15"></line>
+          </svg>
+          插入模板
+        </button>
+      </div>
+
+      <!-- 编辑器容器 -->
+      <div class="editor-container">
+        <!-- 编辑区域 -->
+        <div class="editor-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
                 <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                 <polyline points="14 2 14 8 20 8"></polyline>
                 <line x1="16" y1="13" x2="8" y2="13"></line>
                 <line x1="16" y1="17" x2="8" y2="17"></line>
                 <polyline points="10 9 9 9 8 9"></polyline>
               </svg>
+              编辑
             </div>
-            <h2 class="tool-title">Markdown编辑器</h2>
           </div>
-          <p class="tool-desc">支持多平台格式转换的Markdown编辑器，适配微信公众号、知乎、掘金等平台</p>
-          <div class="tool-footer">
-            <span class="tool-tag">文档处理</span>
-            <a href="./markdown-editor.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
-          </div>
-        </article>
+          <div id="vditor"></div>
+        </div>
 
-        <!-- 工具2: 代码助手 -->
-        <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-purple">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="16 18 22 12 16 6"></polyline>
-                <polyline points="8 6 2 12 8 18"></polyline>
+        <!-- 预览区域 -->
+        <div class="editor-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
               </svg>
+              预览
             </div>
-            <h2 class="tool-title">代码助手</h2>
-          </div>
-          <p class="tool-desc">基于大语言模型的编程辅助工具，提供代码生成、问题诊断、技术咨询等功能</p>
-          <div class="tool-footer">
-            <span class="tool-tag">编程辅助</span>
-            <a href="./code-assistant.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- 工具3: 天气查询 -->
-        <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-orange">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-              </svg>
+            <div class="panel-actions">
+              <button class="btn-icon" onclick="copyHtml()" title="复制HTML">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                  <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+              </button>
             </div>
-            <h2 class="tool-title">天气查询</h2>
           </div>
-          <p class="tool-desc">实时天气信息查询服务，支持全球城市天气、7天预报、空气质量监测</p>
-          <div class="tool-footer">
-            <span class="tool-tag">数据服务</span>
-            <a href="./weather-query.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
-          </div>
-        </article>
-
-        <!-- 工具4: 图像处理 -->
-        <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-green">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                <polyline points="21 15 16 10 5 21"></polyline>
-              </svg>
-            </div>
-            <h2 class="tool-title">图像处理</h2>
-          </div>
-          <p class="tool-desc">在线图像处理工具，支持图片压缩、格式转换、滤镜效果、背景移除等功能</p>
-          <div class="tool-footer">
-            <span class="tool-tag">图像处理</span>
-            <a href="./image-processor.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
-          </div>
-        </article>
-
-      </section>
-
-      <!-- 特性说明 -->
-      <section class="features-section">
-        <h3 class="section-title">服务特性</h3>
-        <div class="features-grid">
-          <div class="feature-item">
-            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-            </svg>
-            <h4>高效便捷</h4>
-            <p>无需安装，即开即用，所有工具均基于Web技术实现</p>
-          </div>
-          <div class="feature-item">
-            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-            <h4>数据安全</h4>
-            <p>敏感信息本地存储，数据处理在浏览器端完成</p>
-          </div>
-          <div class="feature-item">
-            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-              <line x1="12" y1="18" x2="12.01" y2="18"></line>
-            </svg>
-            <h4>多端适配</h4>
-            <p>响应式设计，支持桌面端、平板、手机等多种设备</p>
+          <div class="preview-panel">
+            <div id="preview" class="preview-content"></div>
           </div>
         </div>
-      </section>
-
+      </div>
     </div>
   </main>
+
+  <!-- Toast提示 -->
+  <div id="toast" class="toast"></div>
 
   <!-- 页脚 -->
   <footer class="footer">
     <div class="container">
       <p>&copy; 2026 LIMUHEshua. 保留所有权利。</p>
-      <p class="footer-links">
-        <a href="/">返回博客首页</a>
-      </p>
     </div>
   </footer>
 
+  <!-- 引入Vditor -->
+  <script src="https://cdn.jsdelivr.net/npm/vditor@3.10.4/dist/index.min.js"></script>
+  <script>
+    // 初始化Vditor编辑器
+    let vditor;
+    let currentPlatform = 'default';
+    
+    // 平台样式配置
+    const platformStyles = {
+      default: {
+        h1: 'font-size: 2em; font-weight: bold; margin: 0.67em 0;',
+        h2: 'font-size: 1.5em; font-weight: bold; margin: 0.75em 0;',
+        h3: 'font-size: 1.17em; font-weight: bold; margin: 0.83em 0;',
+        code: 'background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-family: monospace;',
+        pre: 'background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto;',
+        blockquote: 'border-left: 4px solid #ddd; padding-left: 16px; color: #666; margin: 1em 0;'
+      },
+      wechat: {
+        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0; color: #333;',
+        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0; color: #333;',
+        h3: 'font-size: 18px; font-weight: bold; margin: 16px 0; color: #333;',
+        code: 'background: #f6f8fa; padding: 2px 6px; border-radius: 3px; font-family: "Courier New", monospace; color: #e83e8c;',
+        pre: 'background: #f6f8fa; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 14px; line-height: 1.6;',
+        blockquote: 'border-left: 4px solid #07c160; padding: 12px 16px; background: #f0f9f4; margin: 16px 0; color: #333;'
+      },
+      zhihu: {
+        h1: 'font-size: 26px; font-weight: 600; margin: 24px 0 16px; color: #121212;',
+        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0 12px; color: #121212;',
+        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0 8px; color: #121212;',
+        code: 'background: #f6f6f6; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #d73a49;',
+        pre: 'background: #f6f6f6; padding: 16px; border-radius: 4px; overflow-x: auto; font-size: 14px;',
+        blockquote: 'border-left: 4px solid #0066ff; padding-left: 16px; color: #444; margin: 16px 0;'
+      },
+      juejin: {
+        h1: 'font-size: 28px; font-weight: 600; margin: 24px 0; color: #252933;',
+        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0; color: #252933;',
+        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0; color: #252933;',
+        code: 'background: #f2f3f5; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #d63200;',
+        pre: 'background: #f2f3f5; padding: 16px; border-radius: 4px; overflow-x: auto; font-size: 13px;',
+        blockquote: 'border-left: 4px solid #1e80ff; padding: 12px 16px; background: #f4f5f5; margin: 16px 0; color: #515767;'
+      },
+      csdn: {
+        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0; color: #333;',
+        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0; color: #333;',
+        h3: 'font-size: 16px; font-weight: bold; margin: 16px 0; color: #333;',
+        code: 'background: #f5f5f5; padding: 2px 4px; border-radius: 3px; font-family: monospace; color: #c7254e;',
+        pre: 'background: #f5f5f5; padding: 16px; border-radius: 4px; overflow-x: auto; font-size: 14px;',
+        blockquote: 'border-left: 4px solid #fc5531; padding-left: 16px; color: #666; margin: 16px 0;'
+      }
+    };
+    
+    document.addEventListener('DOMContentLoaded', function() {
+      // 初始化Vditor
+      vditor = new Vditor('vditor', {
+        height: '100%',
+        mode: 'ir', // 即时渲染模式
+        placeholder: '开始编写 Markdown...',
+        theme: 'classic',
+        icon: 'material',
+        toolbar: [
+          'emoji', 'headings', 'bold', 'italic', 'strike', '|',
+          'line', 'quote', 'list', 'ordered-list', 'check', '|',
+          'code', 'inline-code', 'link', 'table', '|',
+          'undo', 'redo', '|',
+          'fullscreen', 'preview'
+        ],
+        toolbarConfig: {
+          pin: true
+        },
+        cache: {
+          enable: true,
+          id: 'markdown-editor-cache'
+        },
+        after: function() {
+          // 设置默认内容
+          vditor.setValue('# 欢迎使用 Markdown 编辑器\n\n这是一个支持多平台格式转换的在线编辑工具。\n\n## 功能特点\n\n- 📝 实时预览编辑\n- 🔄 多平台格式适配\n- 📋 一键复制内容\n- 💾 支持下载保存\n\n## 支持的平台\n\n1. 微信公众号\n2. 知乎\n3. 掘金\n4. CSDN\n\n## 代码示例\n\n```javascript\nconsole.log("Hello World!");\n```\n\n> 开始编写你的文章吧！');
+          updatePreview();
+        },
+        input: function() {
+          updatePreview();
+        }
+      });
+      
+      // 平台切换事件
+      document.querySelectorAll('.platform-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+          document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+          this.classList.add('active');
+          currentPlatform = this.dataset.platform;
+          updatePreview();
+        });
+      });
+    });
+    
+    // 更新预览
+    function updatePreview() {
+      if (!vditor) return;
+      
+      const markdown = vditor.getValue();
+      const html = vditor.exportHTML(markdown);
+      const styledHtml = applyPlatformStyles(html, currentPlatform);
+      document.getElementById('preview').innerHTML = styledHtml;
+    }
+    
+    // 应用平台样式
+    function applyPlatformStyles(html, platform) {
+      const styles = platformStyles[platform] || platformStyles.default;
+      
+      // 创建临时DOM
+      const temp = document.createElement('div');
+      temp.innerHTML = html;
+      
+      // 应用样式
+      temp.querySelectorAll('h1').forEach(el => el.style.cssText = styles.h1);
+      temp.querySelectorAll('h2').forEach(el => el.style.cssText = styles.h2);
+      temp.querySelectorAll('h3').forEach(el => el.style.cssText = styles.h3);
+      temp.querySelectorAll('code:not(pre code)').forEach(el => el.style.cssText = styles.code);
+      temp.querySelectorAll('pre').forEach(el => {
+        el.style.cssText = styles.pre;
+        el.querySelectorAll('code').forEach(code => code.style.cssText = '');
+      });
+      temp.querySelectorAll('blockquote').forEach(el => el.style.cssText = styles.blockquote);
+      
+      return temp.innerHTML;
+    }
+    
+    // 复制内容
+    function copyContent() {
+      if (!vditor) return;
+      
+      const content = vditor.getValue();
+      navigator.clipboard.writeText(content).then(() => {
+        showToast('Markdown内容已复制到剪贴板');
+      }).catch(() => {
+        showToast('复制失败，请手动复制');
+      });
+    }
+    
+    // 复制HTML
+    function copyHtml() {
+      const html = document.getElementById('preview').innerHTML;
+      navigator.clipboard.writeText(html).then(() => {
+        showToast('HTML内容已复制到剪贴板');
+      }).catch(() => {
+        showToast('复制失败，请手动复制');
+      });
+    }
+    
+    // 下载Markdown
+    function downloadMarkdown() {
+      if (!vditor) return;
+      
+      const content = vditor.getValue();
+      const blob = new Blob([content], { type: 'text/markdown' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'article.md';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('文件已下载');
+    }
+    
+    // 清空内容
+    function clearContent() {
+      if (!vditor) return;
+      
+      if (confirm('确定要清空所有内容吗？')) {
+        vditor.setValue('');
+        showToast('内容已清空');
+      }
+    }
+    
+    // 插入模板
+    function insertTemplate() {
+      if (!vditor) return;
+      
+      const template = `# 文章标题\n\n## 简介\n\n在这里添加文章简介...\n\n## 正文\n\n### 第一部分\n\n内容...\n\n### 第二部分\n\n内容...\n\n## 总结\n\n总结内容...\n\n---\n\n*感谢您的阅读！*`;
+      
+      vditor.setValue(template);
+      showToast('模板已插入');
+    }
+    
+    // 显示提示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+  </script>
 </body>
 </html>
   </div>
@@ -258,7 +591,7 @@
 </article>
 
 <script>
-  var postId = 'tools/index.html';
+  var postId = 'tools/markdown-editor.html';
   
   function loadComments() {
     var comments = JSON.parse(localStorage.getItem('comments') || '[]');
