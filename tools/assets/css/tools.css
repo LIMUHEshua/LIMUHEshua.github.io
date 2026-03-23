@@ -333,13 +333,83 @@ body {
 }
 
 /* ============================================
+   政策链接区域
+   ============================================ */
+.policy-section {
+  background-color: var(--color-bg-tertiary);
+  padding: var(--spacing-2xl) 0;
+  border-top: 1px solid var(--color-border);
+}
+
+.policy-box {
+  background-color: var(--color-bg-primary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.policy-title {
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.policy-links {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.policy-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) 0;
+}
+
+.policy-label {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.policy-link {
+  font-size: var(--font-size-sm);
+  color: var(--color-blue);
+  text-decoration: none;
+  word-break: break-all;
+  transition: color var(--transition-fast);
+}
+
+.policy-link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .policy-links {
+    grid-template-columns: 1fr;
+  }
+  
+  .policy-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+}
+
+/* ============================================
    页脚
    ============================================ */
 .footer {
   background-color: var(--color-bg-primary);
   border-top: 1px solid var(--color-border);
   padding: var(--spacing-xl) 0;
-  margin-top: auto;
 }
 
 .footer .container {
