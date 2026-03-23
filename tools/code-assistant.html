@@ -10,6 +10,11 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
+    /* ============================================
+       主题颜色方案定义
+       ============================================ */
+    
+    /* 深色主题 (默认) - Deep Ocean */
     :root {
       --bg-primary: #1a1a2e;
       --bg-secondary: #16213e;
@@ -22,6 +27,55 @@
       --success: #48bb78;
       --warning: #ed8936;
       --error: #f56565;
+      --theme-name: 'deep-ocean';
+    }
+    
+    /* 浅色主题 - Light Frost */
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f5f9;
+      --accent: #2563eb;
+      --accent-hover: #3b82f6;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --theme-name: 'light-frost';
+    }
+    
+    /* 护眼模式 - Eye Care */
+    [data-theme="eyecare"] {
+      --bg-primary: #f5f0e6;
+      --bg-secondary: #faf8f3;
+      --bg-tertiary: #ede8dc;
+      --accent: #d97706;
+      --accent-hover: #f59e0b;
+      --text-primary: #3d3d3d;
+      --text-secondary: #6b6b6b;
+      --border: #d4cfc4;
+      --success: #059669;
+      --warning: #d97706;
+      --error: #dc2626;
+      --theme-name: 'eye-care';
+    }
+    
+    /* 紫夜主题 - Purple Night */
+    [data-theme="purple"] {
+      --bg-primary: #1a1b2e;
+      --bg-secondary: #252642;
+      --bg-tertiary: #2d2e4f;
+      --accent: #a855f7;
+      --accent-hover: #c084fc;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --border: #374151;
+      --success: #22c55e;
+      --warning: #f97316;
+      --error: #ef4444;
+      --theme-name: 'purple-night';
     }
     
     body {
@@ -30,6 +84,7 @@
       color: var(--text-primary);
       height: 100vh;
       overflow: hidden;
+      transition: background-color 0.4s ease, color 0.4s ease;
     }
     
     /* 顶部导航 */
@@ -490,6 +545,121 @@
       justify-content: flex-end;
     }
     
+    /* 主题切换器样式 */
+    .theme-switcher {
+      position: relative;
+    }
+    
+    .theme-btn {
+      padding: 8px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .theme-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+    
+    .theme-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .theme-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 8px;
+      min-width: 180px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s;
+      z-index: 1000;
+    }
+    
+    .theme-dropdown.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .theme-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+    }
+    
+    .theme-option:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    
+    .theme-option.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .theme-color-preview {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+    }
+    
+    .theme-option.active .theme-color-preview {
+      border-color: rgba(255,255,255,0.5);
+    }
+    
+    .theme-name {
+      font-size: 13px;
+      font-weight: 500;
+    }
+    
+    /* 主题色预览 */
+    .preview-deep-ocean {
+      background: linear-gradient(135deg, #1a1a2e 50%, #16213e 50%);
+    }
+    
+    .preview-light-frost {
+      background: linear-gradient(135deg, #f8fafc 50%, #ffffff 50%);
+    }
+    
+    .preview-eye-care {
+      background: linear-gradient(135deg, #f5f0e6 50%, #faf8f3 50%);
+    }
+    
+    .preview-purple-night {
+      background: linear-gradient(135deg, #1a1b2e 50%, #252642 50%);
+    }
+    
+    /* 过渡动画 */
+    .navbar, .sidebar, .content-area, .modal, .output-content, 
+    .code-input, .language-select, .text-input, .history-item,
+    .function-item, .nav-btn, .btn-secondary, .icon-btn {
+      transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+    }
+    
     /* 响应式 */
     @media (max-width: 768px) {
       .sidebar {
@@ -505,6 +675,25 @@
       .output-section {
         padding: 16px;
       }
+      
+      .theme-dropdown {
+        position: fixed;
+        top: auto;
+        bottom: 20px;
+        left: 20px;
+        right: 20px;
+        margin-top: 0;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .theme-btn span {
+        display: none;
+      }
+      
+      .theme-btn {
+        padding: 8px;
+      }
     }
   </style>
 </head>
@@ -519,6 +708,42 @@
       <h1>AI代码助手</h1>
     </div>
     <div class="nav-actions">
+      <!-- 主题切换器 -->
+      <div class="theme-switcher">
+        <button class="theme-btn" onclick="toggleThemeDropdown()" title="切换主题">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <span>主题</span>
+        </button>
+        <div class="theme-dropdown" id="themeDropdown">
+          <div class="theme-option active" data-theme="dark" onclick="switchTheme('dark')">
+            <div class="theme-color-preview preview-deep-ocean"></div>
+            <span class="theme-name">深海蓝</span>
+          </div>
+          <div class="theme-option" data-theme="light" onclick="switchTheme('light')">
+            <div class="theme-color-preview preview-light-frost"></div>
+            <span class="theme-name">浅雪白</span>
+          </div>
+          <div class="theme-option" data-theme="eyecare" onclick="switchTheme('eyecare')">
+            <div class="theme-color-preview preview-eye-care"></div>
+            <span class="theme-name">护眼黄</span>
+          </div>
+          <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">
+            <div class="theme-color-preview preview-purple-night"></div>
+            <span class="theme-name">紫夜</span>
+          </div>
+        </div>
+      </div>
+      
       <button class="nav-btn" onclick="showSettings()">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="12" cy="12" r="3"></circle>
@@ -1030,9 +1255,116 @@
       return div.innerHTML;
     }
 
+    // 主题管理
+    const THEME_STORAGE_KEY = 'code_assistant_theme';
+    let currentTheme = 'dark';
+    
+    // 切换主题下拉菜单
+    window.toggleThemeDropdown = () => {
+      const dropdown = document.getElementById('themeDropdown');
+      dropdown.classList.toggle('show');
+    };
+    
+    // 切换主题
+    window.switchTheme = (theme) => {
+      if (theme === currentTheme) {
+        closeThemeDropdown();
+        return;
+      }
+      
+      // 应用主题
+      applyTheme(theme);
+      
+      // 保存到本地存储
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+      currentTheme = theme;
+      
+      // 更新UI
+      updateThemeUI(theme);
+      closeThemeDropdown();
+      
+      showToast(`已切换到${getThemeName(theme)}主题`, 'success');
+    };
+    
+    // 应用主题
+    function applyTheme(theme) {
+      const body = document.body;
+      
+      // 移除所有主题属性
+      body.removeAttribute('data-theme');
+      
+      // 应用新主题（默认深色不需要data-theme）
+      if (theme !== 'dark') {
+        body.setAttribute('data-theme', theme);
+      }
+      
+      // 更新代码高亮主题
+      updateCodeHighlightTheme(theme);
+    }
+    
+    // 更新代码高亮主题
+    function updateCodeHighlightTheme(theme) {
+      const highlightLink = document.querySelector('link[href*="highlight.js"]');
+      if (highlightLink) {
+        const themeMap = {
+          'dark': 'atom-one-dark',
+          'light': 'github',
+          'eyecare': 'github',
+          'purple': 'atom-one-dark'
+        };
+        const newTheme = themeMap[theme] || 'atom-one-dark';
+        highlightLink.href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${newTheme}.min.css`;
+      }
+    }
+    
+    // 更新主题UI
+    function updateThemeUI(theme) {
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === theme) {
+          option.classList.add('active');
+        }
+      });
+    }
+    
+    // 关闭主题下拉菜单
+    function closeThemeDropdown() {
+      document.getElementById('themeDropdown').classList.remove('show');
+    }
+    
+    // 获取主题名称
+    function getThemeName(theme) {
+      const names = {
+        'dark': '深海蓝',
+        'light': '浅雪白',
+        'eyecare': '护眼黄',
+        'purple': '紫夜'
+      };
+      return names[theme] || '深海蓝';
+    }
+    
+    // 加载保存的主题
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
+      if (savedTheme && savedTheme !== 'dark') {
+        applyTheme(savedTheme);
+        currentTheme = savedTheme;
+        updateThemeUI(savedTheme);
+      }
+    }
+    
+    // 点击外部关闭主题下拉菜单
+    document.addEventListener('click', (e) => {
+      const themeSwitcher = document.querySelector('.theme-switcher');
+      if (themeSwitcher && !themeSwitcher.contains(e.target)) {
+        closeThemeDropdown();
+      }
+    });
+    
     // 初始化
     document.addEventListener('DOMContentLoaded', () => {
       loadHistory();
+      loadSavedTheme();
       
       // 点击模态框外部关闭
       document.getElementById('settingsModal').addEventListener('click', (e) => {
