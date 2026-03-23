@@ -30,33 +30,344 @@
 
   <div class="container main-content">
     <main>
-      <div class="tag-page">
-  <h1>标签: 温湿度检测</h1>
-  
-  <article class="post-archive">
-    <h2><a href="/2026/03/10/stm32-smart-fan-control-system/">STM32F103C8T6 智能风扇控制系统</a></h2>
+      <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline"></h1>
     <div class="post-meta">
-      <time>2026-03-10</time>
-      
-      <span class="post-category">
-        | 
-          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a>
-        
-          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a>
-        
-          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/STM32/">STM32</a>
-        
-      </span>
+      <time class="post-time" itemprop="datePublished" datetime="2026-03-23T12:25:02.219Z" content="2026-03-23">
+        2026-03-23
+      </time>
       
     </div>
-    <div class="post-excerpt">
-      
-    </div>
-  </article>
-  
+  </header>
 
+  <div class="post-content" itemprop="articleBody">
+    <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>开发者工具箱 | LIMUHEshua博客</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; }
+    .tool-card {
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .tool-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -12px rgba(0, 102, 204, 0.25);
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    .glass-effect {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <!-- 导航栏 -->
+  <nav class="gradient-bg text-white shadow-lg">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center h-16">
+        <div class="flex items-center space-x-3">
+          <span class="iconify text-2xl" data-icon="mdi:toolbox"></span>
+          <span class="font-bold text-xl">开发者工具箱</span>
+        </div>
+        <a href="/" class="flex items-center space-x-2 hover:text-gray-200 transition">
+          <span class="iconify" data-icon="mdi:arrow-left"></span>
+          <span>返回博客</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 头部区域 -->
+  <header class="gradient-bg text-white py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">🛠️ 开发者工具箱</h1>
+      <p class="text-xl text-blue-100 max-w-2xl mx-auto">
+        专为开发者打造的4大核心工具，提升开发效率，解决实际问题
+      </p>
+    </div>
+  </header>
+
+  <!-- 工具卡片区域 -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      
+      <!-- 工具1: Markdown多平台发布工具 -->
+      <a href="./markdown-publisher.html" class="tool-card glass-effect rounded-2xl p-6 border border-gray-200 block">
+        <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="iconify text-3xl text-white" data-icon="mdi:markdown"></span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">Markdown发布工具</h3>
+        <p class="text-gray-600 text-sm mb-4">
+          在线编辑Markdown，一键适配微信公众号、知乎、掘金等多平台格式
+        </p>
+        <div class="flex items-center text-blue-600 font-medium">
+          <span>立即使用</span>
+          <span class="iconify ml-1" data-icon="mdi:arrow-right"></span>
+        </div>
+      </a>
+
+      <!-- 工具2: DeepSeek AI对话助手 -->
+      <a href="./deepseek-assistant.html" class="tool-card glass-effect rounded-2xl p-6 border border-gray-200 block">
+        <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="iconify text-3xl text-white" data-icon="mdi:robot"></span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">DeepSeek AI助手</h3>
+        <p class="text-gray-600 text-sm mb-4">
+          代码生成、Bug排查、部署咨询、技术文档翻译，开发者的AI助手
+        </p>
+        <div class="flex items-center text-purple-600 font-medium">
+          <span>立即使用</span>
+          <span class="iconify ml-1" data-icon="mdi:arrow-right"></span>
+        </div>
+      </a>
+
+      <!-- 工具3: 在线天气查询工具 -->
+      <a href="./weather-query.html" class="tool-card glass-effect rounded-2xl p-6 border border-gray-200 block">
+        <div class="w-16 h-16 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="iconify text-3xl text-white" data-icon="mdi:weather-partly-cloudy"></span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">天气查询工具</h3>
+        <p class="text-gray-600 text-sm mb-4">
+          实时天气查询、7天预报、空气质量监测，支持全球城市搜索
+        </p>
+        <div class="flex items-center text-orange-600 font-medium">
+          <span>立即使用</span>
+          <span class="iconify ml-1" data-icon="mdi:arrow-right"></span>
+        </div>
+      </a>
+
+      <!-- 工具4: 在线图像处理工具 -->
+      <a href="./image-processor.html" class="tool-card glass-effect rounded-2xl p-6 border border-gray-200 block">
+        <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-500 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+          <span class="iconify text-3xl text-white" data-icon="mdi:image-edit"></span>
+        </div>
+        <h3 class="text-xl font-bold text-gray-800 mb-2">图像处理工具</h3>
+        <p class="text-gray-600 text-sm mb-4">
+          图片压缩、格式转换、滤镜处理、AI背景移除，纯前端实现
+        </p>
+        <div class="flex items-center text-teal-600 font-medium">
+          <span>立即使用</span>
+          <span class="iconify ml-1" data-icon="mdi:arrow-right"></span>
+        </div>
+      </a>
+    </div>
+
+    <!-- 特性说明 -->
+    <div class="mt-16 grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="text-center p-6">
+        <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="iconify text-2xl text-blue-600" data-icon="mdi:lightning-bolt"></span>
+        </div>
+        <h4 class="font-semibold text-gray-800 mb-2">开箱即用</h4>
+        <p class="text-gray-600 text-sm">零配置、零依赖，打开即用，所有工具纯前端实现</p>
+      </div>
+      <div class="text-center p-6">
+        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="iconify text-2xl text-green-600" data-icon="mdi:shield-check"></span>
+        </div>
+        <h4 class="font-semibold text-gray-800 mb-2">隐私安全</h4>
+        <p class="text-gray-600 text-sm">API密钥本地存储，数据不上传服务器，保护用户隐私</p>
+      </div>
+      <div class="text-center p-6">
+        <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <span class="iconify text-2xl text-purple-600" data-icon="mdi:responsive"></span>
+        </div>
+        <h4 class="font-semibold text-gray-800 mb-2">响应式设计</h4>
+        <p class="text-gray-600 text-sm">完美适配PC、平板、手机，随时随地使用工具</p>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="bg-gray-800 text-white py-8 mt-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-gray-400">
+        © 2026 LIMUHEshua博客 · 开发者工具箱 · 
+        <a href="/" class="text-blue-400 hover:text-blue-300">返回博客首页</a>
+      </p>
+    </div>
+  </footer>
+</body>
+</html>
+  </div>
+
+  <footer class="post-footer">
+    
+  </footer>
+
+  <div class="comments-section">
+    <h3>评论区</h3>
+    <div class="comment-form">
+      <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+      <button onclick="submitComment()">发表评论</button>
+    </div>
+    <div id="comments-list"></div>
+  </div>
+</article>
+
+<script>
+  var postId = 'tools/index.html';
   
-</div>
+  function loadComments() {
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var postComments = comments.filter(function(comment) {
+      return comment.postId === postId;
+    });
+    
+    var commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+    
+    postComments.forEach(function(comment) {
+      var commentElement = createCommentElement(comment);
+      commentsList.appendChild(commentElement);
+    });
+  }
+  
+  function createCommentElement(comment, isReply = false) {
+    var div = document.createElement('div');
+    div.className = 'comment' + (isReply ? ' comment-reply' : '');
+    
+    var content = document.createElement('div');
+    content.className = 'comment-content';
+    content.textContent = comment.content;
+    
+    var meta = document.createElement('div');
+    meta.className = 'comment-meta';
+    meta.textContent = '匿名用户 • ' + comment.date;
+    
+    var actions = document.createElement('div');
+    actions.className = 'comment-actions';
+    
+    var replyButton = document.createElement('button');
+    replyButton.textContent = '回复';
+    replyButton.onclick = function() {
+      showReplyForm(comment.id);
+    };
+    actions.appendChild(replyButton);
+    
+    div.appendChild(content);
+    div.appendChild(meta);
+    div.appendChild(actions);
+    
+    if (comment.replies && comment.replies.length > 0) {
+      var repliesContainer = document.createElement('div');
+      repliesContainer.className = 'comment-replies';
+      
+      comment.replies.forEach(function(reply) {
+        var replyElement = createCommentElement(reply, true);
+        repliesContainer.appendChild(replyElement);
+      });
+      
+      div.appendChild(repliesContainer);
+    }
+    
+    return div;
+  }
+  
+  function submitComment(parentId = null) {
+    var input = document.getElementById('comment-input');
+    var content = input.value.trim();
+    
+    if (!content) {
+      alert('请输入评论内容');
+      return;
+    }
+    
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var newComment = {
+      id: Date.now(),
+      postId: postId,
+      content: content,
+      date: new Date().toLocaleString('zh-CN'),
+      replies: []
+    };
+    
+    if (parentId) {
+      var parentComment = comments.find(function(comment) {
+        return comment.id === parentId;
+      });
+      
+      if (parentComment) {
+        parentComment.replies.push({
+          id: Date.now(),
+          content: content,
+          date: new Date().toLocaleString('zh-CN')
+        });
+      }
+    } else {
+      comments.push(newComment);
+    }
+    
+    localStorage.setItem('comments', JSON.stringify(comments));
+    input.value = '';
+    
+    if (parentId) {
+      hideReplyForm();
+    }
+    
+    loadComments();
+    updateCommentCount();
+  }
+  
+  function showReplyForm(commentId) {
+    var existingForm = document.getElementById('reply-form-' + commentId);
+    if (existingForm) {
+      existingForm.remove();
+      return;
+    }
+    
+    var commentElement = document.querySelector('[data-comment-id="' + commentId + '"]');
+    if (!commentElement) return;
+    
+    var replyForm = document.createElement('div');
+    replyForm.id = 'reply-form-' + commentId;
+    replyForm.className = 'reply-form';
+    
+    var textarea = document.createElement('textarea');
+    textarea.placeholder = '回复评论...';
+    textarea.id = 'reply-input-' + commentId;
+    
+    var button = document.createElement('button');
+    button.textContent = '回复';
+    button.onclick = function() {
+      var input = document.getElementById('reply-input-' + commentId);
+      if (input.value.trim()) {
+        submitComment(commentId);
+      }
+    };
+    
+    var cancelButton = document.createElement('button');
+    cancelButton.textContent = '取消';
+    cancelButton.onclick = function() {
+      hideReplyForm();
+    };
+    
+    replyForm.appendChild(textarea);
+    replyForm.appendChild(button);
+    replyForm.appendChild(cancelButton);
+    
+    commentElement.appendChild(replyForm);
+  }
+  
+  function hideReplyForm() {
+    var replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(function(form) {
+      form.remove();
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadComments);
+</script>
     </main>
 
     <aside>
