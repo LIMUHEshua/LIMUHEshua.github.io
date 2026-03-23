@@ -34,7 +34,7 @@
   <header class="post-header">
     <h1 class="post-title" itemprop="name headline"></h1>
     <div class="post-meta">
-      <time class="post-time" itemprop="datePublished" datetime="2026-03-23T13:14:36.569Z" content="2026-03-23">
+      <time class="post-time" itemprop="datePublished" datetime="2026-03-23T13:26:37.162Z" content="2026-03-23">
         2026-03-23
       </time>
       
@@ -56,16 +56,20 @@
     html, body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #f5f5f5;
-      height: 100%;
+      height: 100vh;
+      width: 100vw;
       overflow: hidden;
     }
     
-    body {
+    /* 全屏容器 */
+    .editor-fullscreen {
       display: flex;
       flex-direction: column;
+      height: 100vh;
+      width: 100vw;
     }
     
-    /* 顶部工具栏 */
+    /* 顶部工具栏 - 更紧凑 */
     .toolbar {
       background: #fff;
       border-bottom: 1px solid #e0e0e0;
@@ -74,7 +78,8 @@
       align-items: center;
       gap: 12px;
       flex-shrink: 0;
-      min-height: 52px;
+      height: 50px;
+      min-height: 50px;
     }
     
     .toolbar-left {
@@ -88,16 +93,17 @@
     .logo {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       font-weight: 600;
       color: #333;
       text-decoration: none;
       flex-shrink: 0;
+      font-size: 14px;
     }
     
     .logo svg {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
     }
     
     .divider {
@@ -109,16 +115,16 @@
     
     .platform-select {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       flex-wrap: wrap;
     }
     
     .platform-btn {
-      padding: 6px 12px;
+      padding: 5px 10px;
       border: 1px solid #e0e0e0;
       background: #fff;
       border-radius: 4px;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
       white-space: nowrap;
@@ -137,16 +143,16 @@
     
     .toolbar-right {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       flex-shrink: 0;
     }
     
     .tool-btn {
-      padding: 6px 12px;
+      padding: 5px 10px;
       border: 1px solid #e0e0e0;
       background: #fff;
       border-radius: 4px;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       display: flex;
       align-items: center;
@@ -166,7 +172,7 @@
       flex-shrink: 0;
     }
     
-    /* 主编辑区 */
+    /* 主编辑区 - 占据剩余全部空间 */
     .main-container {
       flex: 1;
       display: grid;
@@ -183,10 +189,11 @@
       flex-direction: column;
       min-height: 0;
       overflow: hidden;
+      height: 100%;
     }
     
     .panel-header {
-      padding: 8px 12px;
+      padding: 6px 12px;
       background: #fafafa;
       border-bottom: 1px solid #e0e0e0;
       font-size: 12px;
@@ -195,6 +202,7 @@
       justify-content: space-between;
       align-items: center;
       flex-shrink: 0;
+      height: 36px;
     }
     
     .panel-title {
@@ -203,18 +211,19 @@
       gap: 6px;
     }
     
-    /* Vditor容器 */
+    /* Vditor容器 - 关键修复 */
     #vditor-container {
       flex: 1;
       min-height: 0;
-      overflow: hidden;
       position: relative;
+      overflow: hidden;
     }
     
     /* 确保Vditor正确显示 */
     .vditor {
       height: 100% !important;
       border: none !important;
+      position: relative;
     }
     
     .vditor-content {
@@ -224,6 +233,22 @@
     .vditor-ir {
       height: 100% !important;
       overflow: auto !important;
+      position: relative;
+    }
+    
+    /* 确保所有子元素可交互 */
+    .vditor-ir * {
+      pointer-events: auto !important;
+    }
+    
+    /* 编辑器工具栏 */
+    .vditor-toolbar {
+      position: relative;
+      z-index: 10;
+    }
+    
+    .vditor-toolbar * {
+      pointer-events: auto !important;
     }
     
     .preview-content {
@@ -233,6 +258,7 @@
       font-size: 14px;
       line-height: 1.8;
       min-height: 0;
+      background: #fff;
     }
     
     /* 响应式 */
@@ -245,6 +271,7 @@
       .toolbar {
         flex-wrap: wrap;
         height: auto;
+        min-height: 50px;
       }
       
       .toolbar-left {
@@ -314,84 +341,86 @@
   </style>
 </head>
 <body>
-  <!-- 工具栏 -->
-  <div class="toolbar">
-    <div class="toolbar-left">
-      <a href="./index.html" class="logo">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-          <line x1="8" y1="21" x2="16" y2="21"></line>
-          <line x1="12" y1="17" x2="12" y2="21"></line>
-        </svg>
-        工具箱
-      </a>
-      <div class="divider"></div>
-      <div class="platform-select">
-        <button class="platform-btn active" data-platform="default">默认</button>
-        <button class="platform-btn" data-platform="wechat">微信</button>
-        <button class="platform-btn" data-platform="zhihu">知乎</button>
-        <button class="platform-btn" data-platform="juejin">掘金</button>
-        <button class="platform-btn" data-platform="csdn">CSDN</button>
-      </div>
-    </div>
-    <div class="toolbar-right">
-      <button class="tool-btn" onclick="copyContent()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-        </svg>
-        复制
-      </button>
-      <button class="tool-btn" onclick="downloadMarkdown()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-          <polyline points="7 10 12 15 17 10"></polyline>
-          <line x1="12" y1="15" x2="12" y2="3"></line>
-        </svg>
-        下载
-      </button>
-      <button class="tool-btn" onclick="clearContent()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <polyline points="3 6 5 6 21 6"></polyline>
-          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-        </svg>
-        清空
-      </button>
-    </div>
-  </div>
-
-  <!-- 主编辑区 -->
-  <div class="main-container">
-    <div class="editor-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
+  <div class="editor-fullscreen">
+    <!-- 工具栏 -->
+    <div class="toolbar">
+      <div class="toolbar-left">
+        <a href="./index.html" class="logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
           </svg>
-          Markdown
+          工具箱
+        </a>
+        <div class="divider"></div>
+        <div class="platform-select">
+          <button class="platform-btn active" data-platform="default">默认</button>
+          <button class="platform-btn" data-platform="wechat">微信</button>
+          <button class="platform-btn" data-platform="zhihu">知乎</button>
+          <button class="platform-btn" data-platform="juejin">掘金</button>
+          <button class="platform-btn" data-platform="csdn">CSDN</button>
         </div>
       </div>
-      <div id="vditor-container">
-        <div class="loading">正在加载编辑器...</div>
-      </div>
-    </div>
-    <div class="preview-panel">
-      <div class="panel-header">
-        <div class="panel-title">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-            <circle cx="12" cy="12" r="3"></circle>
+      <div class="toolbar-right">
+        <button class="tool-btn" onclick="copyContent()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
           </svg>
-          预览
-        </div>
-        <button class="tool-btn" onclick="copyHtml()" style="padding: 4px 8px; font-size: 11px;">
-          复制HTML
+          复制
+        </button>
+        <button class="tool-btn" onclick="downloadMarkdown()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          下载
+        </button>
+        <button class="tool-btn" onclick="clearContent()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          清空
         </button>
       </div>
-      <div id="preview" class="preview-content">
-        <div style="color: #999; text-align: center; padding-top: 50px;">
-          在左侧编辑器输入内容，此处将显示预览
+    </div>
+
+    <!-- 主编辑区 -->
+    <div class="main-container">
+      <div class="editor-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+            Markdown
+          </div>
+        </div>
+        <div id="vditor-container">
+          <div class="loading">正在加载编辑器...</div>
+        </div>
+      </div>
+      <div class="preview-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+              <circle cx="12" cy="12" r="3"></circle>
+            </svg>
+            预览
+          </div>
+          <button class="tool-btn" onclick="copyHtml()" style="padding: 4px 8px; font-size: 11px;">
+            复制HTML
+          </button>
+        </div>
+        <div id="preview" class="preview-content">
+          <div style="color: #999; text-align: center; padding-top: 50px;">
+            在左侧编辑器输入内容，此处将显示预览
+          </div>
         </div>
       </div>
     </div>
@@ -699,6 +728,7 @@
   </script>
 </body>
 </html>
+
   </div>
 
   <footer class="post-footer">
@@ -926,15 +956,15 @@
           
           <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li>
           
-          <li><a href="/categories/Python/AI/">AI</a></li>
-          
-          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">部署指南</a></li>
-          
           <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/">项目开发</a></li>
           
           <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
           
+          <li><a href="/categories/Python/AI/">AI</a></li>
+          
           <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
+          
+          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">部署指南</a></li>
           
           <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/">前端技术</a></li>
           
@@ -953,11 +983,11 @@
           
           <li><a href="/2026/03/15/codex-deployment-guide/">Codex部署与本地部署完整指南</a></li>
           
+          <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
+          
           <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
           
           <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
-          
-          <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
           
           <li><a href="/2026/03/17/markdown-publisher-dev-log/">Markdown多平台发布工具开发记录</a></li>
           
