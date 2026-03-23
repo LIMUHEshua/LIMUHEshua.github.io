@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="开发者工具集 - 提供Markdown编辑、代码辅助、天气查询、图像处理等实用工具">
+  <title>开发者工具集 | LIMUHEshua</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="./assets/css/tools.css">
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <nav class="navbar">
+    <div class="container">
+      <div class="nav-brand">
+        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        <span class="brand-text">开发者工具集</span>
+      </div>
+      <a href="/" class="nav-back">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回首页
+      </a>
+    </div>
+  </nav>
+
+  <!-- 主内容区 -->
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- 页面标题 -->
+      <header class="page-header">
+        <h1>实用工具集合</h1>
+        <p class="subtitle">为开发者提供高效、便捷的工具服务</p>
+      </header>
+
+      <!-- 工具网格 -->
+      <section class="tools-grid" aria-label="工具列表">
+        
+        <!-- 工具1: Markdown编辑器 -->
+        <article class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon icon-blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+                <polyline points="10 9 9 9 8 9"></polyline>
+              </svg>
+            </div>
+            <h2 class="tool-title">Markdown编辑器</h2>
+          </div>
+          <p class="tool-desc">支持多平台格式转换的Markdown编辑器，适配微信公众号、知乎、掘金等平台</p>
+          <div class="tool-footer">
+            <span class="tool-tag">文档处理</span>
+            <a href="./markdown-editor.html" class="tool-link">
+              进入工具
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- 工具2: 代码助手 -->
+        <article class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon icon-purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="16 18 22 12 16 6"></polyline>
+                <polyline points="8 6 2 12 8 18"></polyline>
+              </svg>
+            </div>
+            <h2 class="tool-title">代码助手</h2>
+          </div>
+          <p class="tool-desc">基于大语言模型的编程辅助工具，提供代码生成、问题诊断、技术咨询等功能</p>
+          <div class="tool-footer">
+            <span class="tool-tag">编程辅助</span>
+            <a href="./code-assistant.html" class="tool-link">
+              进入工具
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- 工具3: 天气查询 -->
+        <article class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon icon-orange">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="5"></circle>
+                <line x1="12" y1="1" x2="12" y2="3"></line>
+                <line x1="12" y1="21" x2="12" y2="23"></line>
+                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                <line x1="1" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="12" x2="23" y2="12"></line>
+                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+              </svg>
+            </div>
+            <h2 class="tool-title">天气查询</h2>
+          </div>
+          <p class="tool-desc">实时天气信息查询服务，支持全球城市天气、7天预报、空气质量监测</p>
+          <div class="tool-footer">
+            <span class="tool-tag">数据服务</span>
+            <a href="./weather-query.html" class="tool-link">
+              进入工具
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+        <!-- 工具4: 图像处理 -->
+        <article class="tool-card">
+          <div class="tool-header">
+            <div class="tool-icon icon-green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+            </div>
+            <h2 class="tool-title">图像处理</h2>
+          </div>
+          <p class="tool-desc">在线图像处理工具，支持图片压缩、格式转换、滤镜效果、背景移除等功能</p>
+          <div class="tool-footer">
+            <span class="tool-tag">图像处理</span>
+            <a href="./image-processor.html" class="tool-link">
+              进入工具
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+                <polyline points="12 5 19 12 12 19"></polyline>
+              </svg>
+            </a>
+          </div>
+        </article>
+
+      </section>
+
+      <!-- 特性说明 -->
+      <section class="features-section">
+        <h3 class="section-title">服务特性</h3>
+        <div class="features-grid">
+          <div class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
+            <h4>高效便捷</h4>
+            <p>无需安装，即开即用，所有工具均基于Web技术实现</p>
+          </div>
+          <div class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <h4>数据安全</h4>
+            <p>敏感信息本地存储，数据处理在浏览器端完成</p>
+          </div>
+          <div class="feature-item">
+            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
+              <line x1="12" y1="18" x2="12.01" y2="18"></line>
+            </svg>
+            <h4>多端适配</h4>
+            <p>响应式设计，支持桌面端、平板、手机等多种设备</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer class="footer">
+    <div class="container">
+      <p>&copy; 2026 LIMUHEshua. 保留所有权利。</p>
+      <p class="footer-links">
+        <a href="/">返回博客首页</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>
