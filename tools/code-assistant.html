@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI代码助手 - 智能代码生成、解释、转换和调试工具">
+  <title>AI代码助手 | LIMUHEshua</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f3460;
+      --accent: #e94560;
+      --accent-hover: #ff6b6b;
+      --text-primary: #eaeaea;
+      --text-secondary: #a0a0a0;
+      --border: #2d3748;
+      --success: #48bb78;
+      --warning: #ed8936;
+      --error: #f56565;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* 顶部导航 */
+    .navbar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 0 20px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .nav-brand svg {
+      width: 28px;
+      height: 28px;
+      color: var(--accent);
+    }
+    
+    .nav-brand h1 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .nav-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .nav-btn {
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .nav-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+    
+    .nav-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    /* 主布局 */
+    .main-container {
+      display: flex;
+      height: calc(100vh - 60px);
+    }
+    
+    /* 侧边栏 */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .sidebar-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      color: var(--text-secondary);
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+    
+    .function-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    
+    .function-item {
+      padding: 12px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+    }
+    
+    .function-item:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    
+    .function-item.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .function-item svg {
+      width: 20px;
+      height: 20px;
+    }
+    
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    
+    .history-section {
+      margin-top: 20px;
+    }
+    
+    .history-item {
+      padding: 10px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-bottom: 8px;
+      background: var(--bg-tertiary);
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    
+    .history-item:hover {
+      background: var(--accent);
+    }
+    
+    /* 主内容区 */
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    
+    .content-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .content-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .content-desc {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    /* 输入区域 */
+    .input-section {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .input-group {
+      margin-bottom: 16px;
+    }
+    
+    .input-label {
+      display: block;
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .language-select {
+      width: 200px;
+      padding: 10px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      cursor: pointer;
+    }
+    
+    .code-input {
+      width: 100%;
+      min-height: 150px;
+      padding: 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 14px;
+      line-height: 1.6;
+      resize: vertical;
+    }
+    
+    .code-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+    
+    .text-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+    }
+    
+    /* 操作按钮 */
+    .action-bar {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    
+    .btn-primary {
+      padding: 12px 24px;
+      background: var(--accent);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+    
+    .btn-primary:hover {
+      background: var(--accent-hover);
+    }
+    
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    
+    .btn-secondary {
+      padding: 12px 20px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-secondary:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+    
+    /* 输出区域 */
+    .output-section {
+      flex: 1;
+      padding: 20px 24px;
+      overflow-y: auto;
+    }
+    
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .output-title {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .output-actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    .icon-btn {
+      padding: 8px;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .icon-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+    
+    .icon-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .output-content {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    
+    .output-placeholder {
+      padding: 60px 40px;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+    
+    .output-placeholder svg {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 20px;
+      opacity: 0.5;
+    }
+    
+    pre {
+      margin: 0;
+      padding: 20px;
+      overflow-x: auto;
+    }
+    
+    code {
+      font-family: 'Fira Code', 'Consolas', monospace;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+    
+    /* 加载动画 */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 60px;
+      gap: 12px;
+    }
+    
+    .spinner {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--border);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+    
+    /* Toast提示 */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 14px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+    
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .toast.success {
+      border-color: var(--success);
+    }
+    
+    .toast.error {
+      border-color: var(--error);
+    }
+    
+    /* API设置弹窗 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      width: 90%;
+      max-width: 480px;
+    }
+    
+    .modal-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    
+    .modal-desc {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    
+    .modal-input {
+      width: 100%;
+      padding: 14px 16px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    
+    /* 响应式 */
+    @media (max-width: 768px) {
+      .sidebar {
+        display: none;
+      }
+      
+      .navbar {
+        padding: 0 16px;
+      }
+      
+      .content-header,
+      .input-section,
+      .output-section {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 顶部导航 -->
+  <nav class="navbar">
+    <div class="nav-brand">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="16 18 22 12 16 6"></polyline>
+        <polyline points="8 6 2 12 8 18"></polyline>
+      </svg>
+      <h1>AI代码助手</h1>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn" onclick="showSettings()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M12 1v6m0 6v6m4.22-10.22l4.24-4.24M6.34 6.34L2.1 2.1m17.8 17.8l-4.24-4.24M6.34 17.66l-4.24 4.24M23 12h-6m-6 0H1m20.07-4.93l-4.24 4.24M6.34 6.34l-4.24-4.24"></path>
+        </svg>
+        设置
+      </button>
+      <button class="nav-btn" onclick="location.href='./index.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="19" y1="12" x2="5" y2="12"></line>
+          <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+        返回工具箱
+      </button>
+    </div>
+  </nav>
+
+  <!-- 主布局 -->
+  <div class="main-container">
+    <!-- 侧边栏 -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">功能模块</div>
+        <div class="function-list">
+          <div class="function-item active" data-mode="generate" onclick="switchMode('generate')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+            </svg>
+            代码生成
+          </div>
+          <div class="function-item" data-mode="explain" onclick="switchMode('explain')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            代码解释
+          </div>
+          <div class="function-item" data-mode="convert" onclick="switchMode('convert')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 1l4 4-4 4"></path>
+              <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+              <path d="M7 23l-4-4 4-4"></path>
+              <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+            </svg>
+            代码转换
+          </div>
+          <div class="function-item" data-mode="debug" onclick="switchMode('debug')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            调试助手
+          </div>
+          <div class="function-item" data-mode="qa" onclick="switchMode('qa')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+            </svg>
+            技术问答
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-content">
+        <div class="sidebar-title">最近历史</div>
+        <div id="historyList">
+          <div class="history-item">暂无历史记录</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- 主内容区 -->
+    <main class="content-area">
+      <div class="content-header">
+        <h2 class="content-title" id="pageTitle">代码生成</h2>
+        <p class="content-desc" id="pageDesc">输入自然语言描述，AI将为您生成高质量的代码</p>
+      </div>
+
+      <div class="input-section">
+        <div class="input-group" id="languageGroup">
+          <label class="input-label">编程语言</label>
+          <select class="language-select" id="languageSelect">
+            <option value="javascript">JavaScript</option>
+            <option value="python">Python</option>
+            <option value="java">Java</option>
+            <option value="cpp">C++</option>
+            <option value="html">HTML/CSS</option>
+            <option value="sql">SQL</option>
+          </select>
+        </div>
+
+        <div class="input-group" id="targetLanguageGroup" style="display: none;">
+          <label class="input-label">目标语言</label>
+          <select class="language-select" id="targetLanguageSelect">
+            <option value="python">Python</option>
+            <option value="javascript">JavaScript</option>
+            <option value="java">Java</option>
+            <option value="cpp">C++</option>
+          </select>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" id="inputLabel">输入描述</label>
+          <textarea class="code-input" id="mainInput" placeholder="请描述您需要的代码功能..."></textarea>
+        </div>
+
+        <div class="input-group" id="errorGroup" style="display: none;">
+          <label class="input-label">错误信息</label>
+          <textarea class="code-input" id="errorInput" placeholder="请粘贴错误信息..." style="min-height: 80px;"></textarea>
+        </div>
+
+        <div class="action-bar">
+          <button class="btn-primary" id="submitBtn" onclick="handleSubmit()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            生成代码
+          </button>
+          <button class="btn-secondary" onclick="clearInput()">清空</button>
+        </div>
+      </div>
+
+      <div class="output-section">
+        <div class="output-header">
+          <span class="output-title">输出结果</span>
+          <div class="output-actions" id="outputActions" style="display: none;">
+            <button class="icon-btn" onclick="copyOutput()" title="复制">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+              </svg>
+            </button>
+            <button class="icon-btn" onclick="saveToFavorites()" title="收藏">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="output-content" id="outputContent">
+          <div class="output-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <p>输入内容后点击生成按钮，AI将为您处理</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <!-- API设置弹窗 -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal">
+      <h3 class="modal-title">API设置</h3>
+      <p class="modal-desc">请输入您的 DeepSeek API Key，数据将加密存储在本地</p>
+      <input type="password" class="modal-input" id="apiKeyInput" placeholder="sk-...">
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeSettings()">取消</button>
+        <button class="btn-primary" onclick="saveSettings()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script type="module">
+    // 导入服务模块
+    import apiService from './assets/js/api-service.js';
+    import storageService from './assets/js/storage-service.js';
+    import cryptoService from './assets/js/crypto-service.js';
+
+    // 全局状态
+    let currentMode = 'generate';
+    let currentOutput = '';
+    let isProcessing = false;
+
+    // 模式配置
+    const modeConfig = {
+      generate: {
+        title: '代码生成',
+        desc: '输入自然语言描述，AI将为您生成高质量的代码',
+        inputLabel: '功能描述',
+        inputPlaceholder: '请描述您需要的代码功能，例如：写一个快速排序算法',
+        buttonText: '生成代码',
+        showLanguage: true,
+        showTargetLanguage: false,
+        showError: false
+      },
+      explain: {
+        title: '代码解释',
+        desc: '粘贴代码，AI将为您详细解释其工作原理',
+        inputLabel: '代码输入',
+        inputPlaceholder: '请粘贴需要解释的代码...',
+        buttonText: '解释代码',
+        showLanguage: true,
+        showTargetLanguage: false,
+        showError: false
+      },
+      convert: {
+        title: '代码转换',
+        desc: '将代码从一种语言转换到另一种语言',
+        inputLabel: '源代码',
+        inputPlaceholder: '请粘贴需要转换的代码...',
+        buttonText: '转换代码',
+        showLanguage: true,
+        showTargetLanguage: true,
+        showError: false
+      },
+      debug: {
+        title: '调试助手',
+        desc: '分析代码错误并提供修复建议',
+        inputLabel: '代码',
+        inputPlaceholder: '请粘贴出现错误的代码...',
+        buttonText: '分析错误',
+        showLanguage: true,
+        showTargetLanguage: false,
+        showError: true
+      },
+      qa: {
+        title: '技术问答',
+        desc: '询问任何技术相关的问题',
+        inputLabel: '问题',
+        inputPlaceholder: '请输入您的问题，例如：什么是闭包？',
+        buttonText: '获取答案',
+        showLanguage: false,
+        showTargetLanguage: false,
+        showError: false
+      }
+    };
+
+    // 切换模式
+    window.switchMode = (mode) => {
+      currentMode = mode;
+      const config = modeConfig[mode];
+      
+      // 更新侧边栏激活状态
+      document.querySelectorAll('.function-item').forEach(item => {
+        item.classList.remove('active');
+        if (item.dataset.mode === mode) {
+          item.classList.add('active');
+        }
+      });
+      
+      // 更新页面内容
+      document.getElementById('pageTitle').textContent = config.title;
+      document.getElementById('pageDesc').textContent = config.desc;
+      document.getElementById('inputLabel').textContent = config.inputLabel;
+      document.getElementById('mainInput').placeholder = config.inputPlaceholder;
+      document.getElementById('submitBtn').innerHTML = `
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+        ${config.buttonText}
+      `;
+      
+      // 显示/隐藏相关字段
+      document.getElementById('languageGroup').style.display = config.showLanguage ? 'block' : 'none';
+      document.getElementById('targetLanguageGroup').style.display = config.showTargetLanguage ? 'block' : 'none';
+      document.getElementById('errorGroup').style.display = config.showError ? 'block' : 'none';
+      
+      // 清空输出
+      clearOutput();
+    };
+
+    // 处理提交
+    window.handleSubmit = async () => {
+      if (isProcessing) return;
+      
+      const input = document.getElementById('mainInput').value.trim();
+      if (!input) {
+        showToast('请输入内容', 'error');
+        return;
+      }
+      
+      // 检查API Key
+      if (!apiService.apiKey) {
+        showSettings();
+        showToast('请先设置API Key', 'error');
+        return;
+      }
+      
+      isProcessing = true;
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width: 16px; height: 16px; border-width: 2px;"></div> 处理中...';
+      
+      showLoading();
+      
+      try {
+        let result;
+        const language = document.getElementById('languageSelect').value;
+        
+        switch (currentMode) {
+          case 'generate':
+            result = await apiService.generateCode(input, language);
+            break;
+          case 'explain':
+            result = await apiService.explainCode(input, language);
+            break;
+          case 'convert':
+            const targetLang = document.getElementById('targetLanguageSelect').value;
+            result = await apiService.convertCode(input, language, targetLang);
+            break;
+          case 'debug':
+            const error = document.getElementById('errorInput').value;
+            result = await apiService.debugCode(input, error, language);
+            break;
+          case 'qa':
+            result = await apiService.techQA(input);
+            break;
+        }
+        
+        currentOutput = result;
+        showOutput(result);
+        
+        // 保存到历史记录
+        await storageService.saveHistory({
+          type: currentMode,
+          input: input,
+          output: result,
+          language: language
+        });
+        
+        // 刷新历史列表
+        loadHistory();
+        
+      } catch (error) {
+        console.error('Error:', error);
+        showToast('处理失败: ' + error.message, 'error');
+        showError(error.message);
+      } finally {
+        isProcessing = false;
+        btn.disabled = false;
+        btn.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="22" y1="2" x2="11" y2="13"></line>
+            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+          </svg>
+          ${modeConfig[currentMode].buttonText}
+        `;
+      }
+    };
+
+    // 显示加载状态
+    function showLoading() {
+      document.getElementById('outputContent').innerHTML = `
+        <div class="loading">
+          <div class="spinner"></div>
+          <span>AI正在思考中...</span>
+        </div>
+      `;
+    }
+
+    // 显示输出
+    function showOutput(content) {
+      // 提取代码块
+      const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+      let html = content;
+      
+      // 处理代码块
+      html = html.replace(codeBlockRegex, (match, lang, code) => {
+        const language = lang || 'plaintext';
+        return `<pre><code class="language-${language}">${escapeHtml(code.trim())}</code></pre>`;
+      });
+      
+      // 处理行内代码
+      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+      
+      // 处理换行
+      html = html.replace(/\n/g, '<br>');
+      
+      document.getElementById('outputContent').innerHTML = html;
+      document.getElementById('outputActions').style.display = 'flex';
+      
+      // 高亮代码
+      document.querySelectorAll('pre code').forEach((block) => {
+        hljs.highlightElement(block);
+      });
+    }
+
+    // 显示错误
+    function showError(message) {
+      document.getElementById('outputContent').innerHTML = `
+        <div class="output-placeholder" style="color: var(--error);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="15" y1="9" x2="9" y2="15"></line>
+            <line x1="9" y1="9" x2="15" y2="15"></line>
+          </svg>
+          <p>${message}</p>
+        </div>
+      `;
+    }
+
+    // 清空输出
+    function clearOutput() {
+      document.getElementById('outputContent').innerHTML = `
+        <div class="output-placeholder">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 18 22 12 16 6"></polyline>
+            <polyline points="8 6 2 12 8 18"></polyline>
+          </svg>
+          <p>输入内容后点击生成按钮，AI将为您处理</p>
+        </div>
+      `;
+      document.getElementById('outputActions').style.display = 'none';
+      currentOutput = '';
+    }
+
+    // 清空输入
+    window.clearInput = () => {
+      document.getElementById('mainInput').value = '';
+      document.getElementById('errorInput').value = '';
+      clearOutput();
+    };
+
+    // 复制输出
+    window.copyOutput = async () => {
+      try {
+        await navigator.clipboard.writeText(currentOutput);
+        showToast('已复制到剪贴板', 'success');
+      } catch (e) {
+        showToast('复制失败', 'error');
+      }
+    };
+
+    // 收藏
+    window.saveToFavorites = async () => {
+      showToast('功能开发中...', 'success');
+    };
+
+    // 显示设置
+    window.showSettings = () => {
+      document.getElementById('settingsModal').classList.add('show');
+    };
+
+    // 关闭设置
+    window.closeSettings = () => {
+      document.getElementById('settingsModal').classList.remove('show');
+    };
+
+    // 保存设置
+    window.saveSettings = async () => {
+      const apiKey = document.getElementById('apiKeyInput').value.trim();
+      if (!apiKey) {
+        showToast('请输入API Key', 'error');
+        return;
+      }
+      
+      await apiService.saveAPIKey(apiKey);
+      closeSettings();
+      showToast('设置已保存', 'success');
+    };
+
+    // 显示Toast
+    function showToast(message, type = 'info') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = 'toast show ' + type;
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 3000);
+    }
+
+    // 加载历史记录
+    async function loadHistory() {
+      try {
+        const history = await storageService.getHistoryList({ limit: 10 });
+        const container = document.getElementById('historyList');
+        
+        if (history.length === 0) {
+          container.innerHTML = '<div class="history-item">暂无历史记录</div>';
+          return;
+        }
+        
+        container.innerHTML = history.map(item => `
+          <div class="history-item" onclick="loadHistoryItem('${item.id}')">
+            ${item.input.substring(0, 30)}...
+          </div>
+        `).join('');
+      } catch (e) {
+        console.error('Failed to load history:', e);
+      }
+    }
+
+    // 加载历史项
+    window.loadHistoryItem = async (id) => {
+      try {
+        const item = await storageService.getHistoryItem(id);
+        if (item) {
+          document.getElementById('mainInput').value = item.input;
+          showOutput(item.output);
+          currentOutput = item.output;
+        }
+      } catch (e) {
+        showToast('加载失败', 'error');
+      }
+    };
+
+    // HTML转义
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', () => {
+      loadHistory();
+      
+      // 点击模态框外部关闭
+      document.getElementById('settingsModal').addEventListener('click', (e) => {
+        if (e.target === e.currentTarget) {
+          closeSettings();
+        }
+      });
+    });
+
+    // 导出到全局
+    window.apiService = apiService;
+    window.storageService = storageService;
+    window.cryptoService = cryptoService;
+  </script>
+</body>
+</html>
