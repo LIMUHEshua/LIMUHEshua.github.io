@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>联系信息 | LIMUHEshua</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* 主题变量 */
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f5f9;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    [data-theme="dark"] {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --accent: #60a5fa;
+      --accent-hover: #3b82f6;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --card-bg: #1e293b;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    [data-theme="eyecare"] {
+      --bg-primary: #f5f0e6;
+      --bg-secondary: #faf8f3;
+      --bg-tertiary: #ede8dc;
+      --accent: #d97706;
+      --accent-hover: #f59e0b;
+      --text-primary: #3d3d3d;
+      --text-secondary: #6b6b6b;
+      --text-muted: #8b8b8b;
+      --border: #d4cfc4;
+      --card-bg: #faf8f3;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    
+    [data-theme="purple"] {
+      --bg-primary: #1a1b2e;
+      --bg-secondary: #252642;
+      --bg-tertiary: #2d2e4f;
+      --accent: #a855f7;
+      --accent-hover: #c084fc;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --border: #374151;
+      --card-bg: #252642;
+      --card-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-secondary);
+      line-height: 1.8;
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    .header {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      margin-bottom: 40px;
+      transition: all 0.4s ease;
+    }
+    
+    .header-content {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 18px;
+    }
+    
+    .logo svg {
+      width: 24px;
+      height: 24px;
+    }
+    
+    .back-link {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: color 0.2s;
+    }
+    
+    .back-link:hover {
+      color: var(--accent);
+    }
+    
+    .back-link svg {
+      width: 16px;
+      height: 16px;
+    }
+    
+    .content {
+      background: var(--card-bg);
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: var(--card-shadow);
+      border: 1px solid var(--border);
+      transition: all 0.4s ease;
+    }
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 10px;
+      color: var(--text-primary);
+    }
+    
+    .last-updated {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    
+    h2 {
+      font-size: 20px;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      color: var(--text-primary);
+    }
+    
+    p {
+      margin-bottom: 15px;
+      color: var(--text-secondary);
+    }
+    
+    ul {
+      margin-left: 20px;
+      margin-bottom: 15px;
+    }
+    
+    li {
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+    
+    a {
+      color: var(--accent);
+    }
+    
+    a:hover {
+      color: var(--accent-hover);
+    }
+    
+    .footer {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+    
+    /* 主题切换器 */
+    .theme-switcher {
+      position: relative;
+    }
+
+    .theme-btn {
+      padding: 8px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .theme-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .theme-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px;
+      min-width: 120px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s;
+      z-index: 1000;
+    }
+
+    .theme-dropdown.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .theme-option {
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .theme-option:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .theme-option.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 10000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    /* 联系信息卡片 */
+    .contact-card {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+      transition: all 0.4s ease;
+    }
+    
+    .contact-card h3 {
+      color: var(--text-primary);
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    
+    .contact-card p {
+      margin-bottom: 8px;
+    }
+    
+    @media (max-width: 600px) {
+      .content {
+        padding: 24px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <a href="/" class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+          <line x1="8" y1="21" x2="16" y2="21"></line>
+          <line x1="12" y1="17" x2="12" y2="21"></line>
+        </svg>
+        LIMUHEshua
+      </a>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <!-- 主题切换器 -->
+        <div class="theme-switcher">
+          <button class="theme-btn" onclick="toggleThemeDropdown()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            主题
+          </button>
+          <div class="theme-dropdown" id="themeDropdown">
+            <div class="theme-option active" data-theme="light" onclick="switchTheme('light')">浅雪白</div>
+            <div class="theme-option" data-theme="dark" onclick="switchTheme('dark')">深海蓝</div>
+            <div class="theme-option" data-theme="eyecare" onclick="switchTheme('eyecare')">护眼黄</div>
+            <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">紫夜</div>
+          </div>
+        </div>
+        <a href="./index.html" class="back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回工具箱
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="content">
+      <h1>联系信息</h1>
+      <p class="last-updated">最后更新日期：2026年3月23日</p>
+
+      <p>如果您对我们的工具服务有任何疑问、建议或反馈，欢迎通过以下方式联系我们。我们将尽快回复您的消息。</p>
+
+      <div class="contact-card">
+        <h3>网站</h3>
+        <p><a href="https://limuheshua.github.io" target="_blank">limuheshua.github.io</a></p>
+      </div>
+
+      <div class="contact-card">
+        <h3>GitHub</h3>
+        <p><a href="https://github.com/LIMUHEshua" target="_blank">@LIMUHEshua</a></p>
+        <p>您可以在GitHub上：</p>
+        <ul>
+          <li>提交Issue报告问题</li>
+          <li>提交Pull Request贡献代码</li>
+          <li>关注项目更新</li>
+        </ul>
+      </div>
+
+      <h2>常见问题</h2>
+      <p>在联系我们之前，您可能想查看以下常见问题：</p>
+      <ul>
+        <li><a href="./privacy.html">隐私政策</a> - 了解我们如何处理您的数据</li>
+        <li><a href="./terms.html">服务条款</a> - 了解使用我们服务的条款和条件</li>
+        <li><a href="./refund.html">退款政策</a> - 了解退款相关事宜</li>
+        <li><a href="./pricing.html">价格</a> - 了解我们的订阅计划和价格</li>
+      </ul>
+
+      <h2>反馈与建议</h2>
+      <p>我们非常重视您的反馈和建议，这对我们改进服务至关重要。如果您有任何想法或建议，请通过上述方式联系我们。</p>
+
+      <h2>服务时间</h2>
+      <p>我们会在工作日（周一至周五）的工作时间内处理您的消息，通常会在24-48小时内回复。</p>
+    </div>
+  </div>
+
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
+  <footer class="footer">
+    <p>&copy; 2026 LIMUHEshua. 保留所有权利。</p>
+  </footer>
+
+  <script>
+    // 主题管理
+    const THEME_STORAGE_KEY = 'tools_theme';
+    let currentTheme = 'light';
+
+    // 初始化主题
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+      if (savedTheme !== 'light') {
+        document.body.setAttribute('data-theme', savedTheme);
+        currentTheme = savedTheme;
+      }
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === currentTheme) {
+          option.classList.add('active');
+        }
+      });
+    }
+
+    // 主题切换
+    function toggleThemeDropdown() {
+      document.getElementById('themeDropdown').classList.toggle('show');
+    }
+
+    function closeThemeDropdown() {
+      document.getElementById('themeDropdown').classList.remove('show');
+    }
+
+    function switchTheme(theme) {
+      if (theme === currentTheme) {
+        closeThemeDropdown();
+        return;
+      }
+
+      const body = document.body;
+      body.removeAttribute('data-theme');
+
+      if (theme !== 'light') {
+        body.setAttribute('data-theme', theme);
+      }
+
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+      currentTheme = theme;
+
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === theme) {
+          option.classList.add('active');
+        }
+      });
+
+      closeThemeDropdown();
+      showToast(`已切换到${getThemeName(theme)}主题`);
+    }
+
+    function getThemeName(theme) {
+      const names = { 'light': '浅雪白', 'dark': '深海蓝', 'eyecare': '护眼黄', 'purple': '紫夜' };
+      return names[theme] || '浅雪白';
+    }
+
+    // Toast提示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // 点击外部关闭下拉菜单
+    document.addEventListener('click', (e) => {
+      const themeSwitcher = document.querySelector('.theme-switcher');
+      if (themeSwitcher && !themeSwitcher.contains(e.target)) {
+        closeThemeDropdown();
+      }
+    });
+
+    // 页面加载时初始化主题
+    document.addEventListener('DOMContentLoaded', initTheme);
+  </script>
+</body>
+</html>

@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="开发者工具集 - 订阅计划">
-  <title>订阅计划 | 开发者工具集</title>
+  <meta name="description" content="开发者工具集 - 价格">
+  <title>价格 | 开发者工具集</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="./assets/css/tools.css">
   <style>
@@ -230,6 +230,65 @@
     .toast.show {
       transform: translateY(0);
       opacity: 1;
+    }
+
+    /* 价格切换器 */
+    .pricing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 40px;
+      gap: 16px;
+    }
+    
+    .pricing-toggle label {
+      font-size: 14px;
+      color: var(--color-text-secondary);
+      font-weight: 500;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      width: 60px;
+      height: 32px;
+    }
+    
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--color-bg-tertiary);
+      transition: .4s;
+      border-radius: 34px;
+    }
+    
+    .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: 24px;
+      width: 24px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    
+    input:checked + .toggle-slider {
+      background-color: var(--color-blue);
+    }
+    
+    input:checked + .toggle-slider:before {
+      transform: translateX(28px);
     }
 
     /* 定价页面样式 */
@@ -472,10 +531,10 @@
     </div>
   </nav>
 
-  <!-- 定价头部 -->
+  <!-- 价格头部 -->
   <header class="pricing-header">
     <div class="container">
-      <h1>选择适合您的订阅计划</h1>
+      <h1>选择适合您的价格方案</h1>
       <p>解锁全部高级功能，提升开发效率</p>
     </div>
   </header>
@@ -494,6 +553,16 @@
           <span id="planName"></span>
           <span id="expiryDate"></span>
         </div>
+      </div>
+
+      <!-- 价格切换器 -->
+      <div class="pricing-toggle">
+        <label for="billing-toggle">月付</label>
+        <div class="toggle-switch">
+          <input type="checkbox" id="billing-toggle" onchange="toggleBilling()">
+          <span class="toggle-slider"></span>
+        </div>
+        <label for="billing-toggle">年付（省20%）</label>
       </div>
 
       <!-- 定价卡片 -->
@@ -760,6 +829,31 @@
         closeThemeDropdown();
       }
     });
+
+    // 价格切换
+    function toggleBilling() {
+      const toggle = document.getElementById('billing-toggle');
+      const prices = document.querySelectorAll('.plan-price');
+      const periods = document.querySelectorAll('.plan-period');
+      
+      if (toggle.checked) {
+        // 年付
+        prices[0].innerHTML = '¥0<span>/年</span>';
+        prices[1].innerHTML = '¥190<span>/年</span>';
+        prices[2].innerHTML = '¥790<span>/年</span>';
+        periods[0].textContent = '永久免费';
+        periods[1].textContent = '省2个月';
+        periods[2].textContent = '省2个月';
+      } else {
+        // 月付
+        prices[0].innerHTML = '¥0<span>/月</span>';
+        prices[1].innerHTML = '¥19<span>/月</span>';
+        prices[2].innerHTML = '¥79<span>/月</span>';
+        periods[0].textContent = '永久免费';
+        periods[1].textContent = '或 ¥190/年（省2个月）';
+        periods[2].textContent = '或 ¥790/年（省2个月）';
+      }
+    }
 
     // 页面加载时初始化主题
     document.addEventListener('DOMContentLoaded', initTheme);
