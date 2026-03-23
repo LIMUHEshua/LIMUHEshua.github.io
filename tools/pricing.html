@@ -8,6 +8,230 @@
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="./assets/css/tools.css">
   <style>
+    /* 主题变量 */
+    :root {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #f1f5f9;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --text-primary: #1e293b;
+      --text-secondary: #64748b;
+      --text-muted: #94a3b8;
+      --border: #e2e8f0;
+      --card-bg: #ffffff;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    [data-theme="dark"] {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-tertiary: #334155;
+      --accent: #60a5fa;
+      --accent-hover: #3b82f6;
+      --text-primary: #f1f5f9;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --border: #334155;
+      --card-bg: #1e293b;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    
+    [data-theme="eyecare"] {
+      --bg-primary: #f5f0e6;
+      --bg-secondary: #faf8f3;
+      --bg-tertiary: #ede8dc;
+      --accent: #d97706;
+      --accent-hover: #f59e0b;
+      --text-primary: #3d3d3d;
+      --text-secondary: #6b6b6b;
+      --text-muted: #8b8b8b;
+      --border: #d4cfc4;
+      --card-bg: #faf8f3;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    
+    [data-theme="purple"] {
+      --bg-primary: #1a1b2e;
+      --bg-secondary: #252642;
+      --bg-tertiary: #2d2e4f;
+      --accent: #a855f7;
+      --accent-hover: #c084fc;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --border: #374151;
+      --card-bg: #252642;
+      --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    body {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      transition: background-color 0.4s ease, color 0.4s ease;
+    }
+
+    .navbar {
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
+      transition: all 0.4s ease;
+    }
+
+    .brand-text {
+      color: var(--text-primary);
+    }
+
+    .nav-back {
+      color: var(--text-secondary);
+    }
+
+    .nav-back:hover {
+      color: var(--accent);
+    }
+
+    .pricing-header {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-hover) 100%);
+    }
+
+    .pricing-card {
+      background: var(--card-bg);
+      border-color: var(--border);
+    }
+
+    .pricing-card:hover {
+      border-color: var(--accent);
+    }
+
+    .pricing-card.featured {
+      border-color: var(--accent);
+    }
+
+    .plan-name {
+      color: var(--text-primary);
+    }
+
+    .plan-price span {
+      color: var(--text-muted);
+    }
+
+    .plan-period {
+      color: var(--text-secondary);
+    }
+
+    .plan-features li {
+      color: var(--text-secondary);
+    }
+
+    .user-status {
+      background: var(--bg-tertiary);
+    }
+
+    .status-free {
+      background: var(--bg-secondary);
+      color: var(--text-muted);
+    }
+
+    .footer {
+      background: var(--bg-secondary);
+      border-top: 1px solid var(--border);
+      color: var(--text-secondary);
+      transition: all 0.4s ease;
+    }
+
+    /* 主题切换器 */
+    .theme-switcher {
+      position: relative;
+    }
+
+    .theme-btn {
+      padding: 8px 14px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .theme-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+    }
+
+    .theme-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .theme-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px;
+      min-width: 120px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s;
+      z-index: 1000;
+    }
+
+    .theme-dropdown.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .theme-option {
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+
+    .theme-option:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .theme-option.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      padding: 12px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 14px;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s;
+      z-index: 10000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
     /* 定价页面样式 */
     .pricing-header {
       text-align: center;
@@ -213,13 +437,38 @@
         </svg>
         <span class="brand-text">开发者工具集</span>
       </div>
-      <a href="./index.html" class="nav-back">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="19" y1="12" x2="5" y2="12"></line>
-          <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-        返回工具箱
-      </a>
+      <div style="display: flex; align-items: center; gap: 16px;">
+        <!-- 主题切换器 -->
+        <div class="theme-switcher">
+          <button class="theme-btn" onclick="toggleThemeDropdown()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            主题
+          </button>
+          <div class="theme-dropdown" id="themeDropdown">
+            <div class="theme-option active" data-theme="light" onclick="switchTheme('light')">浅雪白</div>
+            <div class="theme-option" data-theme="dark" onclick="switchTheme('dark')">深海蓝</div>
+            <div class="theme-option" data-theme="eyecare" onclick="switchTheme('eyecare')">护眼黄</div>
+            <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">紫夜</div>
+          </div>
+        </div>
+        <a href="./index.html" class="nav-back">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          返回工具箱
+        </a>
+      </div>
     </div>
   </nav>
 
@@ -329,6 +578,9 @@
     </div>
   </div>
 
+  <!-- Toast提示 -->
+  <div class="toast" id="toast"></div>
+
   <!-- 页脚 -->
   <footer class="footer">
     <div class="container">
@@ -432,6 +684,85 @@
     
     // 页面加载时检查订阅状态
     document.addEventListener('DOMContentLoaded', checkSubscription);
+
+    // 主题管理
+    const THEME_STORAGE_KEY = 'tools_theme';
+    let currentTheme = 'light';
+
+    // 初始化主题
+    function initTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+      if (savedTheme !== 'light') {
+        document.body.setAttribute('data-theme', savedTheme);
+        currentTheme = savedTheme;
+      }
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === currentTheme) {
+          option.classList.add('active');
+        }
+      });
+    }
+
+    // 主题切换
+    function toggleThemeDropdown() {
+      document.getElementById('themeDropdown').classList.toggle('show');
+    }
+
+    function closeThemeDropdown() {
+      document.getElementById('themeDropdown').classList.remove('show');
+    }
+
+    function switchTheme(theme) {
+      if (theme === currentTheme) {
+        closeThemeDropdown();
+        return;
+      }
+
+      const body = document.body;
+      body.removeAttribute('data-theme');
+
+      if (theme !== 'light') {
+        body.setAttribute('data-theme', theme);
+      }
+
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+      currentTheme = theme;
+
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === theme) {
+          option.classList.add('active');
+        }
+      });
+
+      closeThemeDropdown();
+      showToast(`已切换到${getThemeName(theme)}主题`);
+    }
+
+    function getThemeName(theme) {
+      const names = { 'light': '浅雪白', 'dark': '深海蓝', 'eyecare': '护眼黄', 'purple': '紫夜' };
+      return names[theme] || '浅雪白';
+    }
+
+    // Toast提示
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    }
+
+    // 点击外部关闭下拉菜单
+    document.addEventListener('click', (e) => {
+      const themeSwitcher = document.querySelector('.theme-switcher');
+      if (themeSwitcher && !themeSwitcher.contains(e.target)) {
+        closeThemeDropdown();
+      }
+    });
+
+    // 页面加载时初始化主题
+    document.addEventListener('DOMContentLoaded', initTheme);
   </script>
 </body>
 </html>

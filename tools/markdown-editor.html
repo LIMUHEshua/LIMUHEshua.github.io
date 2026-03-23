@@ -7,14 +7,88 @@
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.10.4/dist/index.css">
   <style>
+    /* ============================================
+       主题颜色方案定义
+       ============================================ */
+    
+    /* 浅色主题 (默认) - Light Frost */
+    :root {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: #ffffff;
+      --bg-tertiary: #fafafa;
+      --accent: #1976d2;
+      --accent-hover: #1565c0;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --border: #e0e0e0;
+      --success: #4caf50;
+      --warning: #ff9800;
+      --error: #f44336;
+      --vditor-bg: #ffffff;
+      --vditor-toolbar: #f5f5f5;
+    }
+    
+    /* 深色主题 - Deep Ocean */
+    [data-theme="dark"] {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f3460;
+      --accent: #e94560;
+      --accent-hover: #ff6b6b;
+      --text-primary: #eaeaea;
+      --text-secondary: #a0a0a0;
+      --border: #2d3748;
+      --success: #48bb78;
+      --warning: #ed8936;
+      --error: #f56565;
+      --vditor-bg: #1a1a2e;
+      --vditor-toolbar: #16213e;
+    }
+    
+    /* 护眼模式 - Eye Care */
+    [data-theme="eyecare"] {
+      --bg-primary: #f5f0e6;
+      --bg-secondary: #faf8f3;
+      --bg-tertiary: #ede8dc;
+      --accent: #d97706;
+      --accent-hover: #f59e0b;
+      --text-primary: #3d3d3d;
+      --text-secondary: #6b6b6b;
+      --border: #d4cfc4;
+      --success: #059669;
+      --warning: #d97706;
+      --error: #dc2626;
+      --vditor-bg: #faf8f3;
+      --vditor-toolbar: #f5f0e6;
+    }
+    
+    /* 紫夜主题 - Purple Night */
+    [data-theme="purple"] {
+      --bg-primary: #1a1b2e;
+      --bg-secondary: #252642;
+      --bg-tertiary: #2d2e4f;
+      --accent: #a855f7;
+      --accent-hover: #c084fc;
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --border: #374151;
+      --success: #22c55e;
+      --warning: #f97316;
+      --error: #ef4444;
+      --vditor-bg: #1a1b2e;
+      --vditor-toolbar: #252642;
+    }
+
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
     html, body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: #f5f5f5;
+      background: var(--bg-primary);
+      color: var(--text-primary);
       height: 100vh;
       width: 100vw;
       overflow: hidden;
+      transition: background-color 0.4s ease, color 0.4s ease;
     }
     
     /* 全屏容器 */
@@ -25,10 +99,10 @@
       width: 100vw;
     }
     
-    /* 顶部工具栏 - 更紧凑 */
+    /* 顶部工具栏 */
     .toolbar {
-      background: #fff;
-      border-bottom: 1px solid #e0e0e0;
+      background: var(--bg-secondary);
+      border-bottom: 1px solid var(--border);
       padding: 8px 16px;
       display: flex;
       align-items: center;
@@ -36,6 +110,7 @@
       flex-shrink: 0;
       height: 50px;
       min-height: 50px;
+      transition: all 0.4s ease;
     }
     
     .toolbar-left {
@@ -51,7 +126,7 @@
       align-items: center;
       gap: 6px;
       font-weight: 600;
-      color: #333;
+      color: var(--text-primary);
       text-decoration: none;
       flex-shrink: 0;
       font-size: 14px;
@@ -65,8 +140,9 @@
     .divider {
       width: 1px;
       height: 20px;
-      background: #e0e0e0;
+      background: var(--border);
       flex-shrink: 0;
+      transition: background-color 0.4s ease;
     }
     
     .platform-select {
@@ -77,23 +153,24 @@
     
     .platform-btn {
       padding: 5px 10px;
-      border: 1px solid #e0e0e0;
-      background: #fff;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
       border-radius: 4px;
       font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
       white-space: nowrap;
+      color: var(--text-secondary);
     }
     
     .platform-btn:hover {
-      border-color: #1976d2;
-      color: #1976d2;
+      border-color: var(--accent);
+      color: var(--accent);
     }
     
     .platform-btn.active {
-      background: #1976d2;
-      border-color: #1976d2;
+      background: var(--accent);
+      border-color: var(--accent);
       color: #fff;
     }
     
@@ -101,12 +178,13 @@
       display: flex;
       gap: 6px;
       flex-shrink: 0;
+      align-items: center;
     }
     
-    .tool-btn {
+    .tool-btn, .theme-btn {
       padding: 5px 10px;
-      border: 1px solid #e0e0e0;
-      background: #fff;
+      border: 1px solid var(--border);
+      background: var(--bg-secondary);
       border-radius: 4px;
       font-size: 12px;
       cursor: pointer;
@@ -115,50 +193,103 @@
       gap: 4px;
       transition: all 0.2s;
       white-space: nowrap;
+      color: var(--text-secondary);
     }
     
-    .tool-btn:hover {
-      background: #f5f5f5;
-      border-color: #bbb;
+    .tool-btn:hover, .theme-btn:hover {
+      background: var(--bg-tertiary);
+      border-color: var(--accent);
+      color: var(--text-primary);
     }
     
-    .tool-btn svg {
+    .tool-btn svg, .theme-btn svg {
       width: 14px;
       height: 14px;
       flex-shrink: 0;
     }
     
-    /* 主编辑区 - 占据剩余全部空间 */
+    /* 主题切换器 */
+    .theme-switcher {
+      position: relative;
+    }
+    
+    .theme-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px;
+      min-width: 120px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(-10px);
+      transition: all 0.2s;
+      z-index: 10000;
+    }
+    
+    .theme-dropdown.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    
+    .theme-option {
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text-secondary);
+      font-size: 12px;
+    }
+    
+    .theme-option:hover {
+      background: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+    
+    .theme-option.active {
+      background: var(--accent);
+      color: white;
+    }
+    
+    /* 主编辑区 */
     .main-container {
       flex: 1;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1px;
-      background: #e0e0e0;
+      background: var(--border);
       min-height: 0;
       overflow: hidden;
+      transition: background-color 0.4s ease;
     }
     
     .editor-panel, .preview-panel {
-      background: #fff;
+      background: var(--bg-secondary);
       display: flex;
       flex-direction: column;
       min-height: 0;
       overflow: hidden;
       height: 100%;
+      transition: background-color 0.4s ease;
     }
     
     .panel-header {
       padding: 6px 12px;
-      background: #fafafa;
-      border-bottom: 1px solid #e0e0e0;
+      background: var(--bg-tertiary);
+      border-bottom: 1px solid var(--border);
       font-size: 12px;
-      color: #666;
+      color: var(--text-secondary);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-shrink: 0;
       height: 36px;
+      transition: all 0.4s ease;
     }
     
     .panel-title {
@@ -167,7 +298,7 @@
       gap: 6px;
     }
     
-    /* Vditor容器 - 关键修复 */
+    /* Vditor容器 */
     #vditor-container {
       flex: 1;
       min-height: 0;
@@ -175,11 +306,13 @@
       overflow: hidden;
     }
     
-    /* 确保Vditor正确显示 */
+    /* Vditor主题适配 */
     .vditor {
       height: 100% !important;
       border: none !important;
       position: relative;
+      background: var(--vditor-bg) !important;
+      transition: background-color 0.4s ease;
     }
     
     .vditor-content {
@@ -190,21 +323,34 @@
       height: 100% !important;
       overflow: auto !important;
       position: relative;
+      background: var(--vditor-bg) !important;
+      color: var(--text-primary) !important;
+      transition: all 0.4s ease;
     }
     
-    /* 确保所有子元素可交互 */
-    .vditor-ir * {
-      pointer-events: auto !important;
-    }
-    
-    /* 编辑器工具栏 */
     .vditor-toolbar {
       position: relative;
       z-index: 10;
+      background: var(--vditor-toolbar) !important;
+      border-bottom: 1px solid var(--border) !important;
+      transition: all 0.4s ease;
     }
     
-    .vditor-toolbar * {
-      pointer-events: auto !important;
+    .vditor-toolbar__item {
+      color: var(--text-secondary) !important;
+    }
+    
+    .vditor-toolbar__item:hover {
+      color: var(--accent) !important;
+      background: var(--bg-tertiary) !important;
+    }
+    
+    .vditor-ir__node--expand {
+      background: var(--bg-tertiary) !important;
+    }
+    
+    .vditor-preview {
+      background: var(--vditor-bg) !important;
     }
     
     .preview-content {
@@ -214,7 +360,9 @@
       font-size: 14px;
       line-height: 1.8;
       min-height: 0;
-      background: #fff;
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      transition: all 0.4s ease;
     }
     
     /* 响应式 */
@@ -246,8 +394,9 @@
       bottom: 20px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #333;
-      color: #fff;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
       padding: 10px 20px;
       border-radius: 4px;
       font-size: 13px;
@@ -268,7 +417,7 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: #999;
+      color: var(--text-secondary);
       font-size: 14px;
     }
     
@@ -279,7 +428,7 @@
       align-items: center;
       justify-content: center;
       height: 100%;
-      color: #666;
+      color: var(--text-secondary);
       font-size: 14px;
       padding: 20px;
       text-align: center;
@@ -288,8 +437,8 @@
     .error-message button {
       margin-top: 12px;
       padding: 8px 16px;
-      border: 1px solid #1976d2;
-      background: #1976d2;
+      border: 1px solid var(--accent);
+      background: var(--accent);
       color: white;
       border-radius: 4px;
       cursor: pointer;
@@ -319,6 +468,30 @@
         </div>
       </div>
       <div class="toolbar-right">
+        <!-- 主题切换器 -->
+        <div class="theme-switcher">
+          <button class="theme-btn" onclick="toggleThemeDropdown()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="5"></circle>
+              <line x1="12" y1="1" x2="12" y2="3"></line>
+              <line x1="12" y1="21" x2="12" y2="23"></line>
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+              <line x1="1" y1="12" x2="3" y2="12"></line>
+              <line x1="21" y1="12" x2="23" y2="12"></line>
+              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+            </svg>
+            主题
+          </button>
+          <div class="theme-dropdown" id="themeDropdown">
+            <div class="theme-option active" data-theme="light" onclick="switchTheme('light')">浅雪白</div>
+            <div class="theme-option" data-theme="dark" onclick="switchTheme('dark')">深海蓝</div>
+            <div class="theme-option" data-theme="eyecare" onclick="switchTheme('eyecare')">护眼黄</div>
+            <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">紫夜</div>
+          </div>
+        </div>
+        
         <button class="tool-btn" onclick="copyContent()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
@@ -374,7 +547,7 @@
           </button>
         </div>
         <div id="preview" class="preview-content">
-          <div style="color: #999; text-align: center; padding-top: 50px;">
+          <div style="color: var(--text-secondary); text-align: center; padding-top: 50px;">
             在左侧编辑器输入内容，此处将显示预览
           </div>
         </div>
@@ -391,6 +564,8 @@
     let vditor = null;
     let currentPlatform = 'default';
     let isInitialized = false;
+    const THEME_STORAGE_KEY = 'markdown_editor_theme';
+    let currentTheme = 'light';
     
     // 平台样式配置
     const platformStyles = {
@@ -398,49 +573,117 @@
         h1: 'font-size: 2em; font-weight: bold; margin: 0.67em 0;',
         h2: 'font-size: 1.5em; font-weight: bold; margin: 0.75em 0;',
         h3: 'font-size: 1.17em; font-weight: bold; margin: 0.83em 0;',
-        code: 'background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-family: monospace;',
-        pre: 'background: #f5f5f5; padding: 16px; border-radius: 6px; overflow-x: auto;',
-        blockquote: 'border-left: 4px solid #ddd; padding-left: 16px; color: #666; margin: 1em 0;'
+        code: 'background: var(--bg-tertiary); padding: 2px 6px; border-radius: 3px; font-family: monospace;',
+        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 6px; overflow-x: auto;',
+        blockquote: 'border-left: 4px solid var(--accent); padding-left: 16px; color: var(--text-secondary); margin: 1em 0;'
       },
       wechat: {
-        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0; color: #333;',
-        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0; color: #333;',
-        h3: 'font-size: 18px; font-weight: bold; margin: 16px 0; color: #333;',
-        code: 'background: #f6f8fa; padding: 2px 6px; border-radius: 3px; font-family: monospace; color: #e83e8c;',
-        pre: 'background: #f6f8fa; padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 14px;',
-        blockquote: 'border-left: 4px solid #07c160; padding: 12px 16px; background: #f0f9f4; margin: 16px 0;'
+        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0; color: var(--text-primary);',
+        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0; color: var(--text-primary);',
+        h3: 'font-size: 18px; font-weight: bold; margin: 16px 0; color: var(--text-primary);',
+        code: 'background: var(--bg-tertiary); padding: 2px 6px; border-radius: 3px; font-family: monospace; color: var(--accent);',
+        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 14px;',
+        blockquote: 'border-left: 4px solid var(--accent); padding: 12px 16px; background: var(--bg-tertiary); margin: 16px 0;'
       },
       zhihu: {
-        h1: 'font-size: 26px; font-weight: 600; margin: 24px 0 16px;',
-        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0 12px;',
-        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0 8px;',
-        code: 'background: #f6f6f6; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #d73a49;',
-        pre: 'background: #f6f6f6; padding: 16px; border-radius: 4px; overflow-x: auto;',
-        blockquote: 'border-left: 4px solid #0066ff; padding-left: 16px; color: #444; margin: 16px 0;'
+        h1: 'font-size: 26px; font-weight: 600; margin: 24px 0 16px; color: var(--text-primary);',
+        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0 12px; color: var(--text-primary);',
+        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0 8px; color: var(--text-primary);',
+        code: 'background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--accent);',
+        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 4px; overflow-x: auto;',
+        blockquote: 'border-left: 4px solid var(--accent); padding-left: 16px; color: var(--text-secondary); margin: 16px 0;'
       },
       juejin: {
-        h1: 'font-size: 28px; font-weight: 600; margin: 24px 0; color: #252933;',
-        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0;',
-        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0;',
-        code: 'background: #f2f3f5; padding: 2px 6px; border-radius: 4px; font-family: monospace; color: #d63200;',
-        pre: 'background: #f2f3f5; padding: 16px; border-radius: 4px; overflow-x: auto;',
-        blockquote: 'border-left: 4px solid #1e80ff; padding: 12px 16px; background: #f4f5f5; margin: 16px 0;'
+        h1: 'font-size: 28px; font-weight: 600; margin: 24px 0; color: var(--text-primary);',
+        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0; color: var(--text-primary);',
+        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0; color: var(--text-primary);',
+        code: 'background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--accent);',
+        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 4px; overflow-x: auto;',
+        blockquote: 'border-left: 4px solid var(--accent); padding: 12px 16px; background: var(--bg-tertiary); margin: 16px 0;'
       },
       csdn: {
-        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0;',
-        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0;',
-        h3: 'font-size: 16px; font-weight: bold; margin: 16px 0;',
-        code: 'background: #f5f5f5; padding: 2px 4px; border-radius: 3px; font-family: monospace; color: #c7254e;',
-        pre: 'background: #f5f5f5; padding: 16px; border-radius: 4px; overflow-x: auto;',
-        blockquote: 'border-left: 4px solid #fc5531; padding-left: 16px; color: #666; margin: 16px 0;'
+        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0; color: var(--text-primary);',
+        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0; color: var(--text-primary);',
+        h3: 'font-size: 16px; font-weight: bold; margin: 16px 0; color: var(--text-primary);',
+        code: 'background: var(--bg-tertiary); padding: 2px 4px; border-radius: 3px; font-family: monospace; color: var(--accent);',
+        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 4px; overflow-x: auto;',
+        blockquote: 'border-left: 4px solid var(--accent); padding-left: 16px; color: var(--text-secondary); margin: 16px 0;'
       }
     };
+    
+    // 主题切换功能
+    function toggleThemeDropdown() {
+      document.getElementById('themeDropdown').classList.toggle('show');
+    }
+    
+    function closeThemeDropdown() {
+      document.getElementById('themeDropdown').classList.remove('show');
+    }
+    
+    function switchTheme(theme) {
+      if (theme === currentTheme) {
+        closeThemeDropdown();
+        return;
+      }
+      
+      const body = document.body;
+      body.removeAttribute('data-theme');
+      
+      if (theme !== 'light') {
+        body.setAttribute('data-theme', theme);
+      }
+      
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+      currentTheme = theme;
+      
+      // 更新UI
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === theme) {
+          option.classList.add('active');
+        }
+      });
+      
+      // 更新Vditor主题
+      updateVditorTheme(theme);
+      
+      closeThemeDropdown();
+      showToast(`已切换到${getThemeName(theme)}主题`);
+      
+      // 刷新预览
+      updatePreview();
+    }
+    
+    function updateVditorTheme(theme) {
+      if (!vditor) return;
+      
+      const vditorTheme = theme === 'light' ? 'classic' : 'dark';
+      vditor.setTheme(vditorTheme, vditorTheme);
+    }
+    
+    function getThemeName(theme) {
+      const names = { 'light': '浅雪白', 'dark': '深海蓝', 'eyecare': '护眼黄', 'purple': '紫夜' };
+      return names[theme] || '浅雪白';
+    }
+    
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+      if (savedTheme !== 'light') {
+        document.body.setAttribute('data-theme', savedTheme);
+        currentTheme = savedTheme;
+        document.querySelectorAll('.theme-option').forEach(option => {
+          option.classList.remove('active');
+          if (option.dataset.theme === savedTheme) {
+            option.classList.add('active');
+          }
+        });
+      }
+    }
     
     // 初始化编辑器
     function initEditor() {
       const container = document.getElementById('vditor-container');
       
-      // 检查Vditor是否加载
       if (typeof Vditor === 'undefined') {
         container.innerHTML = `
           <div class="error-message">
@@ -452,11 +695,13 @@
       }
       
       try {
+        const vditorTheme = currentTheme === 'light' ? 'classic' : 'dark';
+        
         vditor = new Vditor('vditor-container', {
           height: '100%',
           mode: 'ir',
           placeholder: '开始编写 Markdown...',
-          theme: 'classic',
+          theme: vditorTheme,
           icon: 'material',
           toolbar: [
             'emoji', 'headings', 'bold', 'italic', 'strike', '|',
@@ -479,14 +724,12 @@
           },
           after: function() {
             isInitialized = true;
-            // 设置默认内容
             const defaultContent = '# 欢迎使用 Markdown 编辑器\n\n开始编写你的文章...';
             const savedContent = localStorage.getItem('vditor-markdown-content');
             vditor.setValue(savedContent || defaultContent);
             updatePreview();
           },
           input: function(value) {
-            // 保存到本地存储
             localStorage.setItem('vditor-markdown-content', value);
             updatePreview();
           },
@@ -514,23 +757,22 @@
         const markdown = vditor.getValue();
         if (!markdown) {
           document.getElementById('preview').innerHTML = `
-            <div style="color: #999; text-align: center; padding-top: 50px;">
+            <div style="color: var(--text-secondary); text-align: center; padding-top: 50px;">
               在左侧编辑器输入内容，此处将显示预览
             </div>
           `;
           return;
         }
         
-        // 使用Vditor的markdown渲染
         Vditor.md2html(markdown, {
           mode: 'ir',
-          theme: 'classic'
+          theme: currentTheme === 'light' ? 'classic' : 'dark'
         }).then(html => {
           document.getElementById('preview').innerHTML = applyPlatformStyles(html, currentPlatform);
         }).catch(err => {
           console.error('Preview error:', err);
           document.getElementById('preview').innerHTML = `
-            <div style="color: #999; text-align: center; padding-top: 50px;">
+            <div style="color: var(--text-secondary); text-align: center; padding-top: 50px;">
               预览生成失败，请检查内容格式
             </div>
           `;
@@ -548,7 +790,6 @@
       const temp = document.createElement('div');
       temp.innerHTML = html;
       
-      // 应用样式
       temp.querySelectorAll('h1').forEach(el => el.style.cssText = styles.h1);
       temp.querySelectorAll('h2').forEach(el => el.style.cssText = styles.h2);
       temp.querySelectorAll('h3').forEach(el => el.style.cssText = styles.h3);
@@ -656,8 +897,12 @@
     
     // 页面加载完成后初始化
     if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initEditor);
+      document.addEventListener('DOMContentLoaded', () => {
+        loadSavedTheme();
+        initEditor();
+      });
     } else {
+      loadSavedTheme();
       initEditor();
     }
     
@@ -668,6 +913,14 @@
         e.target.classList.add('active');
         currentPlatform = e.target.dataset.platform;
         updatePreview();
+      }
+    });
+    
+    // 点击外部关闭下拉菜单
+    document.addEventListener('click', (e) => {
+      const themeSwitcher = document.querySelector('.theme-switcher');
+      if (themeSwitcher && !themeSwitcher.contains(e.target)) {
+        closeThemeDropdown();
       }
     });
     
