@@ -34,7 +34,7 @@
   <header class="post-header">
     <h1 class="post-title" itemprop="name headline"></h1>
     <div class="post-meta">
-      <time class="post-time" itemprop="datePublished" datetime="2026-03-23T12:53:36.974Z" content="2026-03-23">
+      <time class="post-time" itemprop="datePublished" datetime="2026-03-23T13:14:36.569Z" content="2026-03-23">
         2026-03-23
       </time>
       
@@ -53,13 +53,16 @@
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
-    body {
+    html, body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       background: #f5f5f5;
-      height: 100vh;
+      height: 100%;
+      overflow: hidden;
+    }
+    
+    body {
       display: flex;
       flex-direction: column;
-      overflow: hidden;
     }
     
     /* 顶部工具栏 */
@@ -71,12 +74,15 @@
       align-items: center;
       gap: 12px;
       flex-shrink: 0;
+      min-height: 52px;
     }
     
     .toolbar-left {
       display: flex;
       align-items: center;
       gap: 12px;
+      flex: 1;
+      min-width: 0;
     }
     
     .logo {
@@ -86,6 +92,7 @@
       font-weight: 600;
       color: #333;
       text-decoration: none;
+      flex-shrink: 0;
     }
     
     .logo svg {
@@ -97,11 +104,13 @@
       width: 1px;
       height: 20px;
       background: #e0e0e0;
+      flex-shrink: 0;
     }
     
     .platform-select {
       display: flex;
       gap: 6px;
+      flex-wrap: wrap;
     }
     
     .platform-btn {
@@ -112,6 +121,7 @@
       font-size: 13px;
       cursor: pointer;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     
     .platform-btn:hover {
@@ -126,9 +136,9 @@
     }
     
     .toolbar-right {
-      margin-left: auto;
       display: flex;
       gap: 8px;
+      flex-shrink: 0;
     }
     
     .tool-btn {
@@ -142,6 +152,7 @@
       align-items: center;
       gap: 4px;
       transition: all 0.2s;
+      white-space: nowrap;
     }
     
     .tool-btn:hover {
@@ -152,6 +163,7 @@
     .tool-btn svg {
       width: 14px;
       height: 14px;
+      flex-shrink: 0;
     }
     
     /* 主编辑区 */
@@ -161,6 +173,7 @@
       grid-template-columns: 1fr 1fr;
       gap: 1px;
       background: #e0e0e0;
+      min-height: 0;
       overflow: hidden;
     }
     
@@ -168,6 +181,7 @@
       background: #fff;
       display: flex;
       flex-direction: column;
+      min-height: 0;
       overflow: hidden;
     }
     
@@ -180,6 +194,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      flex-shrink: 0;
     }
     
     .panel-title {
@@ -188,9 +203,27 @@
       gap: 6px;
     }
     
-    #vditor {
+    /* Vditor容器 */
+    #vditor-container {
       flex: 1;
-      overflow: auto;
+      min-height: 0;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    /* 确保Vditor正确显示 */
+    .vditor {
+      height: 100% !important;
+      border: none !important;
+    }
+    
+    .vditor-content {
+      height: 100% !important;
+    }
+    
+    .vditor-ir {
+      height: 100% !important;
+      overflow: auto !important;
     }
     
     .preview-content {
@@ -199,6 +232,7 @@
       overflow: auto;
       font-size: 14px;
       line-height: 1.8;
+      min-height: 0;
     }
     
     /* 响应式 */
@@ -208,12 +242,18 @@
         grid-template-rows: 1fr 1fr;
       }
       
-      .platform-select {
-        flex-wrap: wrap;
-      }
-      
       .toolbar {
         flex-wrap: wrap;
+        height: auto;
+      }
+      
+      .toolbar-left {
+        width: 100%;
+      }
+      
+      .toolbar-right {
+        width: 100%;
+        justify-content: flex-end;
       }
     }
     
@@ -230,12 +270,46 @@
       font-size: 13px;
       opacity: 0;
       transition: all 0.3s;
-      z-index: 1000;
+      z-index: 10000;
+      pointer-events: none;
     }
     
     .toast.show {
       transform: translateX(-50%) translateY(0);
       opacity: 1;
+    }
+    
+    /* 加载状态 */
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #999;
+      font-size: 14px;
+    }
+    
+    /* 错误提示 */
+    .error-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #666;
+      font-size: 14px;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    .error-message button {
+      margin-top: 12px;
+      padding: 8px 16px;
+      border: 1px solid #1976d2;
+      background: #1976d2;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -298,7 +372,9 @@
           Markdown
         </div>
       </div>
-      <div id="vditor"></div>
+      <div id="vditor-container">
+        <div class="loading">正在加载编辑器...</div>
+      </div>
     </div>
     <div class="preview-panel">
       <div class="panel-header">
@@ -313,7 +389,11 @@
           复制HTML
         </button>
       </div>
-      <div id="preview" class="preview-content"></div>
+      <div id="preview" class="preview-content">
+        <div style="color: #999; text-align: center; padding-top: 50px;">
+          在左侧编辑器输入内容，此处将显示预览
+        </div>
+      </div>
     </div>
   </div>
 
@@ -322,9 +402,12 @@
 
   <script src="https://cdn.jsdelivr.net/npm/vditor@3.10.4/dist/index.min.js"></script>
   <script>
-    let vditor;
+    // 全局变量
+    let vditor = null;
     let currentPlatform = 'default';
+    let isInitialized = false;
     
+    // 平台样式配置
     const platformStyles = {
       default: {
         h1: 'font-size: 2em; font-weight: bold; margin: 0.67em 0;',
@@ -368,52 +451,119 @@
       }
     };
     
-    document.addEventListener('DOMContentLoaded', function() {
-      vditor = new Vditor('vditor', {
-        height: '100%',
-        mode: 'ir',
-        placeholder: '开始编写 Markdown...',
-        theme: 'classic',
-        icon: 'material',
-        toolbar: [
-          'emoji', 'headings', 'bold', 'italic', 'strike', '|',
-          'line', 'quote', 'list', 'ordered-list', 'check', '|',
-          'code', 'inline-code', 'link', 'table', '|',
-          'undo', 'redo', '|',
-          'fullscreen'
-        ],
-        toolbarConfig: { pin: true },
-        cache: { enable: true, id: 'markdown-editor-cache' },
-        after: function() {
-          vditor.setValue('# 欢迎使用 Markdown 编辑器\n\n开始编写你的文章...');
-          updatePreview();
-        },
-        input: function() {
-          updatePreview();
-        }
-      });
+    // 初始化编辑器
+    function initEditor() {
+      const container = document.getElementById('vditor-container');
       
-      document.querySelectorAll('.platform-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-          document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
-          this.classList.add('active');
-          currentPlatform = this.dataset.platform;
-          updatePreview();
+      // 检查Vditor是否加载
+      if (typeof Vditor === 'undefined') {
+        container.innerHTML = `
+          <div class="error-message">
+            <div>编辑器加载失败</div>
+            <button onclick="location.reload()">重新加载</button>
+          </div>
+        `;
+        return;
+      }
+      
+      try {
+        vditor = new Vditor('vditor-container', {
+          height: '100%',
+          mode: 'ir',
+          placeholder: '开始编写 Markdown...',
+          theme: 'classic',
+          icon: 'material',
+          toolbar: [
+            'emoji', 'headings', 'bold', 'italic', 'strike', '|',
+            'line', 'quote', 'list', 'ordered-list', 'check', '|',
+            'code', 'inline-code', 'link', 'table', '|',
+            'undo', 'redo', '|',
+            'fullscreen'
+          ],
+          toolbarConfig: { 
+            pin: true,
+            hide: false
+          },
+          cache: { 
+            enable: true, 
+            id: 'markdown-editor-cache-' + location.pathname 
+          },
+          preview: {
+            delay: 500,
+            show: false
+          },
+          after: function() {
+            isInitialized = true;
+            // 设置默认内容
+            const defaultContent = '# 欢迎使用 Markdown 编辑器\n\n开始编写你的文章...';
+            const savedContent = localStorage.getItem('vditor-markdown-content');
+            vditor.setValue(savedContent || defaultContent);
+            updatePreview();
+          },
+          input: function(value) {
+            // 保存到本地存储
+            localStorage.setItem('vditor-markdown-content', value);
+            updatePreview();
+          },
+          error: function(error) {
+            console.error('Vditor error:', error);
+            showToast('编辑器出现错误，请刷新页面重试');
+          }
         });
-      });
-    });
-    
-    function updatePreview() {
-      if (!vditor) return;
-      const markdown = vditor.getValue();
-      const html = vditor.exportHTML(markdown);
-      document.getElementById('preview').innerHTML = applyPlatformStyles(html, currentPlatform);
+      } catch (error) {
+        console.error('Failed to initialize Vditor:', error);
+        container.innerHTML = `
+          <div class="error-message">
+            <div>编辑器初始化失败: ${error.message}</div>
+            <button onclick="location.reload()">重新加载</button>
+          </div>
+        `;
+      }
     }
     
+    // 更新预览
+    function updatePreview() {
+      if (!vditor || !isInitialized) return;
+      
+      try {
+        const markdown = vditor.getValue();
+        if (!markdown) {
+          document.getElementById('preview').innerHTML = `
+            <div style="color: #999; text-align: center; padding-top: 50px;">
+              在左侧编辑器输入内容，此处将显示预览
+            </div>
+          `;
+          return;
+        }
+        
+        // 使用Vditor的markdown渲染
+        Vditor.md2html(markdown, {
+          mode: 'ir',
+          theme: 'classic'
+        }).then(html => {
+          document.getElementById('preview').innerHTML = applyPlatformStyles(html, currentPlatform);
+        }).catch(err => {
+          console.error('Preview error:', err);
+          document.getElementById('preview').innerHTML = `
+            <div style="color: #999; text-align: center; padding-top: 50px;">
+              预览生成失败，请检查内容格式
+            </div>
+          `;
+        });
+      } catch (error) {
+        console.error('Update preview error:', error);
+      }
+    }
+    
+    // 应用平台样式
     function applyPlatformStyles(html, platform) {
+      if (!html) return html;
+      
       const styles = platformStyles[platform] || platformStyles.default;
       const temp = document.createElement('div');
       temp.innerHTML = html;
+      
+      // 应用样式
       temp.querySelectorAll('h1').forEach(el => el.style.cssText = styles.h1);
       temp.querySelectorAll('h2').forEach(el => el.style.cssText = styles.h2);
       temp.querySelectorAll('h3').forEach(el => el.style.cssText = styles.h3);
@@ -423,48 +573,129 @@
         el.querySelectorAll('code').forEach(code => code.style.cssText = '');
       });
       temp.querySelectorAll('blockquote').forEach(el => el.style.cssText = styles.blockquote);
+      
       return temp.innerHTML;
     }
     
+    // 复制内容
     function copyContent() {
-      if (!vditor) return;
-      navigator.clipboard.writeText(vditor.getValue()).then(() => {
+      if (!vditor || !isInitialized) {
+        showToast('编辑器尚未准备好');
+        return;
+      }
+      
+      const content = vditor.getValue();
+      if (!content || content.trim() === '') {
+        showToast('没有可复制的内容');
+        return;
+      }
+      
+      navigator.clipboard.writeText(content).then(() => {
         showToast('已复制到剪贴板');
+      }).catch(() => {
+        showToast('复制失败，请手动复制');
       });
     }
     
+    // 复制HTML
     function copyHtml() {
-      navigator.clipboard.writeText(document.getElementById('preview').innerHTML).then(() => {
+      const preview = document.getElementById('preview');
+      if (!preview || preview.innerText.trim() === '' || preview.innerText.includes('在左侧编辑器输入内容')) {
+        showToast('没有可复制的HTML内容');
+        return;
+      }
+      
+      navigator.clipboard.writeText(preview.innerHTML).then(() => {
         showToast('HTML已复制');
+      }).catch(() => {
+        showToast('复制失败，请手动复制');
       });
     }
     
+    // 下载Markdown
     function downloadMarkdown() {
-      if (!vditor) return;
-      const blob = new Blob([vditor.getValue()], { type: 'text/markdown' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'article.md';
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast('文件已下载');
+      if (!vditor || !isInitialized) {
+        showToast('编辑器尚未准备好');
+        return;
+      }
+      
+      const content = vditor.getValue();
+      if (!content || content.trim() === '') {
+        showToast('没有可下载的内容');
+        return;
+      }
+      
+      try {
+        const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'article-' + new Date().toISOString().slice(0, 10) + '.md';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('文件已下载');
+      } catch (error) {
+        showToast('下载失败: ' + error.message);
+      }
     }
     
+    // 清空内容
     function clearContent() {
-      if (!vditor) return;
-      if (confirm('确定要清空所有内容吗？')) {
+      if (!vditor || !isInitialized) {
+        showToast('编辑器尚未准备好');
+        return;
+      }
+      
+      if (confirm('确定要清空所有内容吗？此操作不可恢复。')) {
         vditor.setValue('');
+        localStorage.removeItem('vditor-markdown-content');
+        updatePreview();
         showToast('内容已清空');
       }
     }
     
+    // 显示提示
     function showToast(message) {
       const toast = document.getElementById('toast');
+      if (!toast) return;
+      
       toast.textContent = message;
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2000);
+      
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
     }
+    
+    // 页面加载完成后初始化
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initEditor);
+    } else {
+      initEditor();
+    }
+    
+    // 平台切换事件
+    document.addEventListener('click', function(e) {
+      if (e.target.classList.contains('platform-btn')) {
+        document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+        e.target.classList.add('active');
+        currentPlatform = e.target.dataset.platform;
+        updatePreview();
+      }
+    });
+    
+    // 窗口大小改变时重新调整
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(function() {
+        if (vditor && isInitialized) {
+          vditor.resize();
+        }
+      }, 250);
+    });
   </script>
 </body>
 </html>
@@ -695,15 +926,15 @@
           
           <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li>
           
+          <li><a href="/categories/Python/AI/">AI</a></li>
+          
+          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">部署指南</a></li>
+          
           <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/">项目开发</a></li>
           
           <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
           
-          <li><a href="/categories/Python/AI/">AI</a></li>
-          
           <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
-          
-          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">部署指南</a></li>
           
           <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/">前端技术</a></li>
           
@@ -724,9 +955,9 @@
           
           <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
           
-          <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
-          
           <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
+          
+          <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
           
           <li><a href="/2026/03/17/markdown-publisher-dev-log/">Markdown多平台发布工具开发记录</a></li>
           
