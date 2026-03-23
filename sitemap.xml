@@ -56,7 +56,7 @@
     <priority>0.7</priority>
   </url>
   
-  <!-- 法律页面 -->
+  <!-- 法律和政策页面 -->
   <url>
     <loc>https://limuheshua.github.io/tools/privacy.html</loc>
     <lastmod>2026-03-24</lastmod>
@@ -99,10 +99,56 @@
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
+  
+  <!-- 联系页面 -->
   <url>
     <loc>https://limuheshua.github.io/tools/contact.html</loc>
     <lastmod>2026-03-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
+  </url>
+  
+  <!-- 博客文章 -->
+  <url>
+    <loc>https://limuheshua.github.io/2026/02/23/hello-world/</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://limuheshua.github.io/2026/02/23/deepseek-local-deployment/</loc>
+    <lastmod>2026-02-23</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://limuheshua.github.io/2026/02/26/gradio-image-processing-guide/</loc>
+    <lastmod>2026-02-26</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://limuheshua.github.io/2026/03/04/weather-query-tool/</loc>
+    <lastmod>2026-03-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://limuheshua.github.io/2026/03/10/stm32-smart-fan-control-system/</loc>
+    <lastmod>2026-03-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://limuheshua.github.io/2026/03/15/codex-deployment-guide/</loc>
+    <lastmod>2026-03-15</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://limuheshua.github.io/2026/03/17/markdown-publisher-dev-log/</loc>
+    <lastmod>2026-03-17</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
   </url>
 </urlset>
