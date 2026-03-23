@@ -333,107 +333,87 @@ body {
 }
 
 /* ============================================
-   政策链接区域
-   ============================================ */
-.policy-section {
-  background-color: var(--color-bg-tertiary);
-  padding: var(--spacing-2xl) 0;
-  border-top: 1px solid var(--color-border);
-}
-
-.policy-box {
-  background-color: var(--color-bg-primary);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.policy-title {
-  font-size: var(--font-size-lg);
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin-bottom: var(--spacing-lg);
-  text-align: center;
-}
-
-.policy-links {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-md);
-}
-
-.policy-item {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-sm);
-  padding: var(--spacing-sm) 0;
-}
-
-.policy-label {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-secondary);
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.policy-link {
-  font-size: var(--font-size-sm);
-  color: var(--color-blue);
-  text-decoration: none;
-  word-break: break-all;
-  transition: color var(--transition-fast);
-}
-
-.policy-link:hover {
-  color: var(--color-accent);
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-  .policy-links {
-    grid-template-columns: 1fr;
-  }
-  
-  .policy-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: var(--spacing-xs);
-  }
-}
-
-/* ============================================
    页脚
    ============================================ */
 .footer {
   background-color: var(--color-bg-primary);
   border-top: 1px solid var(--color-border);
-  padding: var(--spacing-xl) 0;
+  padding: var(--spacing-lg) 0;
 }
 
 .footer .container {
   text-align: center;
 }
 
-.footer p {
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.copyright {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
+  margin: 0;
 }
 
 .footer-links {
-  margin-top: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .footer-links a {
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   text-decoration: none;
   transition: color var(--transition-fast);
+  position: relative;
+}
+
+.footer-links a::after {
+  content: '|';
+  margin-left: var(--spacing-md);
+  color: var(--color-text-muted);
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.footer-links a:last-child::after {
+  display: none;
 }
 
 .footer-links a:hover {
   color: var(--color-blue);
 }
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-links {
+    justify-content: center;
+  }
+  
+  .footer-links a {
+    font-size: var(--font-size-xs);
+  }
+  
+  .footer-links a::after {
+    margin-left: var(--spacing-sm);
+    right: -8px;
+  }
+}
+
+
 
 /* ============================================
    响应式适配
