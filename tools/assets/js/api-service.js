@@ -213,8 +213,8 @@ class APIService {
    * 发送安全请求
    */
   async secureRequest(method, endpoint, data = null, options = {}) {
-    // 快速安全检查（仅在生产环境启用完整检查）
-    if (process.env.NODE_ENV === 'production') {
+    // 快速安全检查（在非开发环境启用）
+    if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
       const securityCheck = this.performSecurityChecks({ method, endpoint, data, options });
       if (securityCheck.blocked) {
         throw new Error(`Security check failed: ${securityCheck.reason}`);
@@ -237,7 +237,7 @@ class APIService {
     }
 
     // 生成安全请求头
-    const headers = this.generateSecureHeaders(method, endpoint, body);
+    const headers = await this.generateSecureHeaders(method, endpoint, body);
 
     // 请求配置
     const config = {
