@@ -10,7 +10,7 @@ import platformConfig from './platform-config.js';
 class APIService {
   constructor() {
     // API配置 - 使用HTTPS确保TLS加密
-    this.timeout = 15000; // 减少超时时间
+    this.timeout = 30000; // 增加超时时间以处理复杂AI请求
     this.maxRetries = 1; // 减少重试次数
     this.retryDelay = 500; // 减少重试延迟
     
