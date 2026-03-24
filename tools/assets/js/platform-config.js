@@ -13,7 +13,7 @@ class PlatformConfig {
           default: 'deepseek-v3.2',
           options: ['deepseek-v3.2', 'qwen-max', 'qwen-plus']
         },
-        apiKeyPattern: /^sk-\w+$/,
+        apiKeyPattern: /^sk-\w{32}$/,
         headers: {
           'Content-Type': 'application/json'
         },
@@ -34,7 +34,7 @@ class PlatformConfig {
           default: 'deepseek-chat',
           options: ['deepseek-chat', 'deepseek-coder']
         },
-        apiKeyPattern: /^sk-\w+$/,
+        apiKeyPattern: /^sk-\w{40}$/,
         headers: {
           'Content-Type': 'application/json'
         },
@@ -55,7 +55,7 @@ class PlatformConfig {
           default: 'gpt-3.5-turbo',
           options: ['gpt-3.5-turbo', 'gpt-4', 'gpt-4-turbo']
         },
-        apiKeyPattern: /^sk-\w+$/,
+        apiKeyPattern: /^sk-[a-zA-Z0-9-]{20,}$/,
         headers: {
           'Content-Type': 'application/json'
         },
@@ -137,7 +137,11 @@ class PlatformConfig {
    * 检测API密钥所属平台
    */
   detectPlatform(apiKey) {
-    for (const [platform, config] of Object.entries(this.platforms)) {
+    // 按优先级检测，避免模式冲突
+    const detectionOrder = ['anthropic', 'google', 'openai', 'deepseek', 'alibaba'];
+    
+    for (const platform of detectionOrder) {
+      const config = this.platforms[platform];
       if (config.apiKeyPattern.test(apiKey)) {
         return platform;
       }
