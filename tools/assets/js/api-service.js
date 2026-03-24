@@ -9,7 +9,7 @@ import cryptoService from './crypto-service.js';
 class APIService {
   constructor() {
     // API配置 - 使用HTTPS确保TLS加密
-    this.baseURL = 'https://api.deepseek.com/v1';
+    this.baseURL = 'https://dashscope.aliyuncs.com/compatible-mode/v1';
     this.timeout = 30000;
     this.maxRetries = 3;
     this.retryDelay = 1000;
@@ -44,9 +44,13 @@ class APIService {
     if (encryptedKey) {
       try {
         this.apiKey = await cryptoService.decryptAES(encryptedKey);
+        console.log('API key loaded successfully');
       } catch (e) {
         console.error('Failed to decrypt API key:', e);
+        // 清除损坏的密钥
+        sessionStorage.removeItem('encrypted_api_key');
         this.apiKey = null;
+        console.log('Removed corrupted API key from storage');
       }
     }
   }
@@ -59,11 +63,20 @@ class APIService {
     try {
       const encrypted = await cryptoService.encryptAES(key);
       sessionStorage.setItem('encrypted_api_key', encrypted);
+      console.log('API key saved successfully');
       return true;
     } catch (e) {
       console.error('Failed to encrypt API key:', e);
       return false;
     }
+  }
+
+  /**
+   * 直接设置API密钥（用于测试）
+   */
+  setAPIKey(key) {
+    this.apiKey = key;
+    console.log('API key set directly for testing');
   }
 
   /**
@@ -145,6 +158,13 @@ class APIService {
     const url = `${this.baseURL}${endpoint}`;
     const maxRetries = options.maxRetries || this.maxRetries;
     
+    console.log('API Request:', {
+      url,
+      method,
+      data: data ? JSON.stringify(data).substring(0, 100) + '...' : null,
+      hasApiKey: !!this.apiKey
+    });
+    
     // 准备请求体
     let body = null;
     if (data) {
@@ -154,6 +174,10 @@ class APIService {
 
     // 生成安全请求头
     const headers = await this.generateSecureHeaders(method, endpoint, body);
+    console.log('Request Headers:', {
+      'Content-Type': headers['Content-Type'],
+      'Authorization': this.apiKey ? 'Bearer [REDACTED]' : ''
+    });
 
     // 请求配置
     const config = {
@@ -170,7 +194,9 @@ class APIService {
     let lastError;
     for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
+        console.log(`Attempt ${attempt + 1}/${maxRetries}...`);
         const response = await this.fetchWithTimeout(url, config);
+        console.log(`Response status: ${response.status}`);
         
         // 验证响应签名
         const responseSignature = response.headers.get('X-Response-Signature');
@@ -187,6 +213,7 @@ class APIService {
 
         return await this.handleResponse(response);
       } catch (error) {
+        console.error('Request error:', error);
         lastError = error;
         
         // 如果是认证错误，不重试
@@ -196,6 +223,7 @@ class APIService {
         
         // 等待后重试
         if (attempt < maxRetries - 1) {
+          console.log(`Retrying in ${this.retryDelay * Math.pow(2, attempt)}ms...`);
           await this.delay(this.retryDelay * Math.pow(2, attempt));
         }
       }
@@ -232,10 +260,21 @@ class APIService {
    */
   async handleResponse(response) {
     if (!response.ok) {
-      const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
-      error.status = response.status;
-      error.response = response;
-      throw error;
+      // 尝试获取详细错误信息
+      try {
+        const errorData = await response.clone().json();
+        const errorMessage = errorData.error?.message || errorData.message || `${response.status}: ${response.statusText}`;
+        const error = new Error(`HTTP ${response.status}: ${errorMessage}`);
+        error.status = response.status;
+        error.response = response;
+        error.details = errorData;
+        throw error;
+      } catch (e) {
+        const error = new Error(`HTTP ${response.status}: ${response.statusText}`);
+        error.status = response.status;
+        error.response = response;
+        throw error;
+      }
     }
 
     const data = await response.json();
@@ -253,7 +292,7 @@ class APIService {
     if (cached) return cached;
 
     const requestData = {
-      model: 'deepseek-coder',
+      model: 'deepseek-v3.2',
       messages: [
         {
           role: 'system',
@@ -287,7 +326,7 @@ class APIService {
     if (cached) return cached;
 
     const requestData = {
-      model: 'deepseek-coder',
+      model: 'deepseek-v3.2',
       messages: [
         {
           role: 'system',
@@ -318,7 +357,7 @@ class APIService {
     if (cached) return cached;
 
     const requestData = {
-      model: 'deepseek-coder',
+      model: 'deepseek-v3.2',
       messages: [
         {
           role: 'system',
@@ -344,7 +383,7 @@ class APIService {
    */
   async debugCode(code, error, language = 'javascript') {
     const requestData = {
-      model: 'deepseek-coder',
+      model: 'deepseek-v3.2',
       messages: [
         {
           role: 'system',
@@ -373,7 +412,7 @@ class APIService {
     if (cached) return cached;
 
     const requestData = {
-      model: 'deepseek-chat',
+      model: 'deepseek-v3.2',
       messages: [
         {
           role: 'system',
@@ -463,6 +502,114 @@ class APIService {
       return { status: 'healthy', data: response };
     } catch (error) {
       return { status: 'unhealthy', error: error.message };
+    }
+  }
+
+  /**
+   * 测试API密钥
+   */
+  async testAPIKey(apiKey) {
+    console.log('Testing API key...');
+    
+    // 临时设置API密钥
+    const originalApiKey = this.apiKey;
+    this.apiKey = apiKey;
+    
+    try {
+      // 发送一个简单的测试请求
+      const requestData = {
+        model: 'deepseek-v3.2',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant.'
+          },
+          {
+            role: 'user',
+            content: 'Hello, test message'
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 50
+      };
+      
+      const response = await this.secureRequest('POST', '/chat/completions', requestData);
+      console.log('API key test successful:', response);
+      return { success: true, message: 'API密钥测试成功' };
+    } catch (error) {
+      console.error('API key test failed:', error);
+      return { 
+        success: false, 
+        message: `API密钥测试失败: ${error.message}`,
+        error: error
+      };
+    } finally {
+      // 恢复原始API密钥
+      this.apiKey = originalApiKey;
+    }
+  }
+
+  /**
+   * 直接测试API请求（绕过加密存储）
+   */
+  async directAPITest(apiKey, prompt = 'Hello, test message') {
+    console.log('Direct API test...');
+    
+    try {
+      const url = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+      const requestData = {
+        model: 'deepseek-v3.2',
+        messages: [
+          {
+            role: 'system',
+            content: 'You are a helpful assistant.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.7,
+        max_tokens: 50
+      };
+      
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify(requestData)
+      });
+      
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        console.error('API error:', errorData);
+        return { 
+          success: false, 
+          status: response.status,
+          message: errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`,
+          error: errorData
+        };
+      }
+      
+      const data = await response.json();
+      console.log('API response:', data);
+      return { 
+        success: true, 
+        status: response.status,
+        message: 'API请求成功',
+        data: data
+      };
+    } catch (error) {
+      console.error('Direct API test failed:', error);
+      return { 
+        success: false, 
+        message: `请求失败: ${error.message}`,
+        error: error
+      };
     }
   }
 }
