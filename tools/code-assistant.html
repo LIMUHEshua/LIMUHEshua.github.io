@@ -902,11 +902,25 @@
   <div class="modal-overlay" id="settingsModal">
     <div class="modal">
       <h3 class="modal-title">API设置</h3>
-      <p class="modal-desc">请输入您的 DeepSeek API Key，数据将加密存储在本地</p>
-      <input type="password" class="modal-input" id="apiKeyInput" placeholder="sk-...">
+      <p class="modal-desc">请输入您的API Key并选择对应的平台，数据将加密存储在本地</p>
+      <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">
+        <a href="./api-key-tutorial.html" target="_blank" style="color: var(--accent); text-decoration: none;">查看API密钥申请教程</a>
+      </p>
+      <div class="input-group" style="margin-bottom: 16px;">
+        <label class="input-label" style="display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">平台选择</label>
+        <select class="language-select" id="platformSelect" style="width: 100%;">
+          <option value="alibaba">阿里云百炼</option>
+          <option value="deepseek">DeepSeek</option>
+          <option value="openai">OpenAI</option>
+          <option value="google">Google AI</option>
+          <option value="anthropic">Anthropic</option>
+        </select>
+      </div>
+      <input type="password" class="modal-input" id="apiKeyInput" placeholder="API Key">
       <div class="modal-actions">
         <button class="btn-secondary" onclick="closeSettings()">取消</button>
         <button class="btn-primary" onclick="saveSettings()">保存</button>
+        <button class="btn-secondary" onclick="detectPlatform()">自动检测</button>
       </div>
     </div>
   </div>
@@ -917,6 +931,7 @@
     import apiService from './assets/js/api-service.js';
     import storageService from './assets/js/storage-service.js';
     import cryptoService from './assets/js/crypto-service.js';
+    import platformConfig from './assets/js/platform-config.js';
 
     // 全局状态
     let currentMode = 'generate';
@@ -1206,14 +1221,33 @@
     // 保存设置
     window.saveSettings = async () => {
       const apiKey = document.getElementById('apiKeyInput').value.trim();
+      const platform = document.getElementById('platformSelect').value;
+      
       if (!apiKey) {
         showToast('请输入API Key', 'error');
         return;
       }
       
-      await apiService.saveAPIKey(apiKey);
+      await apiService.saveAPIKey(apiKey, platform);
       closeSettings();
       showToast('设置已保存', 'success');
+    };
+    
+    // 自动检测平台
+    window.detectPlatform = () => {
+      const apiKey = document.getElementById('apiKeyInput').value.trim();
+      if (!apiKey) {
+        showToast('请先输入API Key', 'error');
+        return;
+      }
+      
+      const detectedPlatform = platformConfig.detectPlatform(apiKey);
+      if (detectedPlatform) {
+        document.getElementById('platformSelect').value = detectedPlatform;
+        showToast(`已自动检测到平台: ${platformConfig.getPlatformConfig(detectedPlatform).name}`, 'success');
+      } else {
+        showToast('无法自动检测平台，请手动选择', 'error');
+      }
     };
 
     // 显示Toast

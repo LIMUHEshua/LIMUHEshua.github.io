@@ -5,17 +5,18 @@
  */
 
 import cryptoService from './crypto-service.js';
+import platformConfig from './platform-config.js';
 
 class APIService {
   constructor() {
     // API配置 - 使用HTTPS确保TLS加密
-    this.baseURL = 'https://dashscope.aliyuncs.com/compatible-mode/v1';
     this.timeout = 30000;
     this.maxRetries = 3;
     this.retryDelay = 1000;
     
-    // 密钥管理
+    // 密钥和平台管理
     this.apiKey = null;
+    this.platform = 'alibaba'; // 默认平台
     this.keyRotationEnabled = true;
     
     // 请求队列和缓存
@@ -36,34 +37,39 @@ class APIService {
   }
 
   /**
-   * 加载API密钥（加密存储）
+   * 加载API密钥和平台配置（加密存储）
    */
   async loadAPIKey() {
     // 从安全存储获取加密的API密钥
     const encryptedKey = sessionStorage.getItem('encrypted_api_key');
     if (encryptedKey) {
       try {
-        this.apiKey = await cryptoService.decryptAES(encryptedKey);
-        console.log('API key loaded successfully');
+        const storedData = JSON.parse(await cryptoService.decryptAES(encryptedKey));
+        this.apiKey = storedData.apiKey;
+        this.platform = storedData.platform || 'alibaba';
+        console.log('API key and platform loaded successfully');
       } catch (e) {
         console.error('Failed to decrypt API key:', e);
         // 清除损坏的密钥
         sessionStorage.removeItem('encrypted_api_key');
         this.apiKey = null;
+        this.platform = 'alibaba';
         console.log('Removed corrupted API key from storage');
       }
     }
   }
 
   /**
-   * 安全保存API密钥
+   * 安全保存API密钥和平台配置
    */
-  async saveAPIKey(key) {
+  async saveAPIKey(key, platform = 'alibaba') {
     this.apiKey = key;
+    this.platform = platform;
     try {
-      const encrypted = await cryptoService.encryptAES(key);
+      const dataToStore = JSON.stringify({ apiKey: key, platform: platform });
+      const encrypted = await cryptoService.encryptAES(dataToStore);
       sessionStorage.setItem('encrypted_api_key', encrypted);
-      console.log('API key saved successfully');
+      console.log('API key and platform saved successfully');
       return true;
     } catch (e) {
       console.error('Failed to encrypt API key:', e);
@@ -72,18 +78,20 @@ class APIService {
   }
 
   /**
-   * 直接设置API密钥（用于测试）
+   * 直接设置API密钥和平台（用于测试）
    */
-  setAPIKey(key) {
+  setAPIKey(key, platform = 'alibaba') {
     this.apiKey = key;
-    console.log('API key set directly for testing');
+    this.platform = platform;
+    console.log(`API key set directly for testing on platform: ${platform}`);
   }
 
   /**
-   * 清除API密钥
+   * 清除API密钥和平台配置
    */
   clearAPIKey() {
     this.apiKey = null;
+    this.platform = 'alibaba';
     sessionStorage.removeItem('encrypted_api_key');
   }
 
@@ -124,13 +132,15 @@ class APIService {
       body
     );
 
+    // 获取平台特定的认证头
+    const platformHeaders = platformConfig.getAuthHeaders(this.platform, this.apiKey);
+
     return {
-      'Content-Type': 'application/json',
+      ...platformHeaders,
       'X-Request-Timestamp': timestamp,
       'X-Request-Nonce': nonce,
       'X-Request-Signature': signature,
-      'X-Key-Version': cryptoService.keyVersion,
-      'Authorization': this.apiKey ? `Bearer ${this.apiKey}` : ''
+      'X-Key-Version': cryptoService.keyVersion
     };
   }
 
@@ -155,12 +165,18 @@ class APIService {
    * 发送安全请求
    */
   async secureRequest(method, endpoint, data = null, options = {}) {
-    const url = `${this.baseURL}${endpoint}`;
+    // 根据平台配置获取API端点URL
+    const url = platformConfig.getEndpointUrl(this.platform, endpoint, options.model);
+    if (!url) {
+      throw new Error(`Invalid endpoint for platform ${this.platform}: ${endpoint}`);
+    }
+    
     const maxRetries = options.maxRetries || this.maxRetries;
     
     console.log('API Request:', {
       url,
       method,
+      platform: this.platform,
       data: data ? JSON.stringify(data).substring(0, 100) + '...' : null,
       hasApiKey: !!this.apiKey
     });
@@ -291,8 +307,9 @@ class APIService {
     const cached = this.getCachedResponse(cacheKey);
     if (cached) return cached;
 
+    const model = platformConfig.getDefaultModel(this.platform);
     const requestData = {
-      model: 'deepseek-v3.2',
+      model: model,
       messages: [
         {
           role: 'system',
@@ -308,7 +325,7 @@ class APIService {
       stream: false
     };
 
-    const response = await this.secureRequest('POST', '/chat/completions', requestData);
+    const response = await this.secureRequest('POST', 'chat', requestData, { model });
     
     // 缓存响应
     this.cacheResponse(cacheKey, response);
@@ -325,8 +342,9 @@ class APIService {
     const cached = this.getCachedResponse(cacheKey);
     if (cached) return cached;
 
+    const model = platformConfig.getDefaultModel(this.platform);
     const requestData = {
-      model: 'deepseek-v3.2',
+      model: model,
       messages: [
         {
           role: 'system',
@@ -341,7 +359,7 @@ class APIService {
       max_tokens: 2000
     };
 
-    const response = await this.secureRequest('POST', '/chat/completions', requestData);
+    const response = await this.secureRequest('POST', 'chat', requestData, { model });
     this.cacheResponse(cacheKey, response);
     
     return response.choices[0].message.content;
@@ -356,8 +374,9 @@ class APIService {
     const cached = this.getCachedResponse(cacheKey);
     if (cached) return cached;
 
+    const model = platformConfig.getDefaultModel(this.platform);
     const requestData = {
-      model: 'deepseek-v3.2',
+      model: model,
       messages: [
         {
           role: 'system',
@@ -372,7 +391,7 @@ class APIService {
       max_tokens: 2000
     };
 
-    const response = await this.secureRequest('POST', '/chat/completions', requestData);
+    const response = await this.secureRequest('POST', 'chat', requestData, { model });
     this.cacheResponse(cacheKey, response);
     
     return response.choices[0].message.content;
@@ -382,8 +401,9 @@ class APIService {
    * 调试助手API
    */
   async debugCode(code, error, language = 'javascript') {
+    const model = platformConfig.getDefaultModel(this.platform);
     const requestData = {
-      model: 'deepseek-v3.2',
+      model: model,
       messages: [
         {
           role: 'system',
@@ -398,7 +418,7 @@ class APIService {
       max_tokens: 2000
     };
 
-    const response = await this.secureRequest('POST', '/chat/completions', requestData);
+    const response = await this.secureRequest('POST', 'chat', requestData, { model });
     return response.choices[0].message.content;
   }
 
@@ -411,8 +431,9 @@ class APIService {
     const cached = this.getCachedResponse(cacheKey);
     if (cached) return cached;
 
+    const model = platformConfig.getDefaultModel(this.platform);
     const requestData = {
-      model: 'deepseek-v3.2',
+      model: model,
       messages: [
         {
           role: 'system',
@@ -427,7 +448,7 @@ class APIService {
       max_tokens: 1500
     };
 
-    const response = await this.secureRequest('POST', '/chat/completions', requestData);
+    const response = await this.secureRequest('POST', 'chat', requestData, { model });
     this.cacheResponse(cacheKey, response);
     
     return response.choices[0].message.content;
@@ -517,8 +538,9 @@ class APIService {
     
     try {
       // 发送一个简单的测试请求
+      const model = platformConfig.getDefaultModel(this.platform);
       const requestData = {
-        model: 'deepseek-v3.2',
+        model: model,
         messages: [
           {
             role: 'system',
@@ -533,7 +555,7 @@ class APIService {
         max_tokens: 50
       };
       
-      const response = await this.secureRequest('POST', '/chat/completions', requestData);
+      const response = await this.secureRequest('POST', 'chat', requestData, { model });
       console.log('API key test successful:', response);
       return { success: true, message: 'API密钥测试成功' };
     } catch (error) {
@@ -552,13 +574,16 @@ class APIService {
   /**
    * 直接测试API请求（绕过加密存储）
    */
-  async directAPITest(apiKey, prompt = 'Hello, test message') {
+  async directAPITest(apiKey, platform = 'alibaba', prompt = 'Hello, test message') {
     console.log('Direct API test...');
     
     try {
-      const url = 'https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions';
+      const model = platformConfig.getDefaultModel(platform);
+      const url = platformConfig.getEndpointUrl(platform, 'chat', model);
+      const headers = platformConfig.getAuthHeaders(platform, apiKey);
+      
       const requestData = {
-        model: 'deepseek-v3.2',
+        model: model,
         messages: [
           {
             role: 'system',
@@ -575,10 +600,7 @@ class APIService {
       
       const response = await fetch(url, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
+        headers: headers,
         body: JSON.stringify(requestData)
       });
       
