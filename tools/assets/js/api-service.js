@@ -96,6 +96,31 @@ class APIService {
   }
 
   /**
+   * 执行安全检查
+   */
+  performSecurityChecks(request) {
+    if (typeof securityService === 'undefined') {
+      return { blocked: false };
+    }
+
+    const userAgent = navigator.userAgent;
+    const headers = {
+      'user-agent': userAgent,
+      'x-forwarded-for': '127.0.0.1' // 在实际应用中，这会从请求头中获取
+    };
+
+    const behavior = {
+      pageNavSpeed: 1000, // 模拟正常的页面导航速度
+      mouseMovement: true, // 模拟有鼠标移动
+      scroll: true, // 模拟有滚动行为
+      clickPattern: 'human', // 模拟人类点击模式
+      screenSize: `${window.screen.width}x${window.screen.height}`
+    };
+
+    return securityService.performSecurityChecks(request, userAgent, headers, behavior);
+  }
+
+  /**
    * 启动密钥轮换定时器
    */
   startKeyRotationTimer() {
@@ -165,6 +190,12 @@ class APIService {
    * 发送安全请求
    */
   async secureRequest(method, endpoint, data = null, options = {}) {
+    // 执行安全检查
+    const securityCheck = this.performSecurityChecks({ method, endpoint, data, options });
+    if (securityCheck.blocked) {
+      throw new Error(`Security check failed: ${securityCheck.reason}`);
+    }
+
     // 根据平台配置获取API端点URL
     const url = platformConfig.getEndpointUrl(this.platform, endpoint, options.model);
     if (!url) {
