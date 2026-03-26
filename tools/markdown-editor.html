@@ -1,671 +1,286 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Markdown编辑器</title>
-  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vditor@3.10.4/dist/index.css">
-  <style>
-    /* ============================================
-       主题颜色方案定义
-       ============================================ */
-    
-    /* 浅色主题 (默认) - Light Frost */
-    :root {
-      --bg-primary: #f5f5f5;
-      --bg-secondary: #ffffff;
-      --bg-tertiary: #fafafa;
-      --accent: #1976d2;
-      --accent-hover: #1565c0;
-      --text-primary: #333333;
-      --text-secondary: #666666;
-      --border: #e0e0e0;
-      --success: #4caf50;
-      --warning: #ff9800;
-      --error: #f44336;
-      --vditor-bg: #ffffff;
-      --vditor-toolbar: #f5f5f5;
-    }
-    
-    /* 深色主题 - Deep Ocean */
-    [data-theme="dark"] {
-      --bg-primary: #1a1a2e;
-      --bg-secondary: #16213e;
-      --bg-tertiary: #0f3460;
-      --accent: #e94560;
-      --accent-hover: #ff6b6b;
-      --text-primary: #eaeaea;
-      --text-secondary: #a0a0a0;
-      --border: #2d3748;
-      --success: #48bb78;
-      --warning: #ed8936;
-      --error: #f56565;
-      --vditor-bg: #1a1a2e;
-      --vditor-toolbar: #16213e;
-    }
-    
-
-    
-    /* 紫夜主题 - Purple Night */
-    [data-theme="purple"] {
-      --bg-primary: #1a1b2e;
-      --bg-secondary: #252642;
-      --bg-tertiary: #2d2e4f;
-      --accent: #a855f7;
-      --accent-hover: #c084fc;
-      --text-primary: #f3f4f6;
-      --text-secondary: #9ca3af;
-      --border: #374151;
-      --success: #22c55e;
-      --warning: #f97316;
-      --error: #ef4444;
-      --vditor-bg: #1a1b2e;
-      --vditor-toolbar: #252642;
-    }
-
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    
-    html, body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      height: 100vh;
-      width: 100vw;
-      overflow: hidden;
-      transition: background-color 0.4s ease, color 0.4s ease;
-    }
-    
-    /* 全屏容器 */
-    .editor-fullscreen {
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      width: 100vw;
-    }
-    
-    /* 顶部工具栏 */
-    .toolbar {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-      padding: 8px 16px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-shrink: 0;
-      height: 50px;
-      min-height: 50px;
-      transition: all 0.4s ease;
-    }
-    
-    .toolbar-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex: 1;
-      min-width: 0;
-    }
-    
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-weight: 600;
-      color: var(--text-primary);
-      text-decoration: none;
-      flex-shrink: 0;
-      font-size: 14px;
-    }
-    
-    .logo svg {
-      width: 18px;
-      height: 18px;
-    }
-    
-    .divider {
-      width: 1px;
-      height: 20px;
-      background: var(--border);
-      flex-shrink: 0;
-      transition: background-color 0.4s ease;
-    }
-    
-    .platform-select {
-      display: flex;
-      gap: 4px;
-      flex-wrap: wrap;
-    }
-    
-    .platform-btn {
-      padding: 5px 10px;
-      border: 1px solid var(--border);
-      background: var(--bg-secondary);
-      border-radius: 4px;
-      font-size: 12px;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-      color: var(--text-secondary);
-    }
-    
-    .platform-btn:hover {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-    
-    .platform-btn.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #fff;
-    }
-    
-    .toolbar-right {
-      display: flex;
-      gap: 6px;
-      flex-shrink: 0;
-      align-items: center;
-    }
-    
-    .tool-btn, .theme-btn {
-      padding: 5px 10px;
-      border: 1px solid var(--border);
-      background: var(--bg-secondary);
-      border-radius: 4px;
-      font-size: 12px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-      transition: all 0.2s;
-      white-space: nowrap;
-      color: var(--text-secondary);
-    }
-    
-    .tool-btn:hover, .theme-btn:hover {
-      background: var(--bg-tertiary);
-      border-color: var(--accent);
-      color: var(--text-primary);
-    }
-    
-    .tool-btn svg, .theme-btn svg {
-      width: 14px;
-      height: 14px;
-      flex-shrink: 0;
-    }
-    
-    /* 主题切换器 */
-    .theme-switcher {
-      position: relative;
-    }
-    
-    .theme-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 8px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px;
-      min-width: 120px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: all 0.2s;
-      z-index: 10000;
-    }
-    
-    .theme-dropdown.show {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-    
-    .theme-option {
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text-secondary);
-      font-size: 12px;
-    }
-    
-    .theme-option:hover {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-    }
-    
-    .theme-option.active {
-      background: var(--accent);
-      color: white;
-    }
-    
-    /* 主编辑区 */
-    .main-container {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1px;
-      background: var(--border);
-      min-height: 0;
-      overflow: hidden;
-      transition: background-color 0.4s ease;
-    }
-    
-    .editor-panel, .preview-panel {
-      background: var(--bg-secondary);
-      display: flex;
-      flex-direction: column;
-      min-height: 0;
-      overflow: hidden;
-      height: 100%;
-      transition: background-color 0.4s ease;
-    }
-    
-    .panel-header {
-      padding: 6px 12px;
-      background: var(--bg-tertiary);
-      border-bottom: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--text-secondary);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-shrink: 0;
-      height: 36px;
-      transition: all 0.4s ease;
-    }
-    
-    .panel-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    
-    /* Vditor容器 */
-    #vditor-container {
-      flex: 1;
-      min-height: 0;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    /* Vditor主题适配 */
-    .vditor {
-      height: 100% !important;
-      border: none !important;
-      position: relative;
-      background: var(--vditor-bg) !important;
-      transition: background-color 0.4s ease;
-    }
-    
-    .vditor-content {
-      height: 100% !important;
-    }
-    
-    .vditor-ir {
-      height: 100% !important;
-      overflow: auto !important;
-      position: relative;
-      background: var(--vditor-bg) !important;
-      color: var(--text-primary) !important;
-      transition: all 0.4s ease;
-    }
-    
-    .vditor-toolbar {
-      position: relative;
-      z-index: 10;
-      background: var(--vditor-toolbar) !important;
-      border-bottom: 1px solid var(--border) !important;
-      transition: all 0.4s ease;
-    }
-    
-    .vditor-toolbar__item {
-      color: var(--text-secondary) !important;
-    }
-    
-    .vditor-toolbar__item:hover {
-      color: var(--accent) !important;
-      background: var(--bg-tertiary) !important;
-    }
-    
-    .vditor-ir__node--expand {
-      background: var(--bg-tertiary) !important;
-    }
-    
-    .vditor-preview {
-      background: var(--vditor-bg) !important;
-    }
-    
-    .preview-content {
-      flex: 1;
-      padding: 20px;
-      overflow: auto;
-      font-size: 14px;
-      line-height: 1.8;
-      min-height: 0;
-      background: var(--bg-secondary);
-      color: var(--text-primary);
-      transition: all 0.4s ease;
-    }
-    
-    /* 响应式 */
-    @media (max-width: 768px) {
-      .main-container {
-        grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
-      }
-      
-      .toolbar {
-        flex-wrap: wrap;
-        height: auto;
-        min-height: 50px;
-      }
-      
-      .toolbar-left {
-        width: 100%;
-      }
-      
-      .toolbar-right {
-        width: 100%;
-        justify-content: flex-end;
-      }
-    }
-    
-    /* Toast提示 */
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%) translateY(100px);
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      padding: 10px 20px;
-      border-radius: 4px;
-      font-size: 13px;
-      opacity: 0;
-      transition: all 0.3s;
-      z-index: 10000;
-      pointer-events: none;
-    }
-    
-    .toast.show {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-    }
-    
-    /* 加载状态 */
-    .loading {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      color: var(--text-secondary);
-      font-size: 14px;
-    }
-    
-    /* 错误提示 */
-    .error-message {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      color: var(--text-secondary);
-      font-size: 14px;
-      padding: 20px;
-      text-align: center;
-    }
-    
-    .error-message button {
-      margin-top: 12px;
-      padding: 8px 16px;
-      border: 1px solid var(--accent);
-      background: var(--accent);
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-  </style>
-</head>
-<body>
-  <div class="editor-fullscreen">
-    <!-- 工具栏 -->
-    <div class="toolbar">
-      <div class="toolbar-left">
-        <a href="./index.html" class="logo">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-            <line x1="8" y1="21" x2="16" y2="21"></line>
-            <line x1="12" y1="17" x2="12" y2="21"></line>
-          </svg>
-          工具箱
-        </a>
-        <div class="divider"></div>
-        <div class="platform-select">
-          <button class="platform-btn active" data-platform="default">默认</button>
-          <button class="platform-btn" data-platform="wechat">微信</button>
-          <button class="platform-btn" data-platform="zhihu">知乎</button>
-          <button class="platform-btn" data-platform="juejin">掘金</button>
-          <button class="platform-btn" data-platform="csdn">CSDN</button>
-        </div>
-      </div>
-      <div class="toolbar-right">
-        <!-- 主题切换器 -->
-        <div class="theme-switcher">
-          <button class="theme-btn" onclick="toggleThemeDropdown()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-            主题
-          </button>
-          <div class="theme-dropdown" id="themeDropdown">
-            <div class="theme-option active" data-theme="light" onclick="switchTheme('light')">浅雪白</div>
-            <div class="theme-option" data-theme="dark" onclick="switchTheme('dark')">深海蓝</div>
-
-            <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">紫夜</div>
-          </div>
-        </div>
-        
-        <button class="tool-btn" onclick="copyContent()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-          </svg>
-          复制
-        </button>
-        <button class="tool-btn" onclick="downloadMarkdown()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          下载
-        </button>
-        <button class="tool-btn" onclick="clearContent()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="3 6 5 6 21 6"></polyline>
-            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-          </svg>
-          清空
-        </button>
-      </div>
-    </div>
-
-    <!-- 主编辑区 -->
-    <div class="main-container">
-      <div class="editor-panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-              <polyline points="14 2 14 8 20 8"></polyline>
-            </svg>
-            Markdown
-          </div>
-        </div>
-        <div id="vditor-container">
-          <div class="loading">正在加载编辑器...</div>
-        </div>
-      </div>
-      <div class="preview-panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-              <circle cx="12" cy="12" r="3"></circle>
-            </svg>
-            预览
-          </div>
-          <button class="tool-btn" onclick="copyHtml()" style="padding: 4px 8px; font-size: 11px;">
-            复制HTML
-          </button>
-        </div>
-        <div id="preview" class="preview-content">
-          <div style="color: var(--text-secondary); text-align: center; padding-top: 50px;">
-            在左侧编辑器输入内容，此处将显示预览
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Toast提示 -->
-  <div id="toast" class="toast"></div>
-
-  <script src="https://cdn.jsdelivr.net/npm/vditor@3.10.4/dist/index.min.js"></script>
-  <script>
-    // 全局变量
+    // ============================================
+    // 全局变量和配置
+    // ============================================
     let vditor = null;
     let currentPlatform = 'default';
     let isInitialized = false;
     const THEME_STORAGE_KEY = 'markdown_editor_theme';
     let currentTheme = 'light';
+    let currentMarkdownTheme = 'github';
+    let recentColors = JSON.parse(localStorage.getItem('recent_colors') || '[]');
+    let currentColor = '#1976d2';
+    
+    // 预设颜色面板
+    const presetColors = [
+      '#000000', '#333333', '#666666', '#999999', '#cccccc', '#ffffff',
+      '#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3',
+      '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39',
+      '#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#607d8b',
+      '#e53935', '#d81b60', '#8e24aa', '#5e35b1', '#3949ab', '#1e88e5',
+      '#039be5', '#00acc1', '#00897b', '#43a047', '#7cb342', '#c0ca33',
+      '#fdd835', '#ffb300', '#fb8c00', '#f4511e', '#6d4c41', '#546e7a'
+    ];
+    
+    // 免费开源 Markdown 主题集合
+    const markdownThemes = [
+      {
+        id: 'github',
+        name: 'GitHub',
+        author: 'GitHub Inc.',
+        license: 'MIT',
+        category: 'light',
+        description: '经典的 GitHub 风格主题',
+        preview: '<h1 style="color:#24292e;font-size:2em">Heading</h1><p style="color:#24292e">Text with <code style="background:#f6f8fa;padding:2px 6px;border-radius:3px">code</code></p>',
+        styles: {
+          h1: 'color: #24292e; font-size: 2em; font-weight: 600; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em;',
+          h2: 'color: #24292e; font-size: 1.5em; font-weight: 600; border-bottom: 1px solid #eaecef; padding-bottom: 0.3em;',
+          h3: 'color: #24292e; font-size: 1.25em; font-weight: 600;',
+          code: 'background: #f6f8fa; padding: 0.2em 0.4em; border-radius: 3px; font-family: SFMono-Regular, Consolas, monospace;',
+          pre: 'background: #f6f8fa; padding: 16px; border-radius: 6px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #dfe2e5; padding-left: 16px; color: #6a737d; margin: 0;'
+        }
+      },
+      {
+        id: 'github-dark',
+        name: 'GitHub Dark',
+        author: 'GitHub Inc.',
+        license: 'MIT',
+        category: 'dark',
+        description: 'GitHub 深色主题',
+        preview: '<h1 style="color:#c9d1d9;font-size:2em">Heading</h1><p style="color:#c9d1d9">Text with <code style="background:#161b22;padding:2px 6px;border-radius:3px">code</code></p>',
+        styles: {
+          h1: 'color: #c9d1d9; font-size: 2em; font-weight: 600; border-bottom: 1px solid #30363d; padding-bottom: 0.3em;',
+          h2: 'color: #c9d1d9; font-size: 1.5em; font-weight: 600; border-bottom: 1px solid #30363d; padding-bottom: 0.3em;',
+          h3: 'color: #c9d1d9; font-size: 1.25em; font-weight: 600;',
+          code: 'background: #161b22; padding: 0.2em 0.4em; border-radius: 3px; font-family: SFMono-Regular, Consolas, monospace;',
+          pre: 'background: #161b22; padding: 16px; border-radius: 6px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #30363d; padding-left: 16px; color: #8b949e; margin: 0;'
+        }
+      },
+      {
+        id: 'typora',
+        name: 'Typora',
+        author: 'Typora Team',
+        license: 'MIT',
+        category: 'light',
+        description: 'Typora 编辑器风格',
+        preview: '<h1 style="color:#333;font-size:2.25em">Heading</h1><p style="color:#333">Text with <code style="background:#f0f0f0;padding:2px 6px;border-radius:3px">code</code></p>',
+        styles: {
+          h1: 'color: #333; font-size: 2.25em; font-weight: 400; text-align: center;',
+          h2: 'color: #333; font-size: 1.75em; font-weight: 400; border-bottom: 1px solid #eee;',
+          h3: 'color: #333; font-size: 1.5em; font-weight: 400;',
+          code: 'background: #f0f0f0; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, Monaco, monospace;',
+          pre: 'background: #f8f8f8; padding: 16px; border-radius: 4px; overflow-x: auto; border: 1px solid #e5e5e5;',
+          blockquote: 'border-left: 4px solid #ddd; padding-left: 16px; color: #666; margin: 0; background: #f9f9f9; padding: 10px 16px;'
+        }
+      },
+      {
+        id: 'vue',
+        name: 'Vue',
+        author: 'Vue.js Team',
+        license: 'MIT',
+        category: 'light',
+        description: 'Vue.js 文档风格',
+        preview: '<h1 style="color:#2c3e50;font-size:2em">Heading</h1><p style="color:#2c3e50">Text with <code style="background:#f8f8f8;padding:2px 6px;border-radius:3px;color:#e96900">code</code></p>',
+        styles: {
+          h1: 'color: #2c3e50; font-size: 2em; font-weight: 600;',
+          h2: 'color: #2c3e50; font-size: 1.65em; font-weight: 600; border-bottom: 1px solid #ddd; padding-bottom: 0.3em;',
+          h3: 'color: #2c3e50; font-size: 1.35em; font-weight: 600;',
+          code: 'background: #f8f8f8; padding: 0.2em 0.4em; border-radius: 3px; font-family: Roboto Mono, Monaco, monospace; color: #e96900;',
+          pre: 'background: #f8f8f8; padding: 16px; border-radius: 4px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #42b983; padding: 12px 20px; color: #666; margin: 0; background: #f8f8f8;'
+        }
+      },
+      {
+        id: 'material',
+        name: 'Material',
+        author: 'Google',
+        license: 'Apache-2.0',
+        category: 'colorful',
+        description: 'Material Design 风格',
+        preview: '<h1 style="color:#212121;font-size:2em">Heading</h1><p style="color:#424242">Text with <code style="background:#f5f5f5;padding:2px 6px;border-radius:4px;color:#d81b60">code</code></p>',
+        styles: {
+          h1: 'color: #212121; font-size: 2em; font-weight: 400;',
+          h2: 'color: #212121; font-size: 1.5em; font-weight: 400;',
+          h3: 'color: #212121; font-size: 1.25em; font-weight: 500;',
+          code: 'background: #f5f5f5; padding: 0.2em 0.4em; border-radius: 4px; font-family: Roboto Mono, monospace; color: #d81b60;',
+          pre: 'background: #f5f5f5; padding: 16px; border-radius: 8px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #e91e63; padding-left: 16px; color: #616161; margin: 0;'
+        }
+      },
+      {
+        id: 'dracula',
+        name: 'Dracula',
+        author: 'Dracula Theme',
+        license: 'MIT',
+        category: 'dark',
+        description: 'Dracula 暗色主题',
+        preview: '<h1 style="color:#f8f8f2;font-size:2em">Heading</h1><p style="color:#f8f8f2">Text with <code style="background:#44475a;padding:2px 6px;border-radius:3px;color:#ff79c6">code</code></p>',
+        styles: {
+          h1: 'color: #f8f8f2; font-size: 2em; font-weight: 600;',
+          h2: 'color: #f8f8f2; font-size: 1.5em; font-weight: 600;',
+          h3: 'color: #f8f8f2; font-size: 1.25em; font-weight: 600;',
+          code: 'background: #44475a; padding: 0.2em 0.4em; border-radius: 3px; font-family: Fira Code, monospace; color: #ff79c6;',
+          pre: 'background: #282a36; padding: 16px; border-radius: 6px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #bd93f9; padding-left: 16px; color: #6272a4; margin: 0;'
+        }
+      },
+      {
+        id: 'one-dark',
+        name: 'One Dark',
+        author: 'Atom Team',
+        license: 'MIT',
+        category: 'dark',
+        description: 'Atom One Dark 主题',
+        preview: '<h1 style="color:#abb2bf;font-size:2em">Heading</h1><p style="color:#abb2bf">Text with <code style="background:#282c34;padding:2px 6px;border-radius:3px;color:#e06c75">code</code></p>',
+        styles: {
+          h1: 'color: #abb2bf; font-size: 2em; font-weight: 600;',
+          h2: 'color: #abb2bf; font-size: 1.5em; font-weight: 600;',
+          h3: 'color: #abb2bf; font-size: 1.25em; font-weight: 600;',
+          code: 'background: #282c34; padding: 0.2em 0.4em; border-radius: 3px; font-family: Fira Code, monospace; color: #e06c75;',
+          pre: 'background: #282c34; padding: 16px; border-radius: 6px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #61afef; padding-left: 16px; color: #5c6370; margin: 0;'
+        }
+      },
+      {
+        id: 'minimal',
+        name: 'Minimal',
+        author: 'Minimal Team',
+        license: 'MIT',
+        category: 'minimal',
+        description: '极简主义风格',
+        preview: '<h1 style="color:#000;font-size:1.8em;font-weight:300">Heading</h1><p style="color:#333">Text with <code style="background:#f5f5f5;padding:2px 6px;border-radius:2px">code</code></p>',
+        styles: {
+          h1: 'color: #000; font-size: 1.8em; font-weight: 300; letter-spacing: -0.02em;',
+          h2: 'color: #000; font-size: 1.4em; font-weight: 300; letter-spacing: -0.01em;',
+          h3: 'color: #000; font-size: 1.2em; font-weight: 400;',
+          code: 'background: #f5f5f5; padding: 0.15em 0.4em; border-radius: 2px; font-family: monospace; font-size: 0.9em;',
+          pre: 'background: #fafafa; padding: 16px; border-radius: 2px; overflow-x: auto; border: 1px solid #eee;',
+          blockquote: 'border-left: 2px solid #000; padding-left: 20px; color: #555; margin: 0; font-style: italic;'
+        }
+      },
+      {
+        id: 'solarized-light',
+        name: 'Solarized Light',
+        author: 'Ethan Schoonover',
+        license: 'MIT',
+        category: 'light',
+        description: 'Solarized 浅色主题',
+        preview: '<h1 style="color:#657b83;font-size:2em">Heading</h1><p style="color:#586e75">Text with <code style="background:#eee8d5;padding:2px 6px;border-radius:3px;color:#cb4b16">code</code></p>',
+        styles: {
+          h1: 'color: #657b83; font-size: 2em; font-weight: 600;',
+          h2: 'color: #657b83; font-size: 1.5em; font-weight: 600;',
+          h3: 'color: #657b83; font-size: 1.25em; font-weight: 600;',
+          code: 'background: #eee8d5; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace; color: #cb4b16;',
+          pre: 'background: #fdf6e3; padding: 16px; border-radius: 6px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #268bd2; padding-left: 16px; color: #93a1a1; margin: 0;'
+        }
+      },
+      {
+        id: 'solarized-dark',
+        name: 'Solarized Dark',
+        author: 'Ethan Schoonover',
+        license: 'MIT',
+        category: 'dark',
+        description: 'Solarized 深色主题',
+        preview: '<h1 style="color:#93a1a1;font-size:2em">Heading</h1><p style="color:#839496">Text with <code style="background:#073642;padding:2px 6px;border-radius:3px;color:#cb4b16">code</code></p>',
+        styles: {
+          h1: 'color: #93a1a1; font-size: 2em; font-weight: 600;',
+          h2: 'color: #93a1a1; font-size: 1.5em; font-weight: 600;',
+          h3: 'color: #93a1a1; font-size: 1.25em; font-weight: 600;',
+          code: 'background: #073642; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace; color: #cb4b16;',
+          pre: 'background: #002b36; padding: 16px; border-radius: 6px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #268bd2; padding-left: 16px; color: #586e75; margin: 0;'
+        }
+      },
+      {
+        id: 'monokai',
+        name: 'Monokai',
+        author: 'Wimer Hazenberg',
+        license: 'MIT',
+        category: 'dark',
+        description: 'Monokai 代码编辑器风格',
+        preview: '<h1 style="color:#f8f8f2;font-size:2em">Heading</h1><p style="color:#f8f8f2">Text with <code style="background:#49483e;padding:2px 6px;border-radius:3px;color:#fd971f">code</code></p>',
+        styles: {
+          h1: 'color: #f8f8f2; font-size: 2em; font-weight: 600;',
+          h2: 'color: #f8f8f2; font-size: 1.5em; font-weight: 600;',
+          h3: 'color: #f8f8f2; font-size: 1.25em; font-weight: 600;',
+          code: 'background: #49483e; padding: 0.2em 0.4em; border-radius: 3px; font-family: Consolas, monospace; color: #fd971f;',
+          pre: 'background: #272822; padding: 16px; border-radius: 6px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #a6e22e; padding-left: 16px; color: #75715e; margin: 0;'
+        }
+      },
+      {
+        id: 'nord',
+        name: 'Nord',
+        author: 'Arctic Ice Studio',
+        license: 'MIT',
+        category: 'dark',
+        description: 'Nord 极地风格主题',
+        preview: '<h1 style="color:#d8dee9;font-size:2em">Heading</h1><p style="color:#d8dee9">Text with <code style="background:#3b4252;padding:2px 6px;border-radius:3px;color:#88c0d0">code</code></p>',
+        styles: {
+          h1: 'color: #d8dee9; font-size: 2em; font-weight: 600;',
+          h2: 'color: #d8dee9; font-size: 1.5em; font-weight: 600;',
+          h3: 'color: #d8dee9; font-size: 1.25em; font-weight: 600;',
+          code: 'background: #3b4252; padding: 0.2em 0.4em; border-radius: 3px; font-family: monospace; color: #88c0d0;',
+          pre: 'background: #2e3440; padding: 16px; border-radius: 6px; overflow-x: auto;',
+          blockquote: 'border-left: 4px solid #88c0d0; padding-left: 16px; color: #4c566a; margin: 0;'
+        }
+      }
+    ];
     
     // 平台样式配置
     const platformStyles = {
-      default: {
-        h1: 'font-size: 2em; font-weight: bold; margin: 0.67em 0;',
-        h2: 'font-size: 1.5em; font-weight: bold; margin: 0.75em 0;',
-        h3: 'font-size: 1.17em; font-weight: bold; margin: 0.83em 0;',
-        code: 'background: var(--bg-tertiary); padding: 2px 6px; border-radius: 3px; font-family: monospace;',
-        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 6px; overflow-x: auto;',
-        blockquote: 'border-left: 4px solid var(--accent); padding-left: 16px; color: var(--text-secondary); margin: 1em 0;'
-      },
+      default: {},
       wechat: {
-        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0; color: var(--text-primary);',
-        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0; color: var(--text-primary);',
-        h3: 'font-size: 18px; font-weight: bold; margin: 16px 0; color: var(--text-primary);',
-        code: 'background: var(--bg-tertiary); padding: 2px 6px; border-radius: 3px; font-family: monospace; color: var(--accent);',
-        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 14px;',
-        blockquote: 'border-left: 4px solid var(--accent); padding: 12px 16px; background: var(--bg-tertiary); margin: 16px 0;'
+        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0;',
+        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0;',
+        h3: 'font-size: 18px; font-weight: bold; margin: 16px 0;',
+        code: 'padding: 2px 6px; border-radius: 3px; font-family: monospace;',
+        pre: 'padding: 16px; border-radius: 6px; overflow-x: auto; font-size: 14px;',
+        blockquote: 'padding: 12px 16px; margin: 16px 0;'
       },
       zhihu: {
-        h1: 'font-size: 26px; font-weight: 600; margin: 24px 0 16px; color: var(--text-primary);',
-        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0 12px; color: var(--text-primary);',
-        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0 8px; color: var(--text-primary);',
-        code: 'background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--accent);',
-        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 4px; overflow-x: auto;',
-        blockquote: 'border-left: 4px solid var(--accent); padding-left: 16px; color: var(--text-secondary); margin: 16px 0;'
+        h1: 'font-size: 26px; font-weight: 600; margin: 24px 0 16px;',
+        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0 12px;',
+        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0 8px;',
+        code: 'padding: 2px 6px; border-radius: 4px; font-family: monospace;',
+        pre: 'padding: 16px; border-radius: 4px; overflow-x: auto;',
+        blockquote: 'padding-left: 16px; margin: 16px 0;'
       },
       juejin: {
-        h1: 'font-size: 28px; font-weight: 600; margin: 24px 0; color: var(--text-primary);',
-        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0; color: var(--text-primary);',
-        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0; color: var(--text-primary);',
-        code: 'background: var(--bg-tertiary); padding: 2px 6px; border-radius: 4px; font-family: monospace; color: var(--accent);',
-        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 4px; overflow-x: auto;',
-        blockquote: 'border-left: 4px solid var(--accent); padding: 12px 16px; background: var(--bg-tertiary); margin: 16px 0;'
+        h1: 'font-size: 28px; font-weight: 600; margin: 24px 0;',
+        h2: 'font-size: 22px; font-weight: 600; margin: 20px 0;',
+        h3: 'font-size: 18px; font-weight: 600; margin: 16px 0;',
+        code: 'padding: 2px 6px; border-radius: 4px; font-family: monospace;',
+        pre: 'padding: 16px; border-radius: 4px; overflow-x: auto;',
+        blockquote: 'padding: 12px 16px; margin: 16px 0;'
       },
       csdn: {
-        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0; color: var(--text-primary);',
-        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0; color: var(--text-primary);',
-        h3: 'font-size: 16px; font-weight: bold; margin: 16px 0; color: var(--text-primary);',
-        code: 'background: var(--bg-tertiary); padding: 2px 4px; border-radius: 3px; font-family: monospace; color: var(--accent);',
-        pre: 'background: var(--bg-tertiary); padding: 16px; border-radius: 4px; overflow-x: auto;',
-        blockquote: 'border-left: 4px solid var(--accent); padding-left: 16px; color: var(--text-secondary); margin: 16px 0;'
+        h1: 'font-size: 24px; font-weight: bold; margin: 20px 0;',
+        h2: 'font-size: 20px; font-weight: bold; margin: 18px 0;',
+        h3: 'font-size: 16px; font-weight: bold; margin: 16px 0;',
+        code: 'padding: 2px 4px; border-radius: 3px; font-family: monospace;',
+        pre: 'padding: 16px; border-radius: 4px; overflow-x: auto;',
+        blockquote: 'padding-left: 16px; margin: 16px 0;'
       }
     };
     
-    // 主题切换功能
-    function toggleThemeDropdown() {
-      document.getElementById('themeDropdown').classList.toggle('show');
-    }
+    // ============================================
+    // 初始化
+    // ============================================
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSavedTheme();
+      loadSavedMarkdownTheme();
+      initEditor();
+      initColorPicker();
+      initThemeManager();
+      initKeyboardShortcuts();
+    });
     
-    function closeThemeDropdown() {
-      document.getElementById('themeDropdown').classList.remove('show');
-    }
-    
-    function switchTheme(theme) {
-      if (theme === currentTheme) {
-        closeThemeDropdown();
-        return;
-      }
-      
-      const body = document.body;
-      body.removeAttribute('data-theme');
-      
-      if (theme !== 'light') {
-        body.setAttribute('data-theme', theme);
-      }
-      
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-      currentTheme = theme;
-      
-      // 更新UI
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.remove('active');
-        if (option.dataset.theme === theme) {
-          option.classList.add('active');
-        }
-      });
-      
-      // 更新Vditor主题
-      updateVditorTheme(theme);
-      
-      closeThemeDropdown();
-      showToast(`已切换到${getThemeName(theme)}主题`);
-      
-      // 刷新预览
-      updatePreview();
-    }
-    
-    function updateVditorTheme(theme) {
-      if (!vditor) return;
-      
-      const vditorTheme = theme === 'light' ? 'classic' : 'dark';
-      vditor.setTheme(vditorTheme, vditorTheme);
-    }
-    
-    function getThemeName(theme) {
-      const names = { 'light': '浅雪白', 'dark': '深海蓝', 'purple': '紫夜' };
-      return names[theme] || '浅雪白';
-    }
-    
-    function loadSavedTheme() {
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
-      if (savedTheme !== 'light') {
-        document.body.setAttribute('data-theme', savedTheme);
-        currentTheme = savedTheme;
-        document.querySelectorAll('.theme-option').forEach(option => {
-          option.classList.remove('active');
-          if (option.dataset.theme === savedTheme) {
-            option.classList.add('active');
-          }
-        });
-      }
-    }
-    
-    // 初始化编辑器
+    // ============================================
+    // 编辑器初始化
+    // ============================================
     function initEditor() {
       const container = document.getElementById('vditor-container');
       
@@ -685,7 +300,7 @@
         vditor = new Vditor('vditor-container', {
           height: '100%',
           mode: 'ir',
-          placeholder: '开始编写 Markdown...',
+          placeholder: '开始编写 Markdown...\n\n支持快捷键:\n- Ctrl+Shift+C: 颜色选择器\n- Ctrl+Shift+T: 主题管理器\n- Ctrl+Shift+S: 复制内容\n- Ctrl+Shift+D: 下载文件',
           theme: vditorTheme,
           icon: 'material',
           toolbar: [
@@ -693,7 +308,13 @@
             'line', 'quote', 'list', 'ordered-list', 'check', '|',
             'code', 'inline-code', 'link', 'table', '|',
             'undo', 'redo', '|',
-            'fullscreen'
+            'fullscreen', {
+              name: 'color',
+              tip: '字体颜色',
+              className: 'vditor-toolbar__item--color',
+              icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="M12 8v8"></path><path d="M8 12h8"></path></svg>',
+              click: openColorPicker
+            }
           ],
           toolbarConfig: { 
             pin: true,
@@ -709,7 +330,7 @@
           },
           after: function() {
             isInitialized = true;
-            const defaultContent = '# 欢迎使用 Markdown 编辑器\n\n开始编写你的文章...';
+            const defaultContent = '# 欢迎使用 Markdown 编辑器\n\n## 🎨 新增功能\n\n### 1. 字体颜色选择器\n- 点击工具栏的 **颜色** 按钮或使用快捷键 `Ctrl+Shift+C`\n- 支持预设颜色面板\n- 支持 HEX、RGB、HSL 多种格式\n- 自动保存最近使用的颜色\n\n### 2. Markdown 主题管理器\n- 点击工具栏的 **主题** 按钮或使用快捷键 `Ctrl+Shift+T`\n- 内置 12 种免费开源主题\n- 支持主题预览和自定义\n- 支持导入/导出主题配置\n\n### 3. 快捷键支持\n- `Ctrl+Shift+C` - 打开颜色选择器\n- `Ctrl+Shift+T` - 打开主题管理器\n- `Ctrl+Shift+S` - 复制内容\n- `Ctrl+Shift+D` - 下载文件\n- `Ctrl+Shift+X` - 清空内容\n- `?` - 显示快捷键帮助\n\n## 开始使用\n\n在左侧编辑器输入 Markdown 内容，右侧将实时显示预览效果。';
             const savedContent = localStorage.getItem('vditor-markdown-content');
             vditor.setValue(savedContent || defaultContent);
             updatePreview();
@@ -734,7 +355,491 @@
       }
     }
     
-    // 更新预览
+    // ============================================
+    // 颜色选择器功能
+    // ============================================
+    function initColorPicker() {
+      // 渲染预设颜色
+      const presetGrid = document.getElementById('presetColorGrid');
+      presetColors.forEach(color => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.style.backgroundColor = color;
+        swatch.dataset.color = color;
+        swatch.onclick = () => selectColor(color);
+        presetGrid.appendChild(swatch);
+      });
+      
+      // 初始化 RGB 滑块事件
+      ['rgbR', 'rgbG', 'rgbB'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateColorFromRGB);
+      });
+      
+      // 初始化 HSL 滑块事件
+      ['hslH', 'hslS', 'hslL'].forEach(id => {
+        document.getElementById(id).addEventListener('input', updateColorFromHSL);
+      });
+      
+      // 初始化 HEX 输入
+      document.getElementById('hexInput').addEventListener('input', updateColorFromHex);
+      
+      // 渲染最近使用颜色
+      renderRecentColors();
+      
+      // 设置默认颜色
+      selectColor(currentColor);
+    }
+    
+    function openColorPicker() {
+      document.getElementById('colorPickerModal').classList.add('show');
+    }
+    
+    function closeColorPicker() {
+      document.getElementById('colorPickerModal').classList.remove('show');
+    }
+    
+    function selectColor(color) {
+      currentColor = color;
+      
+      // 更新预设颜色选中状态
+      document.querySelectorAll('.color-swatch').forEach(swatch => {
+        swatch.classList.toggle('active', swatch.dataset.color === color);
+      });
+      
+      // 更新预览
+      document.getElementById('hexPreview').style.backgroundColor = color;
+      
+      // 更新输入值
+      const rgb = hexToRgb(color);
+      if (rgb) {
+        document.getElementById('hexInput').value = color;
+        document.getElementById('rgbR').value = rgb.r;
+        document.getElementById('rgbG').value = rgb.g;
+        document.getElementById('rgbB').value = rgb.b;
+        document.getElementById('rgbRValue').textContent = rgb.r;
+        document.getElementById('rgbGValue').textContent = rgb.g;
+        document.getElementById('rgbBValue').textContent = rgb.b;
+        
+        const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
+        document.getElementById('hslH').value = hsl.h;
+        document.getElementById('hslS').value = hsl.s;
+        document.getElementById('hslL').value = hsl.l;
+        document.getElementById('hslHValue').textContent = hsl.h + '°';
+        document.getElementById('hslSValue').textContent = hsl.s + '%';
+        document.getElementById('hslLValue').textContent = hsl.l + '%';
+      }
+    }
+    
+    function switchColorTab(tab) {
+      document.querySelectorAll('.color-input-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.color-input-content').forEach(c => c.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(tab + 'Tab').classList.add('active');
+    }
+    
+    function updateColorFromRGB() {
+      const r = parseInt(document.getElementById('rgbR').value);
+      const g = parseInt(document.getElementById('rgbG').value);
+      const b = parseInt(document.getElementById('rgbB').value);
+      
+      document.getElementById('rgbRValue').textContent = r;
+      document.getElementById('rgbGValue').textContent = g;
+      document.getElementById('rgbBValue').textContent = b;
+      
+      const hex = rgbToHex(r, g, b);
+      selectColor(hex);
+    }
+    
+    function updateColorFromHSL() {
+      const h = parseInt(document.getElementById('hslH').value);
+      const s = parseInt(document.getElementById('hslS').value);
+      const l = parseInt(document.getElementById('hslL').value);
+      
+      document.getElementById('hslHValue').textContent = h + '°';
+      document.getElementById('hslSValue').textContent = s + '%';
+      document.getElementById('hslLValue').textContent = l + '%';
+      
+      const rgb = hslToRgb(h, s, l);
+      const hex = rgbToHex(rgb.r, rgb.g, rgb.b);
+      selectColor(hex);
+    }
+    
+    function updateColorFromHex() {
+      let hex = document.getElementById('hexInput').value;
+      if (!hex.startsWith('#')) hex = '#' + hex;
+      if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+        selectColor(hex);
+      }
+    }
+    
+    function applyColor() {
+      if (!vditor || !isInitialized) {
+        showToast('编辑器尚未准备好');
+        return;
+      }
+      
+      // 获取选中的文本
+      const selection = window.getSelection();
+      const selectedText = selection.toString();
+      
+      if (selectedText) {
+        // 在选中文本周围添加颜色标记
+        const coloredText = `<span style="color: ${currentColor}">${selectedText}</span>`;
+        document.execCommand('insertHTML', false, coloredText);
+      } else {
+        // 插入带颜色的占位符
+        const coloredText = `<span style="color: ${currentColor}">彩色文本</span>`;
+        vditor.insertValue(coloredText);
+      }
+      
+      // 添加到最近使用
+      addRecentColor(currentColor);
+      
+      closeColorPicker();
+      showToast('颜色已应用');
+      updatePreview();
+    }
+    
+    function addRecentColor(color) {
+      // 移除重复项
+      recentColors = recentColors.filter(c => c !== color);
+      // 添加到开头
+      recentColors.unshift(color);
+      // 限制数量
+      if (recentColors.length > 10) recentColors.pop();
+      
+      localStorage.setItem('recent_colors', JSON.stringify(recentColors));
+      renderRecentColors();
+    }
+    
+    function renderRecentColors() {
+      const grid = document.getElementById('recentColorsGrid');
+      
+      if (recentColors.length === 0) {
+        grid.innerHTML = '<span class="recent-color-empty">暂无记录</span>';
+        return;
+      }
+      
+      grid.innerHTML = recentColors.map(color => `
+        <div class="recent-color-item" style="background-color: ${color}" onclick="selectColor('${color}')"></div>
+      `).join('');
+    }
+    
+    // 颜色转换工具函数
+    function hexToRgb(hex) {
+      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+      } : null;
+    }
+    
+    function rgbToHex(r, g, b) {
+      return '#' + [r, g, b].map(x => {
+        const hex = x.toString(16);
+        return hex.length === 1 ? '0' + hex : hex;
+      }).join('');
+    }
+    
+    function rgbToHsl(r, g, b) {
+      r /= 255; g /= 255; b /= 255;
+      const max = Math.max(r, g, b);
+      const min = Math.min(r, g, b);
+      let h, s, l = (max + min) / 2;
+      
+      if (max === min) {
+        h = s = 0;
+      } else {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+          case g: h = (b - r) / d + 2; break;
+          case b: h = (r - g) / d + 4; break;
+        }
+        h /= 6;
+      }
+      
+      return {
+        h: Math.round(h * 360),
+        s: Math.round(s * 100),
+        l: Math.round(l * 100)
+      };
+    }
+    
+    function hslToRgb(h, s, l) {
+      h /= 360; s /= 100; l /= 100;
+      let r, g, b;
+      
+      if (s === 0) {
+        r = g = b = l;
+      } else {
+        const hue2rgb = (p, q, t) => {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q - p) * 6 * t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+        };
+        
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+      
+      return {
+        r: Math.round(r * 255),
+        g: Math.round(g * 255),
+        b: Math.round(b * 255)
+      };
+    }
+    
+    // ============================================
+    // 主题管理器功能
+    // ============================================
+    function initThemeManager() {
+      renderThemeGrid('all');
+    }
+    
+    function openThemeManager() {
+      document.getElementById('themeManagerModal').classList.add('show');
+      renderThemeGrid('all');
+    }
+    
+    function closeThemeManager() {
+      document.getElementById('themeManagerModal').classList.remove('show');
+    }
+    
+    function renderThemeGrid(category) {
+      const grid = document.getElementById('themeGrid');
+      const themes = category === 'all' 
+        ? markdownThemes 
+        : markdownThemes.filter(t => t.category === category);
+      
+      grid.innerHTML = themes.map(theme => `
+        <div class="theme-card ${theme.id === currentMarkdownTheme ? 'active' : ''}" onclick="applyMarkdownTheme('${theme.id}')">
+          <div class="theme-preview" style="background: ${theme.category === 'dark' ? '#1a1a2e' : '#ffffff'}">
+            ${theme.preview}
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">${theme.name}</div>
+            <div class="theme-meta">${theme.author}</div>
+            <span class="theme-license">${theme.license}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function filterThemes(category) {
+      document.querySelectorAll('.theme-category').forEach(c => c.classList.remove('active'));
+      document.querySelector(`[data-category="${category}"]`).classList.add('active');
+      renderThemeGrid(category);
+    }
+    
+    function searchThemes(query) {
+      const grid = document.getElementById('themeGrid');
+      const themes = markdownThemes.filter(t => 
+        t.name.toLowerCase().includes(query.toLowerCase()) ||
+        t.description.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      grid.innerHTML = themes.map(theme => `
+        <div class="theme-card ${theme.id === currentMarkdownTheme ? 'active' : ''}" onclick="applyMarkdownTheme('${theme.id}')">
+          <div class="theme-preview" style="background: ${theme.category === 'dark' ? '#1a1a2e' : '#ffffff'}">
+            ${theme.preview}
+          </div>
+          <div class="theme-info">
+            <div class="theme-name">${theme.name}</div>
+            <div class="theme-meta">${theme.author}</div>
+            <span class="theme-license">${theme.license}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function applyMarkdownTheme(themeId) {
+      currentMarkdownTheme = themeId;
+      localStorage.setItem('markdown_editor_markdown_theme', themeId);
+      
+      const theme = markdownThemes.find(t => t.id === themeId);
+      if (theme) {
+        document.getElementById('currentThemeName').textContent = theme.name;
+        document.getElementById('currentThemeAuthor').textContent = theme.author;
+        document.getElementById('currentThemeLicense').textContent = theme.license;
+      }
+      
+      renderThemeGrid(document.querySelector('.theme-category.active').dataset.category);
+      updatePreview();
+      showToast(`已切换到 ${theme.name} 主题`);
+    }
+    
+    function loadSavedMarkdownTheme() {
+      const saved = localStorage.getItem('markdown_editor_markdown_theme');
+      if (saved && markdownThemes.find(t => t.id === saved)) {
+        currentMarkdownTheme = saved;
+      }
+    }
+    
+    // ============================================
+    // 主题自定义功能
+    // ============================================
+    function updateFontSize(value) {
+      document.getElementById('fontSizeValue').textContent = value + 'px';
+      document.documentElement.style.setProperty('--editor-font-size', value + 'px');
+      localStorage.setItem('editor_font_size', value);
+      updatePreview();
+    }
+    
+    function updateLineHeight(value) {
+      document.getElementById('lineHeightValue').textContent = value;
+      document.documentElement.style.setProperty('--editor-line-height', value);
+      localStorage.setItem('editor_line_height', value);
+      updatePreview();
+    }
+    
+    function updateCodeStyle() {
+      const bgColor = document.getElementById('codeBgColor').value;
+      const radius = document.getElementById('codeRadiusRange').value;
+      document.getElementById('codeRadiusValue').textContent = radius + 'px';
+      
+      localStorage.setItem('code_bg_color', bgColor);
+      localStorage.setItem('code_radius', radius);
+      updatePreview();
+    }
+    
+    // ============================================
+    // 主题导入/导出
+    // ============================================
+    function importTheme() {
+      document.getElementById('themeImportInput').click();
+    }
+    
+    function handleThemeImport(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const theme = JSON.parse(e.target.result);
+          if (theme.id && theme.name && theme.styles) {
+            markdownThemes.push(theme);
+            renderThemeGrid('all');
+            showToast('主题导入成功');
+          } else {
+            showToast('无效的主题文件');
+          }
+        } catch (err) {
+          showToast('文件解析失败');
+        }
+      };
+      reader.readAsText(file);
+    }
+    
+    function exportCurrentTheme() {
+      const theme = markdownThemes.find(t => t.id === currentMarkdownTheme);
+      if (!theme) return;
+      
+      const dataStr = JSON.stringify(theme, null, 2);
+      const blob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `theme-${theme.id}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      showToast('主题已导出');
+    }
+    
+    // ============================================
+    // 界面主题切换
+    // ============================================
+    function toggleThemeDropdown() {
+      document.getElementById('themeDropdown').classList.toggle('show');
+    }
+    
+    function closeThemeDropdown() {
+      document.getElementById('themeDropdown').classList.remove('show');
+    }
+    
+    function switchTheme(theme) {
+      if (theme === currentTheme) {
+        closeThemeDropdown();
+        return;
+      }
+      
+      const body = document.body;
+      body.removeAttribute('data-theme');
+      
+      if (theme !== 'light') {
+        body.setAttribute('data-theme', theme);
+      }
+      
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+      currentTheme = theme;
+      
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === theme) {
+          option.classList.add('active');
+        }
+      });
+      
+      updateVditorTheme(theme);
+      closeThemeDropdown();
+      showToast(`已切换到${getThemeName(theme)}主题`);
+      updatePreview();
+    }
+    
+    function updateVditorTheme(theme) {
+      if (!vditor) return;
+      const vditorTheme = theme === 'light' ? 'classic' : 'dark';
+      vditor.setTheme(vditorTheme, vditorTheme);
+    }
+    
+    function getThemeName(theme) {
+      const names = { 'light': '浅雪白', 'dark': '深海蓝', 'purple': '紫夜' };
+      return names[theme] || '浅雪白';
+    }
+    
+    function loadSavedTheme() {
+      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+      const savedFontSize = localStorage.getItem('editor_font_size') || '14';
+      const savedLineHeight = localStorage.getItem('editor_line_height') || '1.8';
+      
+      if (savedTheme !== 'light') {
+        document.body.setAttribute('data-theme', savedTheme);
+        currentTheme = savedTheme;
+        document.querySelectorAll('.theme-option').forEach(option => {
+          option.classList.remove('active');
+          if (option.dataset.theme === savedTheme) {
+            option.classList.add('active');
+          }
+        });
+      }
+      
+      // 恢复自定义设置
+      document.getElementById('fontSizeRange').value = savedFontSize;
+      document.getElementById('fontSizeValue').textContent = savedFontSize + 'px';
+      document.documentElement.style.setProperty('--editor-font-size', savedFontSize + 'px');
+      
+      document.getElementById('lineHeightRange').value = savedLineHeight;
+      document.getElementById('lineHeightValue').textContent = savedLineHeight;
+      document.documentElement.style.setProperty('--editor-line-height', savedLineHeight);
+    }
+    
+    // ============================================
+    // 预览和导出功能
+    // ============================================
     function updatePreview() {
       if (!vditor || !isInitialized) return;
       
@@ -753,42 +858,54 @@
           mode: 'ir',
           theme: currentTheme === 'light' ? 'classic' : 'dark'
         }).then(html => {
-          document.getElementById('preview').innerHTML = applyPlatformStyles(html, currentPlatform);
+          document.getElementById('preview').innerHTML = applyMarkdownStyles(html);
         }).catch(err => {
           console.error('Preview error:', err);
-          document.getElementById('preview').innerHTML = `
-            <div style="color: var(--text-secondary); text-align: center; padding-top: 50px;">
-              预览生成失败，请检查内容格式
-            </div>
-          `;
         });
       } catch (error) {
         console.error('Update preview error:', error);
       }
     }
     
-    // 应用平台样式
-    function applyPlatformStyles(html, platform) {
-      if (!html) return html;
+    function applyMarkdownStyles(html) {
+      const theme = markdownThemes.find(t => t.id === currentMarkdownTheme);
+      const platformStyle = platformStyles[currentPlatform] || {};
       
-      const styles = platformStyles[platform] || platformStyles.default;
+      if (!theme && !Object.keys(platformStyle).length) return html;
+      
       const temp = document.createElement('div');
       temp.innerHTML = html;
       
-      temp.querySelectorAll('h1').forEach(el => el.style.cssText = styles.h1);
-      temp.querySelectorAll('h2').forEach(el => el.style.cssText = styles.h2);
-      temp.querySelectorAll('h3').forEach(el => el.style.cssText = styles.h3);
-      temp.querySelectorAll('code:not(pre code)').forEach(el => el.style.cssText = styles.code);
-      temp.querySelectorAll('pre').forEach(el => {
-        el.style.cssText = styles.pre;
-        el.querySelectorAll('code').forEach(code => code.style.cssText = '');
-      });
-      temp.querySelectorAll('blockquote').forEach(el => el.style.cssText = styles.blockquote);
+      // 应用 Markdown 主题样式
+      if (theme) {
+        temp.querySelectorAll('h1').forEach(el => el.style.cssText = theme.styles.h1);
+        temp.querySelectorAll('h2').forEach(el => el.style.cssText = theme.styles.h2);
+        temp.querySelectorAll('h3').forEach(el => el.style.cssText = theme.styles.h3);
+        temp.querySelectorAll('code:not(pre code)').forEach(el => el.style.cssText = theme.styles.code);
+        temp.querySelectorAll('pre').forEach(el => {
+          el.style.cssText = theme.styles.pre;
+          el.querySelectorAll('code').forEach(code => code.style.cssText = '');
+        });
+        temp.querySelectorAll('blockquote').forEach(el => el.style.cssText = theme.styles.blockquote);
+      }
+      
+      // 应用平台样式覆盖
+      if (currentPlatform !== 'default') {
+        const ps = platformStyle;
+        if (ps.h1) temp.querySelectorAll('h1').forEach(el => el.style.cssText += ';' + ps.h1);
+        if (ps.h2) temp.querySelectorAll('h2').forEach(el => el.style.cssText += ';' + ps.h2);
+        if (ps.h3) temp.querySelectorAll('h3').forEach(el => el.style.cssText += ';' + ps.h3);
+        if (ps.code) temp.querySelectorAll('code:not(pre code)').forEach(el => el.style.cssText += ';' + ps.code);
+        if (ps.pre) temp.querySelectorAll('pre').forEach(el => el.style.cssText += ';' + ps.pre);
+        if (ps.blockquote) temp.querySelectorAll('blockquote').forEach(el => el.style.cssText += ';' + ps.blockquote);
+      }
       
       return temp.innerHTML;
     }
     
-    // 复制内容
+    // ============================================
+    // 工具功能
+    // ============================================
     function copyContent() {
       if (!vditor || !isInitialized) {
         showToast('编辑器尚未准备好');
@@ -808,7 +925,6 @@
       });
     }
     
-    // 复制HTML
     function copyHtml() {
       const preview = document.getElementById('preview');
       if (!preview || preview.innerText.trim() === '' || preview.innerText.includes('在左侧编辑器输入内容')) {
@@ -823,7 +939,6 @@
       });
     }
     
-    // 下载Markdown
     function downloadMarkdown() {
       if (!vditor || !isInitialized) {
         showToast('编辑器尚未准备好');
@@ -852,7 +967,6 @@
       }
     }
     
-    // 清空内容
     function clearContent() {
       if (!vditor || !isInitialized) {
         showToast('编辑器尚未准备好');
@@ -867,7 +981,6 @@
       }
     }
     
-    // 显示提示
     function showToast(message) {
       const toast = document.getElementById('toast');
       if (!toast) return;
@@ -880,36 +993,74 @@
       }, 2000);
     }
     
-    // 页面加载完成后初始化
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => {
-        loadSavedTheme();
-        initEditor();
+    // ============================================
+    // 快捷键支持
+    // ============================================
+    function initKeyboardShortcuts() {
+      document.addEventListener('keydown', (e) => {
+        // Ctrl+Shift+C - 颜色选择器
+        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+          e.preventDefault();
+          openColorPicker();
+        }
+        // Ctrl+Shift+T - 主题管理器
+        else if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+          e.preventDefault();
+          openThemeManager();
+        }
+        // Ctrl+Shift+S - 复制内容
+        else if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+          e.preventDefault();
+          copyContent();
+        }
+        // Ctrl+Shift+D - 下载文件
+        else if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+          e.preventDefault();
+          downloadMarkdown();
+        }
+        // Ctrl+Shift+X - 清空内容
+        else if (e.ctrlKey && e.shiftKey && e.key === 'X') {
+          e.preventDefault();
+          clearContent();
+        }
+        // ? - 显示快捷键
+        else if (e.key === '?' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+          e.preventDefault();
+          toggleShortcuts();
+        }
+        // ESC - 关闭模态框
+        else if (e.key === 'Escape') {
+          closeColorPicker();
+          closeThemeManager();
+          document.getElementById('keyboardShortcuts').classList.remove('show');
+        }
       });
-    } else {
-      loadSavedTheme();
-      initEditor();
     }
     
-    // 平台切换事件
+    function toggleShortcuts() {
+      document.getElementById('keyboardShortcuts').classList.toggle('show');
+    }
+    
+    // ============================================
+    // 事件监听
+    // ============================================
     document.addEventListener('click', function(e) {
+      // 平台切换
       if (e.target.classList.contains('platform-btn')) {
         document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
         e.target.classList.add('active');
         currentPlatform = e.target.dataset.platform;
         updatePreview();
       }
-    });
-    
-    // 点击外部关闭下拉菜单
-    document.addEventListener('click', (e) => {
+      
+      // 关闭主题下拉
       const themeSwitcher = document.querySelector('.theme-switcher');
       if (themeSwitcher && !themeSwitcher.contains(e.target)) {
         closeThemeDropdown();
       }
     });
     
-    // 窗口大小改变时重新调整
+    // 窗口调整
     let resizeTimer;
     window.addEventListener('resize', function() {
       clearTimeout(resizeTimer);
