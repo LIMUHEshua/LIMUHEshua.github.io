@@ -34,8 +34,8 @@
   <header class="post-header">
     <h1 class="post-title" itemprop="name headline"></h1>
     <div class="post-meta">
-      <time class="post-time" itemprop="datePublished" datetime="2026-03-26T14:36:50.546Z" content="2026-03-26">
-        2026-03-26
+      <time class="post-time" itemprop="datePublished" datetime="2026-03-26T16:06:49.386Z" content="2026-03-27">
+        2026-03-27
       </time>
       
     </div>
@@ -393,135 +393,320 @@
         // 全局变量
         let currentFiles = [];
         let currentTask = null;
+        let isProcessing = false;
 
         // 初始化
         document.addEventListener('DOMContentLoaded', function() {
-            initTabs();
-            initUploadAreas();
-            initEventListeners();
+            try {
+                initTabs();
+                initUploadAreas();
+                initEventListeners();
+                loadSavedTheme();
+            } catch (error) {
+                console.error('Initialization error:', error);
+            }
         });
 
         // 初始化选项卡
         function initTabs() {
-            const tabBtns = document.querySelectorAll('.tab-btn');
-            const tabContents = document.querySelectorAll('.tab-content');
+            try {
+                const tabBtns = document.querySelectorAll('.tab-btn');
+                const tabContents = document.querySelectorAll('.tab-content');
 
-            tabBtns.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const tabId = this.getAttribute('data-tab');
+                tabBtns.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        try {
+                            const tabId = this.getAttribute('data-tab');
+                            if (!tabId) return;
 
-                    // 更新选项卡状态
-                    tabBtns.forEach(b => b.classList.remove('tab-active'));
-                    this.classList.add('tab-active');
+                            // 更新选项卡状态
+                            tabBtns.forEach(b => b.classList.remove('tab-active'));
+                            this.classList.add('tab-active');
 
-                    // 显示对应内容
-                    tabContents.forEach(content => {
-                        content.classList.add('hidden');
+                            // 显示对应内容
+                            tabContents.forEach(content => {
+                                content.classList.add('hidden');
+                            });
+                            const targetContent = document.getElementById(tabId);
+                            if (targetContent) {
+                                targetContent.classList.remove('hidden');
+                            }
+                        } catch (error) {
+                            console.error('Tab click error:', error);
+                        }
                     });
-                    document.getElementById(tabId).classList.remove('hidden');
                 });
-            });
+            } catch (error) {
+                console.error('Init tabs error:', error);
+            }
         }
 
         // 初始化上传区域
         function initUploadAreas() {
-            const uploadAreas = document.querySelectorAll('.upload-area');
+            try {
+                const uploadAreas = document.querySelectorAll('.upload-area');
 
-            uploadAreas.forEach(area => {
-                // 点击上传
-                area.addEventListener('click', function() {
-                    const input = this.querySelector('input[type="file"]');
-                    input.click();
-                });
+                uploadAreas.forEach(area => {
+                    // 点击上传
+                    area.addEventListener('click', function() {
+                        try {
+                            const input = this.querySelector('input[type="file"]');
+                            if (input) {
+                                input.click();
+                            }
+                        } catch (error) {
+                            console.error('Upload area click error:', error);
+                        }
+                    });
 
-                // 拖拽上传
-                area.addEventListener('dragover', function(e) {
-                    e.preventDefault();
-                    this.classList.add('drag-over');
-                });
+                    // 拖拽上传
+                    area.addEventListener('dragover', function(e) {
+                        try {
+                            e.preventDefault();
+                            this.classList.add('drag-over');
+                        } catch (error) {
+                            console.error('Drag over error:', error);
+                        }
+                    });
 
-                area.addEventListener('dragleave', function() {
-                    this.classList.remove('drag-over');
-                });
+                    area.addEventListener('dragleave', function() {
+                        try {
+                            this.classList.remove('drag-over');
+                        } catch (error) {
+                            console.error('Drag leave error:', error);
+                        }
+                    });
 
-                area.addEventListener('drop', function(e) {
-                    e.preventDefault();
-                    this.classList.remove('drag-over');
-                    const input = this.querySelector('input[type="file"]');
-                    if (e.dataTransfer.files.length > 0) {
-                        input.files = e.dataTransfer.files;
-                        input.dispatchEvent(new Event('change'));
-                    }
+                    area.addEventListener('drop', function(e) {
+                        try {
+                            e.preventDefault();
+                            this.classList.remove('drag-over');
+                            const input = this.querySelector('input[type="file"]');
+                            if (input && e.dataTransfer && e.dataTransfer.files.length > 0) {
+                                input.files = e.dataTransfer.files;
+                                input.dispatchEvent(new Event('change'));
+                            }
+                        } catch (error) {
+                            console.error('Drop error:', error);
+                        }
+                    });
                 });
-            });
+            } catch (error) {
+                console.error('Init upload areas error:', error);
+            }
         }
 
         // 初始化事件监听器
         function initEventListeners() {
-            // PDF 转图片
-            document.getElementById('pdf-to-image-file').addEventListener('change', function(e) {
-                currentFiles = Array.from(e.target.files);
-                document.getElementById('convert-to-image-btn').disabled = currentFiles.length === 0;
-            });
+            try {
+                // PDF 转图片
+                const pdfToImageFile = document.getElementById('pdf-to-image-file');
+                if (pdfToImageFile) {
+                    pdfToImageFile.addEventListener('change', function(e) {
+                        try {
+                            currentFiles = Array.from(e.target.files);
+                            const convertBtn = document.getElementById('convert-to-image-btn');
+                            if (convertBtn) {
+                                convertBtn.disabled = currentFiles.length === 0;
+                            }
+                        } catch (error) {
+                            console.error('PDF to image file change error:', error);
+                        }
+                    });
+                }
 
-            document.getElementById('convert-to-image-btn').addEventListener('click', convertPdfToImage);
-            document.getElementById('download-images-btn').addEventListener('click', downloadImages);
+                const convertToImageBtn = document.getElementById('convert-to-image-btn');
+                if (convertToImageBtn) {
+                    convertToImageBtn.addEventListener('click', convertPdfToImage);
+                }
 
-            // 图片转 PDF
-            document.getElementById('image-to-pdf-files').addEventListener('change', function(e) {
-                currentFiles = Array.from(e.target.files);
-                document.getElementById('convert-to-pdf-btn').disabled = currentFiles.length === 0;
-            });
+                const downloadImagesBtn = document.getElementById('download-images-btn');
+                if (downloadImagesBtn) {
+                    downloadImagesBtn.addEventListener('click', downloadImages);
+                }
 
-            document.getElementById('convert-to-pdf-btn').addEventListener('click', convertImageToPdf);
-            document.getElementById('download-pdf-btn').addEventListener('click', downloadPdf);
+                // 图片转 PDF
+                const imageToPdfFiles = document.getElementById('image-to-pdf-files');
+                if (imageToPdfFiles) {
+                    imageToPdfFiles.addEventListener('change', function(e) {
+                        try {
+                            currentFiles = Array.from(e.target.files);
+                            const convertBtn = document.getElementById('convert-to-pdf-btn');
+                            if (convertBtn) {
+                                convertBtn.disabled = currentFiles.length === 0;
+                            }
+                        } catch (error) {
+                            console.error('Image to PDF files change error:', error);
+                        }
+                    });
+                }
 
-            // 文本提取
-            document.getElementById('text-extraction-file').addEventListener('change', function(e) {
-                currentFiles = Array.from(e.target.files);
-                document.getElementById('extract-text-btn').disabled = currentFiles.length === 0;
-            });
+                const convertToPdfBtn = document.getElementById('convert-to-pdf-btn');
+                if (convertToPdfBtn) {
+                    convertToPdfBtn.addEventListener('click', convertImageToPdf);
+                }
 
-            document.getElementById('extract-text-btn').addEventListener('click', extractText);
-            document.getElementById('download-text-btn').addEventListener('click', downloadText);
+                const downloadPdfBtn = document.getElementById('download-pdf-btn');
+                if (downloadPdfBtn) {
+                    downloadPdfBtn.addEventListener('click', downloadPdf);
+                }
 
-            // PDF 压缩
-            document.getElementById('pdf-compression-file').addEventListener('change', function(e) {
-                currentFiles = Array.from(e.target.files);
-                document.getElementById('compress-pdf-btn').disabled = currentFiles.length === 0;
-            });
+                // 文本提取
+                const textExtractionFile = document.getElementById('text-extraction-file');
+                if (textExtractionFile) {
+                    textExtractionFile.addEventListener('change', function(e) {
+                        try {
+                            currentFiles = Array.from(e.target.files);
+                            const extractBtn = document.getElementById('extract-text-btn');
+                            if (extractBtn) {
+                                extractBtn.disabled = currentFiles.length === 0;
+                            }
+                        } catch (error) {
+                            console.error('Text extraction file change error:', error);
+                        }
+                    });
+                }
 
-            document.getElementById('compress-pdf-btn').addEventListener('click', compressPdf);
-            document.getElementById('download-compressed-btn').addEventListener('click', downloadCompressedPdf);
+                const extractTextBtn = document.getElementById('extract-text-btn');
+                if (extractTextBtn) {
+                    extractTextBtn.addEventListener('click', extractText);
+                }
 
-            // PDF 合并
-            document.getElementById('pdf-merge-files').addEventListener('change', function(e) {
-                currentFiles = Array.from(e.target.files);
-                updatePdfMergeList();
-                document.getElementById('merge-pdf-btn').disabled = currentFiles.length === 0;
-            });
+                const downloadTextBtn = document.getElementById('download-text-btn');
+                if (downloadTextBtn) {
+                    downloadTextBtn.addEventListener('click', downloadText);
+                }
 
-            document.getElementById('merge-pdf-btn').addEventListener('click', mergePdfs);
-            document.getElementById('download-merged-btn').addEventListener('click', downloadMergedPdf);
+                // PDF 压缩
+                const pdfCompressionFile = document.getElementById('pdf-compression-file');
+                if (pdfCompressionFile) {
+                    pdfCompressionFile.addEventListener('change', function(e) {
+                        try {
+                            currentFiles = Array.from(e.target.files);
+                            const compressBtn = document.getElementById('compress-pdf-btn');
+                            if (compressBtn) {
+                                compressBtn.disabled = currentFiles.length === 0;
+                            }
+                        } catch (error) {
+                            console.error('PDF compression file change error:', error);
+                        }
+                    });
+                }
 
-            // PDF 拆分
-            document.getElementById('pdf-split-file').addEventListener('change', function(e) {
-                currentFiles = Array.from(e.target.files);
-                document.getElementById('split-pdf-btn').disabled = currentFiles.length === 0;
-            });
+                const compressPdfBtn = document.getElementById('compress-pdf-btn');
+                if (compressPdfBtn) {
+                    compressPdfBtn.addEventListener('click', compressPdf);
+                }
 
-            document.querySelectorAll('input[name="split-mode"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    document.getElementById('range-input').classList.toggle('hidden', this.value === 'single');
-                });
-            });
+                const downloadCompressedBtn = document.getElementById('download-compressed-btn');
+                if (downloadCompressedBtn) {
+                    downloadCompressedBtn.addEventListener('click', downloadCompressedPdf);
+                }
 
-            document.getElementById('split-pdf-btn').addEventListener('click', splitPdf);
+                // PDF 合并
+                const pdfMergeFiles = document.getElementById('pdf-merge-files');
+                if (pdfMergeFiles) {
+                    pdfMergeFiles.addEventListener('change', function(e) {
+                        try {
+                            currentFiles = Array.from(e.target.files);
+                            updatePdfMergeList();
+                            const mergeBtn = document.getElementById('merge-pdf-btn');
+                            if (mergeBtn) {
+                                mergeBtn.disabled = currentFiles.length === 0;
+                            }
+                        } catch (error) {
+                            console.error('PDF merge files change error:', error);
+                        }
+                    });
+                }
 
-            // 主题切换
-            document.getElementById('theme-toggle').addEventListener('click', function() {
-                const icon = this.querySelector('i');
-                if (icon.classList.contains('fa-moon-o')) {
+                const mergePdfBtn = document.getElementById('merge-pdf-btn');
+                if (mergePdfBtn) {
+                    mergePdfBtn.addEventListener('click', mergePdfs);
+                }
+
+                const downloadMergedBtn = document.getElementById('download-merged-btn');
+                if (downloadMergedBtn) {
+                    downloadMergedBtn.addEventListener('click', downloadMergedPdf);
+                }
+
+                // PDF 拆分
+                const pdfSplitFile = document.getElementById('pdf-split-file');
+                if (pdfSplitFile) {
+                    pdfSplitFile.addEventListener('change', function(e) {
+                        try {
+                            currentFiles = Array.from(e.target.files);
+                            const splitBtn = document.getElementById('split-pdf-btn');
+                            if (splitBtn) {
+                                splitBtn.disabled = currentFiles.length === 0;
+                            }
+                        } catch (error) {
+                            console.error('PDF split file change error:', error);
+                        }
+                    });
+                }
+
+                const splitModeRadios = document.querySelectorAll('input[name="split-mode"]');
+                if (splitModeRadios) {
+                    splitModeRadios.forEach(radio => {
+                        radio.addEventListener('change', function() {
+                            try {
+                                const rangeInput = document.getElementById('range-input');
+                                if (rangeInput) {
+                                    rangeInput.classList.toggle('hidden', this.value === 'single');
+                                }
+                            } catch (error) {
+                                console.error('Split mode change error:', error);
+                            }
+                        });
+                    });
+                }
+
+                const splitPdfBtn = document.getElementById('split-pdf-btn');
+                if (splitPdfBtn) {
+                    splitPdfBtn.addEventListener('click', splitPdf);
+                }
+
+                // 主题切换
+                const themeToggle = document.getElementById('theme-toggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', function() {
+                        try {
+                            toggleTheme();
+                        } catch (error) {
+                            console.error('Theme toggle error:', error);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Init event listeners error:', error);
+            }
+        }
+
+        // 加载保存的主题
+        function loadSavedTheme() {
+            try {
+                const savedTheme = localStorage.getItem('pdf_tool_theme');
+                if (savedTheme === 'dark') {
+                    toggleTheme(true);
+                }
+            } catch (error) {
+                console.error('Load saved theme error:', error);
+            }
+        }
+
+        // 切换主题
+        function toggleTheme(forceDark = false) {
+            try {
+                const themeToggle = document.getElementById('theme-toggle');
+                if (!themeToggle) return;
+                
+                const icon = themeToggle.querySelector('i');
+                if (!icon) return;
+                
+                const isDark = forceDark || !icon.classList.contains('fa-sun-o');
+                
+                if (isDark) {
                     icon.classList.remove('fa-moon-o');
                     icon.classList.add('fa-sun-o');
                     document.body.classList.add('bg-gray-900', 'text-white');
@@ -561,6 +746,7 @@
                         el.classList.remove('bg-gray-200');
                         el.classList.add('bg-gray-700');
                     });
+                    localStorage.setItem('pdf_tool_theme', 'dark');
                 } else {
                     icon.classList.remove('fa-sun-o');
                     icon.classList.add('fa-moon-o');
@@ -594,36 +780,85 @@
                         el.classList.remove('border-gray-700');
                         el.classList.add('border-gray-200');
                     });
+                    localStorage.setItem('pdf_tool_theme', 'light');
                 }
-            });
+            } catch (error) {
+                console.error('Toggle theme error:', error);
+            }
         }
 
         // 更新 PDF 合并文件列表
         function updatePdfMergeList() {
-            const list = document.getElementById('pdf-merge-files-list');
-            list.innerHTML = '';
-            currentFiles.forEach(file => {
-                const li = document.createElement('li');
-                li.textContent = file.name;
-                list.appendChild(li);
-            });
+            try {
+                const list = document.getElementById('pdf-merge-files-list');
+                if (!list) return;
+                
+                list.innerHTML = '';
+                
+                if (!Array.isArray(currentFiles)) {
+                    currentFiles = [];
+                }
+                
+                currentFiles.forEach(file => {
+                    if (file && file.name) {
+                        const li = document.createElement('li');
+                        li.textContent = file.name;
+                        list.appendChild(li);
+                    }
+                });
+            } catch (error) {
+                console.error('Update PDF merge list error:', error);
+            }
         }
 
         // PDF 转图片
         async function convertPdfToImage() {
-            if (currentFiles.length === 0) return;
-
-            const file = currentFiles[0];
-            const format = document.getElementById('image-format').value;
-            const dpi = parseInt(document.getElementById('image-dpi').value);
-
-            // 显示进度条
-            const progressContainer = document.getElementById('pdf-to-image-progress');
-            const progressBar = document.getElementById('pdf-to-image-progress-bar');
-            const progressText = document.getElementById('pdf-to-image-progress-text');
-            progressContainer.classList.remove('hidden');
-
             try {
+                if (isProcessing) {
+                    alert('正在处理中，请稍后再试');
+                    return;
+                }
+                
+                if (!Array.isArray(currentFiles) || currentFiles.length === 0) {
+                    alert('请选择 PDF 文件');
+                    return;
+                }
+
+                const file = currentFiles[0];
+                if (!file) {
+                    alert('文件无效');
+                    return;
+                }
+                
+                const formatSelect = document.getElementById('image-format');
+                const dpiSelect = document.getElementById('image-dpi');
+                
+                if (!formatSelect || !dpiSelect) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                const format = formatSelect.value;
+                const dpi = parseInt(dpiSelect.value);
+                
+                if (isNaN(dpi)) {
+                    alert('无效的 DPI 值');
+                    return;
+                }
+
+                // 显示进度条
+                const progressContainer = document.getElementById('pdf-to-image-progress');
+                const progressBar = document.getElementById('pdf-to-image-progress-bar');
+                const progressText = document.getElementById('pdf-to-image-progress-text');
+                
+                if (!progressContainer || !progressBar || !progressText) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                progressContainer.classList.remove('hidden');
+                isProcessing = true;
+
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const numPages = pdf.numPages;
@@ -640,6 +875,9 @@
 
                     const canvas = document.createElement('canvas');
                     const context = canvas.getContext('2d');
+                    if (!context) {
+                        throw new Error('无法创建 canvas 上下文');
+                    }
                     canvas.width = viewport.width;
                     canvas.height = viewport.height;
 
@@ -653,13 +891,18 @@
                     // 转换为图片
                     images.push({
                         canvas: canvas,
-                        name: `${file.name.split('.')[0]}-page-${i}.${format}`
+                        name: `${file.name.split('.')[0] || 'pdf'}-page-${i}.${format}`
                     });
                 }
 
                 // 显示结果
                 const resultContainer = document.getElementById('pdf-to-image-result');
                 const imagePreviews = document.getElementById('image-previews');
+                
+                if (!resultContainer || !imagePreviews) {
+                    throw new Error('页面元素缺失');
+                }
+                
                 imagePreviews.innerHTML = '';
 
                 images.forEach((image, index) => {
@@ -677,44 +920,93 @@
                 });
 
                 // 存储图片以便下载
-                currentTask = { type: 'images', data: images };
+                currentTask = { type: 'images', data: images, format: format };
 
                 resultContainer.classList.remove('hidden');
                 progressContainer.classList.add('hidden');
             } catch (error) {
                 console.error('转换失败:', error);
-                alert('转换失败: ' + error.message);
-                progressContainer.classList.add('hidden');
+                alert('转换失败: ' + (error.message || '未知错误'));
+                const progressContainer = document.getElementById('pdf-to-image-progress');
+                if (progressContainer) {
+                    progressContainer.classList.add('hidden');
+                }
+            } finally {
+                isProcessing = false;
             }
         }
 
         // 下载图片
         function downloadImages() {
-            if (!currentTask || currentTask.type !== 'images') return;
+            try {
+                if (!currentTask || currentTask.type !== 'images') {
+                    alert('没有可下载的图片');
+                    return;
+                }
 
-            currentTask.data.forEach(image => {
-                const link = document.createElement('a');
-                link.href = image.canvas.toDataURL(`image/${document.getElementById('image-format').value}`);
-                link.download = image.name;
-                link.click();
-            });
+                const images = currentTask.data;
+                const format = currentTask.format || 'jpeg';
+                
+                if (!Array.isArray(images) || images.length === 0) {
+                    alert('没有可下载的图片');
+                    return;
+                }
+
+                images.forEach(image => {
+                    if (image && image.canvas && image.name) {
+                        const link = document.createElement('a');
+                        link.href = image.canvas.toDataURL(`image/${format}`);
+                        link.download = image.name;
+                        link.click();
+                    }
+                });
+            } catch (error) {
+                console.error('下载失败:', error);
+                alert('下载失败: ' + (error.message || '未知错误'));
+            }
         }
 
         // 图片转 PDF
         async function convertImageToPdf() {
-            if (currentFiles.length === 0) return;
-
-            const files = currentFiles;
-            const pageSize = document.getElementById('pdf-page-size').value;
-
-            // 显示进度条
-            const progressContainer = document.getElementById('image-to-pdf-progress');
-            const progressBar = document.getElementById('image-to-pdf-progress-bar');
-            const progressText = document.getElementById('image-to-pdf-progress-text');
-            progressContainer.classList.remove('hidden');
-
             try {
+                if (isProcessing) {
+                    alert('正在处理中，请稍后再试');
+                    return;
+                }
+                
+                if (!Array.isArray(currentFiles) || currentFiles.length === 0) {
+                    alert('请选择图片文件');
+                    return;
+                }
+
+                const files = currentFiles;
+                const pageSizeSelect = document.getElementById('pdf-page-size');
+                
+                if (!pageSizeSelect) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                const pageSize = pageSizeSelect.value;
+
+                // 显示进度条
+                const progressContainer = document.getElementById('image-to-pdf-progress');
+                const progressBar = document.getElementById('image-to-pdf-progress-bar');
+                const progressText = document.getElementById('image-to-pdf-progress-text');
+                
+                if (!progressContainer || !progressBar || !progressText) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                progressContainer.classList.remove('hidden');
+                isProcessing = true;
+
                 const { jsPDF } = window.jspdf;
+                if (!jsPDF) {
+                    throw new Error('jsPDF 库未加载');
+                }
+                
                 const pdf = new jsPDF({ unit: 'mm', format: pageSize });
 
                 for (let i = 0; i < files.length; i++) {
@@ -723,6 +1015,9 @@
                     progressBar.style.width = `${progress}%`;
                     progressText.textContent = `${Math.round(progress)}%`;
 
+                    const file = files[i];
+                    if (!file) continue;
+
                     // 压缩图片
                     const options = {
                         maxSizeMB: 1,
@@ -730,7 +1025,14 @@
                         useWebWorker: true
                     };
 
-                    const compressedFile = await imageCompression(files[i], options);
+                    let compressedFile;
+                    try {
+                        compressedFile = await imageCompression(file, options);
+                    } catch (compressionError) {
+                        console.warn('图片压缩失败，使用原图:', compressionError);
+                        compressedFile = file;
+                    }
+                    
                     const imgURL = URL.createObjectURL(compressedFile);
 
                     // 获取页面尺寸
@@ -744,7 +1046,10 @@
                     // 计算图片尺寸
                     const img = new Image();
                     img.src = imgURL;
-                    await new Promise(resolve => img.onload = resolve);
+                    await new Promise((resolve, reject) => {
+                        img.onload = resolve;
+                        img.onerror = reject;
+                    });
 
                     const imgWidth = img.width;
                     const imgHeight = img.height;
@@ -765,36 +1070,74 @@
 
                 // 显示结果
                 const resultContainer = document.getElementById('image-to-pdf-result');
-                document.getElementById('pdf-page-count').textContent = files.length;
+                const pageCountElement = document.getElementById('pdf-page-count');
+                
+                if (!resultContainer || !pageCountElement) {
+                    throw new Error('页面元素缺失');
+                }
+                
+                pageCountElement.textContent = files.length;
                 resultContainer.classList.remove('hidden');
                 progressContainer.classList.add('hidden');
             } catch (error) {
                 console.error('转换失败:', error);
-                alert('转换失败: ' + error.message);
-                progressContainer.classList.add('hidden');
+                alert('转换失败: ' + (error.message || '未知错误'));
+                const progressContainer = document.getElementById('image-to-pdf-progress');
+                if (progressContainer) {
+                    progressContainer.classList.add('hidden');
+                }
+            } finally {
+                isProcessing = false;
             }
         }
 
         // 下载 PDF
         function downloadPdf() {
-            if (!currentTask || currentTask.type !== 'pdf') return;
+            try {
+                if (!currentTask || currentTask.type !== 'pdf') {
+                    alert('没有可下载的 PDF');
+                    return;
+                }
 
-            currentTask.data.save('merged.pdf');
+                currentTask.data.save('merged.pdf');
+            } catch (error) {
+                console.error('下载失败:', error);
+                alert('下载失败: ' + (error.message || '未知错误'));
+            }
         }
 
         // 提取文本
         async function extractText() {
-            if (currentFiles.length === 0) return;
-
-            const file = currentFiles[0];
-
-            // 显示进度条
-            const progressContainer = document.getElementById('text-extraction-progress');
-            const progressBar = document.getElementById('text-extraction-progress-bar');
-            const progressText = document.getElementById('text-extraction-progress-text');
-            progressContainer.classList.remove('hidden');
-
             try {
+                if (isProcessing) {
+                    alert('正在处理中，请稍后再试');
+                    return;
+                }
+                
+                if (!Array.isArray(currentFiles) || currentFiles.length === 0) {
+                    alert('请选择 PDF 文件');
+                    return;
+                }
+
+                const file = currentFiles[0];
+                if (!file) {
+                    alert('文件无效');
+                    return;
+                }
+
+                // 显示进度条
+                const progressContainer = document.getElementById('text-extraction-progress');
+                const progressBar = document.getElementById('text-extraction-progress-bar');
+                const progressText = document.getElementById('text-extraction-progress-text');
+                
+                if (!progressContainer || !progressBar || !progressText) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                progressContainer.classList.remove('hidden');
+                isProcessing = true;
+
                 const arrayBuffer = await file.arrayBuffer();
                 const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
                 const numPages = pdf.numPages;
@@ -808,62 +1151,104 @@
 
                     const page = await pdf.getPage(i);
                     const content = await page.getTextContent();
-                    const pageText = content.items.map(item => item.str).join(' ');
-                    text += `Page ${i}:\n${pageText}\n\n`;
+                    if (content && content.items && Array.isArray(content.items)) {
+                        const pageText = content.items.map(item => item.str || '').join(' ');
+                        text += `Page ${i}:\n${pageText}\n\n`;
+                    }
                 }
 
                 // 显示结果
                 const resultContainer = document.getElementById('text-extraction-result');
-                document.getElementById('extracted-text').value = text;
+                const extractedTextElement = document.getElementById('extracted-text');
+                
+                if (!resultContainer || !extractedTextElement) {
+                    throw new Error('页面元素缺失');
+                }
+                
+                extractedTextElement.value = text;
                 
                 // 存储文本以便下载
-                currentTask = { type: 'text', data: text, filename: `${file.name.split('.')[0]}.txt` };
+                currentTask = { type: 'text', data: text, filename: `${file.name.split('.')[0] || 'pdf'}.txt` };
 
                 resultContainer.classList.remove('hidden');
                 progressContainer.classList.add('hidden');
             } catch (error) {
                 console.error('提取失败:', error);
-                alert('提取失败: ' + error.message);
-                progressContainer.classList.add('hidden');
+                alert('提取失败: ' + (error.message || '未知错误'));
+                const progressContainer = document.getElementById('text-extraction-progress');
+                if (progressContainer) {
+                    progressContainer.classList.add('hidden');
+                }
+            } finally {
+                isProcessing = false;
             }
         }
 
         // 下载文本
         function downloadText() {
-            if (!currentTask || currentTask.type !== 'text') return;
+            try {
+                if (!currentTask || currentTask.type !== 'text') {
+                    alert('没有可下载的文本');
+                    return;
+                }
 
-            const blob = new Blob([currentTask.data], { type: 'text/plain' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = currentTask.filename;
-            link.click();
+                const blob = new Blob([currentTask.data], { type: 'text/plain' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = currentTask.filename || 'extracted-text.txt';
+                link.click();
+            } catch (error) {
+                console.error('下载失败:', error);
+                alert('下载失败: ' + (error.message || '未知错误'));
+            }
         }
 
         // PDF 压缩
         async function compressPdf() {
-            if (currentFiles.length === 0) return;
-
-            const file = currentFiles[0];
-            const quality = document.getElementById('compression-quality').value;
-
-            // 显示进度条
-            const progressContainer = document.getElementById('pdf-compression-progress');
-            const progressBar = document.getElementById('pdf-compression-progress-bar');
-            const progressText = document.getElementById('pdf-compression-progress-text');
-            progressContainer.classList.remove('hidden');
-
             try {
+                if (isProcessing) {
+                    alert('正在处理中，请稍后再试');
+                    return;
+                }
+                
+                if (!Array.isArray(currentFiles) || currentFiles.length === 0) {
+                    alert('请选择 PDF 文件');
+                    return;
+                }
+
+                const file = currentFiles[0];
+                if (!file) {
+                    alert('文件无效');
+                    return;
+                }
+                
+                const qualitySelect = document.getElementById('compression-quality');
+                if (!qualitySelect) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                const quality = qualitySelect.value;
+
+                // 显示进度条
+                const progressContainer = document.getElementById('pdf-compression-progress');
+                const progressBar = document.getElementById('pdf-compression-progress-bar');
+                const progressText = document.getElementById('pdf-compression-progress-text');
+                
+                if (!progressContainer || !progressBar || !progressText) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                progressContainer.classList.remove('hidden');
+                isProcessing = true;
+
                 // 读取原始文件大小
                 const originalSize = file.size;
 
                 // 加载 PDF
                 const arrayBuffer = await file.arrayBuffer();
                 const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
-
-                // 根据质量设置压缩级别
-                let compressionLevel = 0.7;
-                if (quality === 'low') compressionLevel = 0.5;
-                if (quality === 'high') compressionLevel = 0.9;
 
                 // 压缩 PDF
                 const compressedPdfBytes = await pdfDoc.save({
@@ -877,46 +1262,82 @@
 
                 // 显示结果
                 const resultContainer = document.getElementById('pdf-compression-result');
-                document.getElementById('original-size').textContent = formatFileSize(originalSize);
-                document.getElementById('compressed-size').textContent = formatFileSize(compressedSize);
-                document.getElementById('compression-ratio').textContent = `${compressionRatio}%`;
+                const originalSizeElement = document.getElementById('original-size');
+                const compressedSizeElement = document.getElementById('compressed-size');
+                const compressionRatioElement = document.getElementById('compression-ratio');
+                
+                if (!resultContainer || !originalSizeElement || !compressedSizeElement || !compressionRatioElement) {
+                    throw new Error('页面元素缺失');
+                }
+                
+                originalSizeElement.textContent = formatFileSize(originalSize);
+                compressedSizeElement.textContent = formatFileSize(compressedSize);
+                compressionRatioElement.textContent = `${compressionRatio}%`;
 
                 // 存储压缩后的 PDF
-                currentTask = { type: 'compressedPdf', data: compressedPdfBytes, filename: `${file.name.split('.')[0]}-compressed.pdf` };
+                currentTask = { type: 'compressedPdf', data: compressedPdfBytes, filename: `${file.name.split('.')[0] || 'pdf'}-compressed.pdf` };
 
                 resultContainer.classList.remove('hidden');
                 progressContainer.classList.add('hidden');
             } catch (error) {
                 console.error('压缩失败:', error);
-                alert('压缩失败: ' + error.message);
-                progressContainer.classList.add('hidden');
+                alert('压缩失败: ' + (error.message || '未知错误'));
+                const progressContainer = document.getElementById('pdf-compression-progress');
+                if (progressContainer) {
+                    progressContainer.classList.add('hidden');
+                }
+            } finally {
+                isProcessing = false;
             }
         }
 
         // 下载压缩后的 PDF
         function downloadCompressedPdf() {
-            if (!currentTask || currentTask.type !== 'compressedPdf') return;
+            try {
+                if (!currentTask || currentTask.type !== 'compressedPdf') {
+                    alert('没有可下载的压缩 PDF');
+                    return;
+                }
 
-            const blob = new Blob([currentTask.data], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = currentTask.filename;
-            link.click();
+                const blob = new Blob([currentTask.data], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = currentTask.filename || 'compressed.pdf';
+                link.click();
+            } catch (error) {
+                console.error('下载失败:', error);
+                alert('下载失败: ' + (error.message || '未知错误'));
+            }
         }
 
         // PDF 合并
         async function mergePdfs() {
-            if (currentFiles.length === 0) return;
-
-            const files = currentFiles;
-
-            // 显示进度条
-            const progressContainer = document.getElementById('pdf-merge-progress');
-            const progressBar = document.getElementById('pdf-merge-progress-bar');
-            const progressText = document.getElementById('pdf-merge-progress-text');
-            progressContainer.classList.remove('hidden');
-
             try {
+                if (isProcessing) {
+                    alert('正在处理中，请稍后再试');
+                    return;
+                }
+                
+                if (!Array.isArray(currentFiles) || currentFiles.length === 0) {
+                    alert('请选择 PDF 文件');
+                    return;
+                }
+
+                const files = currentFiles;
+
+                // 显示进度条
+                const progressContainer = document.getElementById('pdf-merge-progress');
+                const progressBar = document.getElementById('pdf-merge-progress-bar');
+                const progressText = document.getElementById('pdf-merge-progress-text');
+                
+                if (!progressContainer || !progressBar || !progressText) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                progressContainer.classList.remove('hidden');
+                isProcessing = true;
+
                 // 创建新的 PDF 文档
                 const mergedPdf = await PDFLib.PDFDocument.create();
                 let totalPages = 0;
@@ -927,8 +1348,11 @@
                     progressBar.style.width = `${progress}%`;
                     progressText.textContent = `${Math.round(progress)}%`;
 
+                    const file = files[i];
+                    if (!file) continue;
+
                     // 加载 PDF
-                    const arrayBuffer = await files[i].arrayBuffer();
+                    const arrayBuffer = await file.arrayBuffer();
                     const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
                     const pageCount = pdfDoc.getPageCount();
                     totalPages += pageCount;
@@ -943,8 +1367,15 @@
 
                 // 显示结果
                 const resultContainer = document.getElementById('pdf-merge-result');
-                document.getElementById('merged-files-count').textContent = files.length;
-                document.getElementById('merged-pages-count').textContent = totalPages;
+                const mergedFilesCountElement = document.getElementById('merged-files-count');
+                const mergedPagesCountElement = document.getElementById('merged-pages-count');
+                
+                if (!resultContainer || !mergedFilesCountElement || !mergedPagesCountElement) {
+                    throw new Error('页面元素缺失');
+                }
+                
+                mergedFilesCountElement.textContent = files.length;
+                mergedPagesCountElement.textContent = totalPages;
 
                 // 存储合并后的 PDF
                 currentTask = { type: 'mergedPdf', data: mergedPdfBytes, filename: 'merged.pdf' };
@@ -953,36 +1384,75 @@
                 progressContainer.classList.add('hidden');
             } catch (error) {
                 console.error('合并失败:', error);
-                alert('合并失败: ' + error.message);
-                progressContainer.classList.add('hidden');
+                alert('合并失败: ' + (error.message || '未知错误'));
+                const progressContainer = document.getElementById('pdf-merge-progress');
+                if (progressContainer) {
+                    progressContainer.classList.add('hidden');
+                }
+            } finally {
+                isProcessing = false;
             }
         }
 
         // 下载合并后的 PDF
         function downloadMergedPdf() {
-            if (!currentTask || currentTask.type !== 'mergedPdf') return;
+            try {
+                if (!currentTask || currentTask.type !== 'mergedPdf') {
+                    alert('没有可下载的合并 PDF');
+                    return;
+                }
 
-            const blob = new Blob([currentTask.data], { type: 'application/pdf' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.download = currentTask.filename;
-            link.click();
+                const blob = new Blob([currentTask.data], { type: 'application/pdf' });
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = currentTask.filename || 'merged.pdf';
+                link.click();
+            } catch (error) {
+                console.error('下载失败:', error);
+                alert('下载失败: ' + (error.message || '未知错误'));
+            }
         }
 
         // PDF 拆分
         async function splitPdf() {
-            if (currentFiles.length === 0) return;
-
-            const file = currentFiles[0];
-            const splitMode = document.querySelector('input[name="split-mode"]:checked').value;
-
-            // 显示进度条
-            const progressContainer = document.getElementById('pdf-split-progress');
-            const progressBar = document.getElementById('pdf-split-progress-bar');
-            const progressText = document.getElementById('pdf-split-progress-text');
-            progressContainer.classList.remove('hidden');
-
             try {
+                if (isProcessing) {
+                    alert('正在处理中，请稍后再试');
+                    return;
+                }
+                
+                if (!Array.isArray(currentFiles) || currentFiles.length === 0) {
+                    alert('请选择 PDF 文件');
+                    return;
+                }
+
+                const file = currentFiles[0];
+                if (!file) {
+                    alert('文件无效');
+                    return;
+                }
+                
+                const splitModeElement = document.querySelector('input[name="split-mode"]:checked');
+                if (!splitModeElement) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                const splitMode = splitModeElement.value;
+
+                // 显示进度条
+                const progressContainer = document.getElementById('pdf-split-progress');
+                const progressBar = document.getElementById('pdf-split-progress-bar');
+                const progressText = document.getElementById('pdf-split-progress-text');
+                
+                if (!progressContainer || !progressBar || !progressText) {
+                    alert('页面元素缺失');
+                    return;
+                }
+                
+                progressContainer.classList.remove('hidden');
+                isProcessing = true;
+
                 const arrayBuffer = await file.arrayBuffer();
                 const pdfDoc = await PDFLib.PDFDocument.load(arrayBuffer);
                 const numPages = pdfDoc.getPageCount();
@@ -1003,17 +1473,23 @@
 
                         splitFiles.push({
                             data: pdfBytes,
-                            name: `${file.name.split('.')[0]}-page-${i + 1}.pdf`
+                            name: `${file.name.split('.')[0] || 'pdf'}-page-${i + 1}.pdf`
                         });
                     }
                 } else {
                     // 按页码范围拆分
-                    const ranges = document.getElementById('page-ranges').value;
+                    const pageRangesElement = document.getElementById('page-ranges');
+                    if (!pageRangesElement) {
+                        throw new Error('页面元素缺失');
+                    }
+                    
+                    const ranges = pageRangesElement.value;
                     const pageNumbers = parsePageRanges(ranges, numPages);
 
                     if (pageNumbers.length === 0) {
                         alert('请输入有效的页码范围');
                         progressContainer.classList.add('hidden');
+                        isProcessing = false;
                         return;
                     }
 
@@ -1033,7 +1509,7 @@
                         const rangeStr = range.length === 1 ? range[0] : `${range[0]}-${range[range.length - 1]}`;
                         splitFiles.push({
                             data: pdfBytes,
-                            name: `${file.name.split('.')[0]}-pages-${rangeStr}.pdf`
+                            name: `${file.name.split('.')[0] || 'pdf'}-pages-${rangeStr}.pdf`
                         });
 
                         rangeIndex++;
@@ -1043,9 +1519,16 @@
                 // 显示结果
                 const resultContainer = document.getElementById('pdf-split-result');
                 const splitFilesList = document.getElementById('split-files-list');
+                
+                if (!resultContainer || !splitFilesList) {
+                    throw new Error('页面元素缺失');
+                }
+                
                 splitFilesList.innerHTML = '';
 
                 splitFiles.forEach(splitFile => {
+                    if (!splitFile || !splitFile.name || !splitFile.data) return;
+                    
                     const div = document.createElement('div');
                     div.className = 'bg-white p-4 rounded-md shadow-sm';
                     div.innerHTML = `
@@ -1057,57 +1540,85 @@
                     splitFilesList.appendChild(div);
 
                     // 添加下载事件
-                    div.querySelector('.download-split-file').addEventListener('click', function() {
-                        const blob = new Blob([splitFile.data], { type: 'application/pdf' });
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(blob);
-                        link.download = splitFile.name;
-                        link.click();
-                    });
+                    const downloadBtn = div.querySelector('.download-split-file');
+                    if (downloadBtn) {
+                        downloadBtn.addEventListener('click', function() {
+                            try {
+                                const blob = new Blob([splitFile.data], { type: 'application/pdf' });
+                                const link = document.createElement('a');
+                                link.href = URL.createObjectURL(blob);
+                                link.download = splitFile.name;
+                                link.click();
+                            } catch (error) {
+                                console.error('下载失败:', error);
+                                alert('下载失败: ' + (error.message || '未知错误'));
+                            }
+                        });
+                    }
                 });
 
                 resultContainer.classList.remove('hidden');
                 progressContainer.classList.add('hidden');
             } catch (error) {
                 console.error('拆分失败:', error);
-                alert('拆分失败: ' + error.message);
-                progressContainer.classList.add('hidden');
+                alert('拆分失败: ' + (error.message || '未知错误'));
+                const progressContainer = document.getElementById('pdf-split-progress');
+                if (progressContainer) {
+                    progressContainer.classList.add('hidden');
+                }
+            } finally {
+                isProcessing = false;
             }
         }
 
         // 解析页码范围
         function parsePageRanges(ranges, maxPages) {
-            const result = [];
-            const parts = ranges.split(',').map(p => p.trim());
+            try {
+                const result = [];
+                if (!ranges || typeof ranges !== 'string') return result;
+                
+                const parts = ranges.split(',').map(p => p.trim());
 
-            for (const part of parts) {
-                if (part.includes('-')) {
-                    const [start, end] = part.split('-').map(Number);
-                    if (start <= end && start >= 1 && end <= maxPages) {
-                        const range = [];
-                        for (let i = start; i <= end; i++) {
-                            range.push(i);
+                for (const part of parts) {
+                    if (part.includes('-')) {
+                        const [startStr, endStr] = part.split('-');
+                        const start = parseInt(startStr);
+                        const end = parseInt(endStr);
+                        
+                        if (!isNaN(start) && !isNaN(end) && start <= end && start >= 1 && end <= maxPages) {
+                            const range = [];
+                            for (let i = start; i <= end; i++) {
+                                range.push(i);
+                            }
+                            result.push(range);
                         }
-                        result.push(range);
-                    }
-                } else {
-                    const page = Number(part);
-                    if (page >= 1 && page <= maxPages) {
-                        result.push([page]);
+                    } else {
+                        const page = parseInt(part);
+                        if (!isNaN(page) && page >= 1 && page <= maxPages) {
+                            result.push([page]);
+                        }
                     }
                 }
-            }
 
-            return result;
+                return result;
+            } catch (error) {
+                console.error('解析页码范围失败:', error);
+                return [];
+            }
         }
 
         // 格式化文件大小
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 B';
-            const k = 1024;
-            const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            try {
+                if (bytes === 0) return '0 B';
+                const k = 1024;
+                const sizes = ['B', 'KB', 'MB', 'GB'];
+                const i = Math.floor(Math.log(bytes) / Math.log(k));
+                return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+            } catch (error) {
+                console.error('格式化文件大小失败:', error);
+                return '0 B';
+            }
         }
     </script>
 </body>
@@ -1333,29 +1844,29 @@
         <h3>分类</h3>
         <ul>
           
-          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/">AI工具</a></li>
-          
           <li><a href="/categories/Python/">Python</a></li>
           
-          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li>
-          
-          <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/">项目开发</a></li>
-          
-          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
+          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/">AI工具</a></li>
           
           <li><a href="/categories/Python/AI/">AI</a></li>
           
+          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li>
+          
           <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">部署指南</a></li>
           
-          <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/">前端技术</a></li>
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
           
-          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a></li>
-          
-          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/STM32/">STM32</a></li>
+          <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/">项目开发</a></li>
           
           <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
           
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a></li>
+          
+          <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/">前端技术</a></li>
+          
           <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/%E5%89%8D%E7%AB%AF/">前端</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/STM32/">STM32</a></li>
           
         </ul>
       </div>
@@ -1364,15 +1875,15 @@
         <h3>最新文章</h3>
         <ul>
           
-          <li><a href="/2026/03/15/codex-deployment-guide/">Codex部署与本地部署完整指南</a></li>
-          
           <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
           
           <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
           
+          <li><a href="/2026/03/15/codex-deployment-guide/">Codex部署与本地部署完整指南</a></li>
+          
           <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
           
-          <li><a href="/2026/03/17/markdown-publisher-dev-log/">Markdown多平台发布工具开发记录</a></li>
+          <li><a href="/2026/03/10/stm32-smart-fan-control-system/">STM32F103C8T6 智能风扇控制系统</a></li>
           
         </ul>
       </div>

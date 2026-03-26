@@ -430,11 +430,13 @@
       }
     }
     
-    function switchColorTab(tab) {
+    function switchColorTab(tab, event) {
       document.querySelectorAll('.color-input-tab').forEach(t => t.classList.remove('active'));
       document.querySelectorAll('.color-input-content').forEach(c => c.classList.remove('active'));
       
-      event.target.classList.add('active');
+      if (event && event.target) {
+        event.target.classList.add('active');
+      }
       document.getElementById(tab + 'Tab').classList.add('active');
     }
     
@@ -474,214 +476,398 @@
     }
     
     function applyColor() {
-      if (!vditor || !isInitialized) {
-        showToast('编辑器尚未准备好');
-        return;
+      try {
+        if (!vditor || !isInitialized) {
+          showToast('编辑器尚未准备好');
+          return;
+        }
+        
+        // 确保currentColor有效
+        if (!currentColor || typeof currentColor !== 'string') {
+          showToast('颜色值无效');
+          return;
+        }
+        
+        // 获取选中的文本
+        const selection = window.getSelection();
+        const selectedText = selection ? selection.toString() : '';
+        
+        if (selectedText) {
+          // 在选中文本周围添加颜色标记
+          const coloredText = `<span style="color: ${currentColor}">${selectedText}</span>`;
+          try {
+            document.execCommand('insertHTML', false, coloredText);
+          } catch (execError) {
+            // 如果execCommand失败，尝试使用vditor的insertValue
+            vditor.insertValue(coloredText);
+          }
+        } else {
+          // 插入带颜色的占位符
+          const coloredText = `<span style="color: ${currentColor}">彩色文本</span>`;
+          vditor.insertValue(coloredText);
+        }
+        
+        // 添加到最近使用
+        addRecentColor(currentColor);
+        
+        closeColorPicker();
+        showToast('颜色已应用');
+        updatePreview();
+      } catch (error) {
+        console.error('Apply color error:', error);
+        showToast('应用颜色时出现错误');
+        closeColorPicker();
       }
-      
-      // 获取选中的文本
-      const selection = window.getSelection();
-      const selectedText = selection.toString();
-      
-      if (selectedText) {
-        // 在选中文本周围添加颜色标记
-        const coloredText = `<span style="color: ${currentColor}">${selectedText}</span>`;
-        document.execCommand('insertHTML', false, coloredText);
-      } else {
-        // 插入带颜色的占位符
-        const coloredText = `<span style="color: ${currentColor}">彩色文本</span>`;
-        vditor.insertValue(coloredText);
-      }
-      
-      // 添加到最近使用
-      addRecentColor(currentColor);
-      
-      closeColorPicker();
-      showToast('颜色已应用');
-      updatePreview();
     }
     
     function addRecentColor(color) {
-      // 移除重复项
-      recentColors = recentColors.filter(c => c !== color);
-      // 添加到开头
-      recentColors.unshift(color);
-      // 限制数量
-      if (recentColors.length > 10) recentColors.pop();
-      
-      localStorage.setItem('recent_colors', JSON.stringify(recentColors));
-      renderRecentColors();
+      try {
+        // 确保color有效
+        if (!color || typeof color !== 'string') {
+          return;
+        }
+        
+        // 确保recentColors是数组
+        if (!Array.isArray(recentColors)) {
+          recentColors = [];
+        }
+        
+        // 移除重复项
+        recentColors = recentColors.filter(c => c !== color);
+        // 添加到开头
+        recentColors.unshift(color);
+        // 限制数量
+        if (recentColors.length > 10) recentColors.pop();
+        
+        // 保存到localStorage
+        localStorage.setItem('recent_colors', JSON.stringify(recentColors));
+        renderRecentColors();
+      } catch (error) {
+        console.error('Add recent color error:', error);
+      }
     }
     
     function renderRecentColors() {
-      const grid = document.getElementById('recentColorsGrid');
-      
-      if (recentColors.length === 0) {
-        grid.innerHTML = '<span class="recent-color-empty">暂无记录</span>';
-        return;
+      try {
+        const grid = document.getElementById('recentColorsGrid');
+        if (!grid) return;
+        
+        // 确保recentColors是数组
+        if (!Array.isArray(recentColors)) {
+          recentColors = [];
+        }
+        
+        if (recentColors.length === 0) {
+          grid.innerHTML = '<span class="recent-color-empty">暂无记录</span>';
+          return;
+        }
+        
+        // 过滤掉无效的颜色值
+        const validColors = recentColors.filter(color => color && typeof color === 'string');
+        
+        if (validColors.length === 0) {
+          grid.innerHTML = '<span class="recent-color-empty">暂无记录</span>';
+          return;
+        }
+        
+        grid.innerHTML = validColors.map(color => `
+          <div class="recent-color-item" style="background-color: ${color}" onclick="selectColor('${color}')"></div>
+        `).join('');
+      } catch (error) {
+        console.error('Render recent colors error:', error);
       }
-      
-      grid.innerHTML = recentColors.map(color => `
-        <div class="recent-color-item" style="background-color: ${color}" onclick="selectColor('${color}')"></div>
-      `).join('');
     }
     
     // 颜色转换工具函数
     function hexToRgb(hex) {
-      const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-      } : null;
+      try {
+        if (!hex || typeof hex !== 'string') {
+          return null;
+        }
+        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+        return result ? {
+          r: parseInt(result[1], 16),
+          g: parseInt(result[2], 16),
+          b: parseInt(result[3], 16)
+        } : null;
+      } catch (error) {
+        console.error('Hex to RGB error:', error);
+        return null;
+      }
     }
     
     function rgbToHex(r, g, b) {
-      return '#' + [r, g, b].map(x => {
-        const hex = x.toString(16);
-        return hex.length === 1 ? '0' + hex : hex;
-      }).join('');
+      try {
+        // 确保输入值在有效范围内
+        r = Math.max(0, Math.min(255, Math.round(r)));
+        g = Math.max(0, Math.min(255, Math.round(g)));
+        b = Math.max(0, Math.min(255, Math.round(b)));
+        
+        return '#' + [r, g, b].map(x => {
+          const hex = x.toString(16);
+          return hex.length === 1 ? '0' + hex : hex;
+        }).join('');
+      } catch (error) {
+        console.error('RGB to hex error:', error);
+        return '#000000';
+      }
     }
     
     function rgbToHsl(r, g, b) {
-      r /= 255; g /= 255; b /= 255;
-      const max = Math.max(r, g, b);
-      const min = Math.min(r, g, b);
-      let h, s, l = (max + min) / 2;
-      
-      if (max === min) {
-        h = s = 0;
-      } else {
-        const d = max - min;
-        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-        switch (max) {
-          case r: h = (g - b) / d + (g < b ? 6 : 0); break;
-          case g: h = (b - r) / d + 2; break;
-          case b: h = (r - g) / d + 4; break;
+      try {
+        // 确保输入值在有效范围内
+        r = Math.max(0, Math.min(255, Math.round(r)));
+        g = Math.max(0, Math.min(255, Math.round(g)));
+        b = Math.max(0, Math.min(255, Math.round(b)));
+        
+        r /= 255; g /= 255; b /= 255;
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        let h, s, l = (max + min) / 2;
+        
+        if (max === min) {
+          h = s = 0;
+        } else {
+          const d = max - min;
+          s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+          switch (max) {
+            case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+            case g: h = (b - r) / d + 2; break;
+            case b: h = (r - g) / d + 4; break;
+            default: h = 0;
+          }
+          h /= 6;
         }
-        h /= 6;
+        
+        return {
+          h: Math.round(h * 360),
+          s: Math.round(s * 100),
+          l: Math.round(l * 100)
+        };
+      } catch (error) {
+        console.error('RGB to HSL error:', error);
+        return { h: 0, s: 0, l: 0 };
       }
-      
-      return {
-        h: Math.round(h * 360),
-        s: Math.round(s * 100),
-        l: Math.round(l * 100)
-      };
     }
     
     function hslToRgb(h, s, l) {
-      h /= 360; s /= 100; l /= 100;
-      let r, g, b;
-      
-      if (s === 0) {
-        r = g = b = l;
-      } else {
-        const hue2rgb = (p, q, t) => {
-          if (t < 0) t += 1;
-          if (t > 1) t -= 1;
-          if (t < 1/6) return p + (q - p) * 6 * t;
-          if (t < 1/2) return q;
-          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
-          return p;
-        };
+      try {
+        // 确保输入值在有效范围内
+        h = Math.max(0, Math.min(360, Math.round(h)));
+        s = Math.max(0, Math.min(100, Math.round(s)));
+        l = Math.max(0, Math.min(100, Math.round(l)));
         
-        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-        const p = 2 * l - q;
-        r = hue2rgb(p, q, h + 1/3);
-        g = hue2rgb(p, q, h);
-        b = hue2rgb(p, q, h - 1/3);
+        h /= 360; s /= 100; l /= 100;
+        let r, g, b;
+        
+        if (s === 0) {
+          r = g = b = l;
+        } else {
+          const hue2rgb = (p, q, t) => {
+            if (t < 0) t += 1;
+            if (t > 1) t -= 1;
+            if (t < 1/6) return p + (q - p) * 6 * t;
+            if (t < 1/2) return q;
+            if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+            return p;
+          };
+          
+          const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+          const p = 2 * l - q;
+          r = hue2rgb(p, q, h + 1/3);
+          g = hue2rgb(p, q, h);
+          b = hue2rgb(p, q, h - 1/3);
+        }
+        
+        return {
+          r: Math.round(r * 255),
+          g: Math.round(g * 255),
+          b: Math.round(b * 255)
+        };
+      } catch (error) {
+        console.error('HSL to RGB error:', error);
+        return { r: 0, g: 0, b: 0 };
       }
-      
-      return {
-        r: Math.round(r * 255),
-        g: Math.round(g * 255),
-        b: Math.round(b * 255)
-      };
     }
     
     // ============================================
     // 主题管理器功能
     // ============================================
     function initThemeManager() {
-      renderThemeGrid('all');
+      try {
+        renderThemeGrid('all');
+      } catch (error) {
+        console.error('Init theme manager error:', error);
+      }
     }
     
     function openThemeManager() {
-      document.getElementById('themeManagerModal').classList.add('show');
-      renderThemeGrid('all');
+      try {
+        const modal = document.getElementById('themeManagerModal');
+        if (modal) {
+          modal.classList.add('show');
+          renderThemeGrid('all');
+        }
+      } catch (error) {
+        console.error('Open theme manager error:', error);
+      }
     }
     
     function closeThemeManager() {
-      document.getElementById('themeManagerModal').classList.remove('show');
+      try {
+        const modal = document.getElementById('themeManagerModal');
+        if (modal) {
+          modal.classList.remove('show');
+        }
+      } catch (error) {
+        console.error('Close theme manager error:', error);
+      }
     }
     
     function renderThemeGrid(category) {
-      const grid = document.getElementById('themeGrid');
-      const themes = category === 'all' 
-        ? markdownThemes 
-        : markdownThemes.filter(t => t.category === category);
-      
-      grid.innerHTML = themes.map(theme => `
-        <div class="theme-card ${theme.id === currentMarkdownTheme ? 'active' : ''}" onclick="applyMarkdownTheme('${theme.id}')">
-          <div class="theme-preview" style="background: ${theme.category === 'dark' ? '#1a1a2e' : '#ffffff'}">
-            ${theme.preview}
-          </div>
-          <div class="theme-info">
-            <div class="theme-name">${theme.name}</div>
-            <div class="theme-meta">${theme.author}</div>
-            <span class="theme-license">${theme.license}</span>
-          </div>
-        </div>
-      `).join('');
+      try {
+        const grid = document.getElementById('themeGrid');
+        if (!grid) return;
+        
+        // 确保markdownThemes是数组
+        if (!Array.isArray(markdownThemes)) {
+          grid.innerHTML = '<div class="theme-error">主题数据加载失败</div>';
+          return;
+        }
+        
+        const themes = category === 'all' 
+          ? markdownThemes 
+          : markdownThemes.filter(t => t && t.category === category);
+        
+        if (themes.length === 0) {
+          grid.innerHTML = '<div class="theme-error">没有找到匹配的主题</div>';
+          return;
+        }
+        
+        grid.innerHTML = themes.map(theme => {
+          if (!theme || !theme.id) return '';
+          return `
+            <div class="theme-card ${theme.id === currentMarkdownTheme ? 'active' : ''}" onclick="applyMarkdownTheme('${theme.id}')">
+              <div class="theme-preview" style="background: ${theme.category === 'dark' ? '#1a1a2e' : '#ffffff'}">
+                ${theme.preview || ''}
+              </div>
+              <div class="theme-info">
+                <div class="theme-name">${theme.name || '未知主题'}</div>
+                <div class="theme-meta">${theme.author || '未知作者'}</div>
+                <span class="theme-license">${theme.license || '未知许可'}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Render theme grid error:', error);
+        const grid = document.getElementById('themeGrid');
+        if (grid) {
+          grid.innerHTML = '<div class="theme-error">主题加载失败</div>';
+        }
+      }
     }
     
     function filterThemes(category) {
-      document.querySelectorAll('.theme-category').forEach(c => c.classList.remove('active'));
-      document.querySelector(`[data-category="${category}"]`).classList.add('active');
-      renderThemeGrid(category);
+      try {
+        document.querySelectorAll('.theme-category').forEach(c => c.classList.remove('active'));
+        const activeCategory = document.querySelector(`[data-category="${category}"]`);
+        if (activeCategory) {
+          activeCategory.classList.add('active');
+        }
+        renderThemeGrid(category);
+      } catch (error) {
+        console.error('Filter themes error:', error);
+      }
     }
     
     function searchThemes(query) {
-      const grid = document.getElementById('themeGrid');
-      const themes = markdownThemes.filter(t => 
-        t.name.toLowerCase().includes(query.toLowerCase()) ||
-        t.description.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      grid.innerHTML = themes.map(theme => `
-        <div class="theme-card ${theme.id === currentMarkdownTheme ? 'active' : ''}" onclick="applyMarkdownTheme('${theme.id}')">
-          <div class="theme-preview" style="background: ${theme.category === 'dark' ? '#1a1a2e' : '#ffffff'}">
-            ${theme.preview}
-          </div>
-          <div class="theme-info">
-            <div class="theme-name">${theme.name}</div>
-            <div class="theme-meta">${theme.author}</div>
-            <span class="theme-license">${theme.license}</span>
-          </div>
-        </div>
-      `).join('');
+      try {
+        const grid = document.getElementById('themeGrid');
+        if (!grid) return;
+        
+        // 确保markdownThemes是数组
+        if (!Array.isArray(markdownThemes)) {
+          grid.innerHTML = '<div class="theme-error">主题数据加载失败</div>';
+          return;
+        }
+        
+        const themes = markdownThemes.filter(t => 
+          t && (t.name.toLowerCase().includes(query.toLowerCase()) ||
+          t.description.toLowerCase().includes(query.toLowerCase()))
+        );
+        
+        if (themes.length === 0) {
+          grid.innerHTML = '<div class="theme-error">没有找到匹配的主题</div>';
+          return;
+        }
+        
+        grid.innerHTML = themes.map(theme => {
+          if (!theme || !theme.id) return '';
+          return `
+            <div class="theme-card ${theme.id === currentMarkdownTheme ? 'active' : ''}" onclick="applyMarkdownTheme('${theme.id}')">
+              <div class="theme-preview" style="background: ${theme.category === 'dark' ? '#1a1a2e' : '#ffffff'}">
+                ${theme.preview || ''}
+              </div>
+              <div class="theme-info">
+                <div class="theme-name">${theme.name || '未知主题'}</div>
+                <div class="theme-meta">${theme.author || '未知作者'}</div>
+                <span class="theme-license">${theme.license || '未知许可'}</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (error) {
+        console.error('Search themes error:', error);
+        const grid = document.getElementById('themeGrid');
+        if (grid) {
+          grid.innerHTML = '<div class="theme-error">搜索失败</div>';
+        }
+      }
     }
     
     function applyMarkdownTheme(themeId) {
-      currentMarkdownTheme = themeId;
-      localStorage.setItem('markdown_editor_markdown_theme', themeId);
-      
-      const theme = markdownThemes.find(t => t.id === themeId);
-      if (theme) {
-        document.getElementById('currentThemeName').textContent = theme.name;
-        document.getElementById('currentThemeAuthor').textContent = theme.author;
-        document.getElementById('currentThemeLicense').textContent = theme.license;
+      try {
+        if (!themeId || typeof themeId !== 'string') {
+          showToast('无效的主题ID');
+          return;
+        }
+        
+        currentMarkdownTheme = themeId;
+        localStorage.setItem('markdown_editor_markdown_theme', themeId);
+        
+        const theme = markdownThemes.find(t => t && t.id === themeId);
+        if (theme) {
+          const nameElement = document.getElementById('currentThemeName');
+          const authorElement = document.getElementById('currentThemeAuthor');
+          const licenseElement = document.getElementById('currentThemeLicense');
+          
+          if (nameElement) nameElement.textContent = theme.name || '未知主题';
+          if (authorElement) authorElement.textContent = theme.author || '未知作者';
+          if (licenseElement) licenseElement.textContent = theme.license || '未知许可';
+        }
+        
+        const activeCategory = document.querySelector('.theme-category.active');
+        const category = activeCategory ? activeCategory.dataset.category : 'all';
+        renderThemeGrid(category);
+        updatePreview();
+        showToast(`已切换到 ${theme ? theme.name : '未知'} 主题`);
+      } catch (error) {
+        console.error('Apply markdown theme error:', error);
+        showToast('切换主题时出现错误');
       }
-      
-      renderThemeGrid(document.querySelector('.theme-category.active').dataset.category);
-      updatePreview();
-      showToast(`已切换到 ${theme.name} 主题`);
     }
     
     function loadSavedMarkdownTheme() {
-      const saved = localStorage.getItem('markdown_editor_markdown_theme');
-      if (saved && markdownThemes.find(t => t.id === saved)) {
-        currentMarkdownTheme = saved;
+      try {
+        const saved = localStorage.getItem('markdown_editor_markdown_theme');
+        if (saved && typeof saved === 'string' && Array.isArray(markdownThemes)) {
+          if (markdownThemes.find(t => t && t.id === saved)) {
+            currentMarkdownTheme = saved;
+          }
+        }
+      } catch (error) {
+        console.error('Load saved markdown theme error:', error);
       }
     }
     
@@ -689,121 +875,229 @@
     // 主题自定义功能
     // ============================================
     function updateFontSize(value) {
-      document.getElementById('fontSizeValue').textContent = value + 'px';
-      document.documentElement.style.setProperty('--editor-font-size', value + 'px');
-      localStorage.setItem('editor_font_size', value);
-      updatePreview();
+      try {
+        // 确保value是有效的数字
+        const numValue = parseFloat(value);
+        if (isNaN(numValue) || numValue <= 0) return;
+        
+        const valueElement = document.getElementById('fontSizeValue');
+        if (valueElement) {
+          valueElement.textContent = value + 'px';
+        }
+        document.documentElement.style.setProperty('--editor-font-size', value + 'px');
+        localStorage.setItem('editor_font_size', value);
+        updatePreview();
+      } catch (error) {
+        console.error('Update font size error:', error);
+      }
     }
     
     function updateLineHeight(value) {
-      document.getElementById('lineHeightValue').textContent = value;
-      document.documentElement.style.setProperty('--editor-line-height', value);
-      localStorage.setItem('editor_line_height', value);
-      updatePreview();
+      try {
+        // 确保value是有效的数字
+        const numValue = parseFloat(value);
+        if (isNaN(numValue) || numValue <= 0) return;
+        
+        const valueElement = document.getElementById('lineHeightValue');
+        if (valueElement) {
+          valueElement.textContent = value;
+        }
+        document.documentElement.style.setProperty('--editor-line-height', value);
+        localStorage.setItem('editor_line_height', value);
+        updatePreview();
+      } catch (error) {
+        console.error('Update line height error:', error);
+      }
     }
     
     function updateCodeStyle() {
-      const bgColor = document.getElementById('codeBgColor').value;
-      const radius = document.getElementById('codeRadiusRange').value;
-      document.getElementById('codeRadiusValue').textContent = radius + 'px';
-      
-      localStorage.setItem('code_bg_color', bgColor);
-      localStorage.setItem('code_radius', radius);
-      updatePreview();
+      try {
+        const bgColorElement = document.getElementById('codeBgColor');
+        const radiusElement = document.getElementById('codeRadiusRange');
+        const radiusValueElement = document.getElementById('codeRadiusValue');
+        
+        if (!bgColorElement || !radiusElement) return;
+        
+        const bgColor = bgColorElement.value;
+        const radius = radiusElement.value;
+        
+        if (radiusValueElement) {
+          radiusValueElement.textContent = radius + 'px';
+        }
+        
+        localStorage.setItem('code_bg_color', bgColor);
+        localStorage.setItem('code_radius', radius);
+        updatePreview();
+      } catch (error) {
+        console.error('Update code style error:', error);
+      }
     }
     
     // ============================================
     // 主题导入/导出
     // ============================================
     function importTheme() {
-      document.getElementById('themeImportInput').click();
+      try {
+        const input = document.getElementById('themeImportInput');
+        if (input) {
+          input.click();
+        }
+      } catch (error) {
+        console.error('Import theme error:', error);
+        showToast('打开文件选择器失败');
+      }
     }
     
     function handleThemeImport(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        try {
-          const theme = JSON.parse(e.target.result);
-          if (theme.id && theme.name && theme.styles) {
-            markdownThemes.push(theme);
-            renderThemeGrid('all');
-            showToast('主题导入成功');
-          } else {
-            showToast('无效的主题文件');
-          }
-        } catch (err) {
-          showToast('文件解析失败');
+      try {
+        if (!event || !event.target || !event.target.files) return;
+        
+        const file = event.target.files[0];
+        if (!file) return;
+        
+        // 检查文件类型
+        if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+          showToast('请选择JSON格式的主题文件');
+          return;
         }
-      };
-      reader.readAsText(file);
+        
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          try {
+            if (!e || !e.target || !e.target.result) {
+              showToast('文件读取失败');
+              return;
+            }
+            
+            const theme = JSON.parse(e.target.result);
+            if (theme && theme.id && theme.name && theme.styles) {
+              // 检查是否已存在相同ID的主题
+              const existingIndex = markdownThemes.findIndex(t => t && t.id === theme.id);
+              if (existingIndex >= 0) {
+                // 替换现有主题
+                markdownThemes[existingIndex] = theme;
+              } else {
+                // 添加新主题
+                markdownThemes.push(theme);
+              }
+              renderThemeGrid('all');
+              showToast('主题导入成功');
+            } else {
+              showToast('无效的主题文件格式');
+            }
+          } catch (err) {
+            console.error('Theme import parse error:', err);
+            showToast('文件解析失败: ' + err.message);
+          }
+        };
+        reader.onerror = () => {
+          showToast('文件读取失败');
+        };
+        reader.readAsText(file);
+      } catch (error) {
+        console.error('Handle theme import error:', error);
+        showToast('导入主题时出现错误');
+      }
     }
     
     function exportCurrentTheme() {
-      const theme = markdownThemes.find(t => t.id === currentMarkdownTheme);
-      if (!theme) return;
-      
-      const dataStr = JSON.stringify(theme, null, 2);
-      const blob = new Blob([dataStr], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `theme-${theme.id}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      
-      showToast('主题已导出');
+      try {
+        const theme = markdownThemes.find(t => t && t.id === currentMarkdownTheme);
+        if (!theme) {
+          showToast('未找到当前主题');
+          return;
+        }
+        
+        const dataStr = JSON.stringify(theme, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `theme-${theme.id || 'unknown'}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showToast('主题已导出');
+      } catch (error) {
+        console.error('Export theme error:', error);
+        showToast('导出主题时出现错误');
+      }
     }
     
     // ============================================
     // 界面主题切换
     // ============================================
     function toggleThemeDropdown() {
-      document.getElementById('themeDropdown').classList.toggle('show');
+      try {
+        const dropdown = document.getElementById('themeDropdown');
+        if (dropdown) {
+          dropdown.classList.toggle('show');
+        }
+      } catch (error) {
+        console.error('Toggle theme dropdown error:', error);
+      }
     }
     
     function closeThemeDropdown() {
-      document.getElementById('themeDropdown').classList.remove('show');
+      try {
+        const dropdown = document.getElementById('themeDropdown');
+        if (dropdown) {
+          dropdown.classList.remove('show');
+        }
+      } catch (error) {
+        console.error('Close theme dropdown error:', error);
+      }
     }
     
     function switchTheme(theme) {
-      if (theme === currentTheme) {
-        closeThemeDropdown();
-        return;
-      }
-      
-      const body = document.body;
-      body.removeAttribute('data-theme');
-      
-      if (theme !== 'light') {
-        body.setAttribute('data-theme', theme);
-      }
-      
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-      currentTheme = theme;
-      
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.remove('active');
-        if (option.dataset.theme === theme) {
-          option.classList.add('active');
+      try {
+        if (!theme || typeof theme !== 'string') return;
+        
+        if (theme === currentTheme) {
+          closeThemeDropdown();
+          return;
         }
-      });
-      
-      updateVditorTheme(theme);
-      closeThemeDropdown();
-      showToast(`已切换到${getThemeName(theme)}主题`);
-      updatePreview();
+        
+        const body = document.body;
+        if (body) {
+          body.removeAttribute('data-theme');
+          
+          if (theme !== 'light') {
+            body.setAttribute('data-theme', theme);
+          }
+        }
+        
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+        currentTheme = theme;
+        
+        document.querySelectorAll('.theme-option').forEach(option => {
+          option.classList.remove('active');
+          if (option.dataset.theme === theme) {
+            option.classList.add('active');
+          }
+        });
+        
+        updateVditorTheme(theme);
+        closeThemeDropdown();
+        showToast(`已切换到${getThemeName(theme)}主题`);
+        updatePreview();
+      } catch (error) {
+        console.error('Switch theme error:', error);
+        showToast('切换主题时出现错误');
+      }
     }
     
     function updateVditorTheme(theme) {
-      if (!vditor) return;
-      const vditorTheme = theme === 'light' ? 'classic' : 'dark';
-      vditor.setTheme(vditorTheme, vditorTheme);
+      try {
+        if (!vditor || typeof vditor.setTheme !== 'function') return;
+        const vditorTheme = theme === 'light' ? 'classic' : 'dark';
+        vditor.setTheme(vditorTheme, vditorTheme);
+      } catch (error) {
+        console.error('Update Vditor theme error:', error);
+      }
     }
     
     function getThemeName(theme) {
@@ -812,43 +1106,70 @@
     }
     
     function loadSavedTheme() {
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
-      const savedFontSize = localStorage.getItem('editor_font_size') || '14';
-      const savedLineHeight = localStorage.getItem('editor_line_height') || '1.8';
-      
-      if (savedTheme !== 'light') {
-        document.body.setAttribute('data-theme', savedTheme);
-        currentTheme = savedTheme;
-        document.querySelectorAll('.theme-option').forEach(option => {
-          option.classList.remove('active');
-          if (option.dataset.theme === savedTheme) {
-            option.classList.add('active');
+      try {
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
+        const savedFontSize = localStorage.getItem('editor_font_size') || '14';
+        const savedLineHeight = localStorage.getItem('editor_line_height') || '1.8';
+        
+        if (savedTheme !== 'light') {
+          const body = document.body;
+          if (body) {
+            body.setAttribute('data-theme', savedTheme);
+            currentTheme = savedTheme;
+            document.querySelectorAll('.theme-option').forEach(option => {
+              option.classList.remove('active');
+              if (option.dataset.theme === savedTheme) {
+                option.classList.add('active');
+              }
+            });
           }
-        });
+        }
+        
+        // 恢复自定义设置
+        const fontSizeRange = document.getElementById('fontSizeRange');
+        const fontSizeValue = document.getElementById('fontSizeValue');
+        if (fontSizeRange && fontSizeValue) {
+          fontSizeRange.value = savedFontSize;
+          fontSizeValue.textContent = savedFontSize + 'px';
+          document.documentElement.style.setProperty('--editor-font-size', savedFontSize + 'px');
+        }
+        
+        const lineHeightRange = document.getElementById('lineHeightRange');
+        const lineHeightValue = document.getElementById('lineHeightValue');
+        if (lineHeightRange && lineHeightValue) {
+          lineHeightRange.value = savedLineHeight;
+          lineHeightValue.textContent = savedLineHeight;
+          document.documentElement.style.setProperty('--editor-line-height', savedLineHeight);
+        }
+      } catch (error) {
+        console.error('Load saved theme error:', error);
       }
-      
-      // 恢复自定义设置
-      document.getElementById('fontSizeRange').value = savedFontSize;
-      document.getElementById('fontSizeValue').textContent = savedFontSize + 'px';
-      document.documentElement.style.setProperty('--editor-font-size', savedFontSize + 'px');
-      
-      document.getElementById('lineHeightRange').value = savedLineHeight;
-      document.getElementById('lineHeightValue').textContent = savedLineHeight;
-      document.documentElement.style.setProperty('--editor-line-height', savedLineHeight);
     }
     
     // ============================================
     // 预览和导出功能
     // ============================================
     function updatePreview() {
-      if (!vditor || !isInitialized) return;
-      
       try {
+        if (!vditor || !isInitialized) return;
+        
         const markdown = vditor.getValue();
+        const previewElement = document.getElementById('preview');
+        if (!previewElement) return;
+        
         if (!markdown) {
-          document.getElementById('preview').innerHTML = `
+          previewElement.innerHTML = `
             <div style="color: var(--text-secondary); text-align: center; padding-top: 50px;">
               在左侧编辑器输入内容，此处将显示预览
+            </div>
+          `;
+          return;
+        }
+        
+        if (typeof Vditor === 'undefined' || typeof Vditor.md2html !== 'function') {
+          previewElement.innerHTML = `
+            <div style="color: var(--text-error); text-align: center; padding-top: 50px;">
+              预览功能不可用
             </div>
           `;
           return;
@@ -858,100 +1179,160 @@
           mode: 'ir',
           theme: currentTheme === 'light' ? 'classic' : 'dark'
         }).then(html => {
-          document.getElementById('preview').innerHTML = applyMarkdownStyles(html);
+          try {
+            if (previewElement) {
+              previewElement.innerHTML = applyMarkdownStyles(html);
+            }
+          } catch (applyError) {
+            console.error('Apply markdown styles error:', applyError);
+            if (previewElement) {
+              previewElement.innerHTML = `
+                <div style="color: var(--text-error); text-align: center; padding-top: 50px;">
+                  预览样式应用失败
+                </div>
+              `;
+            }
+          }
         }).catch(err => {
           console.error('Preview error:', err);
+          if (previewElement) {
+            previewElement.innerHTML = `
+              <div style="color: var(--text-error); text-align: center; padding-top: 50px;">
+                预览生成失败: ${err.message || '未知错误'}
+              </div>
+            `;
+          }
         });
       } catch (error) {
         console.error('Update preview error:', error);
+        const previewElement = document.getElementById('preview');
+        if (previewElement) {
+          previewElement.innerHTML = `
+            <div style="color: var(--text-error); text-align: center; padding-top: 50px;">
+              预览更新失败
+            </div>
+          `;
+        }
       }
     }
     
     function applyMarkdownStyles(html) {
-      const theme = markdownThemes.find(t => t.id === currentMarkdownTheme);
-      const platformStyle = platformStyles[currentPlatform] || {};
-      
-      if (!theme && !Object.keys(platformStyle).length) return html;
-      
-      const temp = document.createElement('div');
-      temp.innerHTML = html;
-      
-      // 应用 Markdown 主题样式
-      if (theme) {
-        temp.querySelectorAll('h1').forEach(el => el.style.cssText = theme.styles.h1);
-        temp.querySelectorAll('h2').forEach(el => el.style.cssText = theme.styles.h2);
-        temp.querySelectorAll('h3').forEach(el => el.style.cssText = theme.styles.h3);
-        temp.querySelectorAll('code:not(pre code)').forEach(el => el.style.cssText = theme.styles.code);
-        temp.querySelectorAll('pre').forEach(el => {
-          el.style.cssText = theme.styles.pre;
-          el.querySelectorAll('code').forEach(code => code.style.cssText = '');
-        });
-        temp.querySelectorAll('blockquote').forEach(el => el.style.cssText = theme.styles.blockquote);
+      try {
+        if (!html || typeof html !== 'string') return html;
+        
+        const theme = markdownThemes.find(t => t && t.id === currentMarkdownTheme);
+        const platformStyle = platformStyles[currentPlatform] || {};
+        
+        if (!theme && !Object.keys(platformStyle).length) return html;
+        
+        const temp = document.createElement('div');
+        temp.innerHTML = html;
+        
+        // 应用 Markdown 主题样式
+        if (theme && theme.styles) {
+          const styles = theme.styles;
+          if (styles.h1) temp.querySelectorAll('h1').forEach(el => el.style.cssText = styles.h1);
+          if (styles.h2) temp.querySelectorAll('h2').forEach(el => el.style.cssText = styles.h2);
+          if (styles.h3) temp.querySelectorAll('h3').forEach(el => el.style.cssText = styles.h3);
+          if (styles.code) temp.querySelectorAll('code:not(pre code)').forEach(el => el.style.cssText = styles.code);
+          if (styles.pre) {
+            temp.querySelectorAll('pre').forEach(el => {
+              el.style.cssText = styles.pre;
+              el.querySelectorAll('code').forEach(code => code.style.cssText = '');
+            });
+          }
+          if (styles.blockquote) temp.querySelectorAll('blockquote').forEach(el => el.style.cssText = styles.blockquote);
+        }
+        
+        // 应用平台样式覆盖
+        if (currentPlatform !== 'default' && platformStyle) {
+          const ps = platformStyle;
+          if (ps.h1) temp.querySelectorAll('h1').forEach(el => el.style.cssText += ';' + ps.h1);
+          if (ps.h2) temp.querySelectorAll('h2').forEach(el => el.style.cssText += ';' + ps.h2);
+          if (ps.h3) temp.querySelectorAll('h3').forEach(el => el.style.cssText += ';' + ps.h3);
+          if (ps.code) temp.querySelectorAll('code:not(pre code)').forEach(el => el.style.cssText += ';' + ps.code);
+          if (ps.pre) temp.querySelectorAll('pre').forEach(el => el.style.cssText += ';' + ps.pre);
+          if (ps.blockquote) temp.querySelectorAll('blockquote').forEach(el => el.style.cssText += ';' + ps.blockquote);
+        }
+        
+        return temp.innerHTML;
+      } catch (error) {
+        console.error('Apply markdown styles error:', error);
+        return html;
       }
-      
-      // 应用平台样式覆盖
-      if (currentPlatform !== 'default') {
-        const ps = platformStyle;
-        if (ps.h1) temp.querySelectorAll('h1').forEach(el => el.style.cssText += ';' + ps.h1);
-        if (ps.h2) temp.querySelectorAll('h2').forEach(el => el.style.cssText += ';' + ps.h2);
-        if (ps.h3) temp.querySelectorAll('h3').forEach(el => el.style.cssText += ';' + ps.h3);
-        if (ps.code) temp.querySelectorAll('code:not(pre code)').forEach(el => el.style.cssText += ';' + ps.code);
-        if (ps.pre) temp.querySelectorAll('pre').forEach(el => el.style.cssText += ';' + ps.pre);
-        if (ps.blockquote) temp.querySelectorAll('blockquote').forEach(el => el.style.cssText += ';' + ps.blockquote);
-      }
-      
-      return temp.innerHTML;
     }
     
     // ============================================
     // 工具功能
     // ============================================
     function copyContent() {
-      if (!vditor || !isInitialized) {
-        showToast('编辑器尚未准备好');
-        return;
+      try {
+        if (!vditor || !isInitialized) {
+          showToast('编辑器尚未准备好');
+          return;
+        }
+        
+        const content = vditor.getValue();
+        if (!content || content.trim() === '') {
+          showToast('没有可复制的内容');
+          return;
+        }
+        
+        if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+          showToast('剪贴板功能不可用，请手动复制');
+          return;
+        }
+        
+        navigator.clipboard.writeText(content).then(() => {
+          showToast('已复制到剪贴板');
+        }).catch((err) => {
+          console.error('Copy content error:', err);
+          showToast('复制失败，请手动复制');
+        });
+      } catch (error) {
+        console.error('Copy content error:', error);
+        showToast('复制时出现错误');
       }
-      
-      const content = vditor.getValue();
-      if (!content || content.trim() === '') {
-        showToast('没有可复制的内容');
-        return;
-      }
-      
-      navigator.clipboard.writeText(content).then(() => {
-        showToast('已复制到剪贴板');
-      }).catch(() => {
-        showToast('复制失败，请手动复制');
-      });
     }
     
     function copyHtml() {
-      const preview = document.getElementById('preview');
-      if (!preview || preview.innerText.trim() === '' || preview.innerText.includes('在左侧编辑器输入内容')) {
-        showToast('没有可复制的HTML内容');
-        return;
+      try {
+        const preview = document.getElementById('preview');
+        if (!preview || !preview.innerHTML || preview.innerText.trim() === '' || preview.innerText.includes('在左侧编辑器输入内容')) {
+          showToast('没有可复制的HTML内容');
+          return;
+        }
+        
+        if (!navigator.clipboard || typeof navigator.clipboard.writeText !== 'function') {
+          showToast('剪贴板功能不可用，请手动复制');
+          return;
+        }
+        
+        navigator.clipboard.writeText(preview.innerHTML).then(() => {
+          showToast('HTML已复制');
+        }).catch((err) => {
+          console.error('Copy HTML error:', err);
+          showToast('复制失败，请手动复制');
+        });
+      } catch (error) {
+        console.error('Copy HTML error:', error);
+        showToast('复制HTML时出现错误');
       }
-      
-      navigator.clipboard.writeText(preview.innerHTML).then(() => {
-        showToast('HTML已复制');
-      }).catch(() => {
-        showToast('复制失败，请手动复制');
-      });
     }
     
     function downloadMarkdown() {
-      if (!vditor || !isInitialized) {
-        showToast('编辑器尚未准备好');
-        return;
-      }
-      
-      const content = vditor.getValue();
-      if (!content || content.trim() === '') {
-        showToast('没有可下载的内容');
-        return;
-      }
-      
       try {
+        if (!vditor || !isInitialized) {
+          showToast('编辑器尚未准备好');
+          return;
+        }
+        
+        const content = vditor.getValue();
+        if (!content || content.trim() === '') {
+          showToast('没有可下载的内容');
+          return;
+        }
+        
         const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -963,112 +1344,159 @@
         URL.revokeObjectURL(url);
         showToast('文件已下载');
       } catch (error) {
-        showToast('下载失败: ' + error.message);
+        console.error('Download markdown error:', error);
+        showToast('下载失败: ' + (error.message || '未知错误'));
       }
     }
     
     function clearContent() {
-      if (!vditor || !isInitialized) {
-        showToast('编辑器尚未准备好');
-        return;
-      }
-      
-      if (confirm('确定要清空所有内容吗？此操作不可恢复。')) {
-        vditor.setValue('');
-        localStorage.removeItem('vditor-markdown-content');
-        updatePreview();
-        showToast('内容已清空');
+      try {
+        if (!vditor || !isInitialized || typeof vditor.setValue !== 'function') {
+          showToast('编辑器尚未准备好');
+          return;
+        }
+        
+        if (confirm('确定要清空所有内容吗？此操作不可恢复。')) {
+          vditor.setValue('');
+          localStorage.removeItem('vditor-markdown-content');
+          updatePreview();
+          showToast('内容已清空');
+        }
+      } catch (error) {
+        console.error('Clear content error:', error);
+        showToast('清空内容时出现错误');
       }
     }
     
     function showToast(message) {
-      const toast = document.getElementById('toast');
-      if (!toast) return;
-      
-      toast.textContent = message;
-      toast.classList.add('show');
-      
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 2000);
+      try {
+        const toast = document.getElementById('toast');
+        if (!toast) return;
+        
+        if (!message || typeof message !== 'string') {
+          message = '操作完成';
+        }
+        
+        toast.textContent = message;
+        toast.classList.add('show');
+        
+        // 清除之前的定时器，避免多个toast重叠
+        if (toast._timer) {
+          clearTimeout(toast._timer);
+        }
+        
+        toast._timer = setTimeout(() => {
+          toast.classList.remove('show');
+        }, 2000);
+      } catch (error) {
+        console.error('Show toast error:', error);
+      }
     }
     
     // ============================================
     // 快捷键支持
     // ============================================
     function initKeyboardShortcuts() {
-      document.addEventListener('keydown', (e) => {
-        // Ctrl+Shift+C - 颜色选择器
-        if (e.ctrlKey && e.shiftKey && e.key === 'C') {
-          e.preventDefault();
-          openColorPicker();
-        }
-        // Ctrl+Shift+T - 主题管理器
-        else if (e.ctrlKey && e.shiftKey && e.key === 'T') {
-          e.preventDefault();
-          openThemeManager();
-        }
-        // Ctrl+Shift+S - 复制内容
-        else if (e.ctrlKey && e.shiftKey && e.key === 'S') {
-          e.preventDefault();
-          copyContent();
-        }
-        // Ctrl+Shift+D - 下载文件
-        else if (e.ctrlKey && e.shiftKey && e.key === 'D') {
-          e.preventDefault();
-          downloadMarkdown();
-        }
-        // Ctrl+Shift+X - 清空内容
-        else if (e.ctrlKey && e.shiftKey && e.key === 'X') {
-          e.preventDefault();
-          clearContent();
-        }
-        // ? - 显示快捷键
-        else if (e.key === '?' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
-          e.preventDefault();
-          toggleShortcuts();
-        }
-        // ESC - 关闭模态框
-        else if (e.key === 'Escape') {
-          closeColorPicker();
-          closeThemeManager();
-          document.getElementById('keyboardShortcuts').classList.remove('show');
-        }
-      });
+      try {
+        document.addEventListener('keydown', (e) => {
+          try {
+            // Ctrl+Shift+C - 颜色选择器
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+              e.preventDefault();
+              openColorPicker();
+            }
+            // Ctrl+Shift+T - 主题管理器
+            else if (e.ctrlKey && e.shiftKey && e.key === 'T') {
+              e.preventDefault();
+              openThemeManager();
+            }
+            // Ctrl+Shift+S - 复制内容
+            else if (e.ctrlKey && e.shiftKey && e.key === 'S') {
+              e.preventDefault();
+              copyContent();
+            }
+            // Ctrl+Shift+D - 下载文件
+            else if (e.ctrlKey && e.shiftKey && e.key === 'D') {
+              e.preventDefault();
+              downloadMarkdown();
+            }
+            // Ctrl+Shift+X - 清空内容
+            else if (e.ctrlKey && e.shiftKey && e.key === 'X') {
+              e.preventDefault();
+              clearContent();
+            }
+            // ? - 显示快捷键
+            else if (e.key === '?' && !e.ctrlKey && !e.shiftKey && !e.altKey) {
+              e.preventDefault();
+              toggleShortcuts();
+            }
+            // ESC - 关闭模态框
+            else if (e.key === 'Escape') {
+              closeColorPicker();
+              closeThemeManager();
+              const shortcutsElement = document.getElementById('keyboardShortcuts');
+              if (shortcutsElement) {
+                shortcutsElement.classList.remove('show');
+              }
+            }
+          } catch (error) {
+            console.error('Keyboard shortcut error:', error);
+          }
+        });
+      } catch (error) {
+        console.error('Init keyboard shortcuts error:', error);
+      }
     }
     
     function toggleShortcuts() {
-      document.getElementById('keyboardShortcuts').classList.toggle('show');
+      try {
+        const shortcutsElement = document.getElementById('keyboardShortcuts');
+        if (shortcutsElement) {
+          shortcutsElement.classList.toggle('show');
+        }
+      } catch (error) {
+        console.error('Toggle shortcuts error:', error);
+      }
     }
     
     // ============================================
     // 事件监听
     // ============================================
     document.addEventListener('click', function(e) {
-      // 平台切换
-      if (e.target.classList.contains('platform-btn')) {
-        document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        currentPlatform = e.target.dataset.platform;
-        updatePreview();
-      }
-      
-      // 关闭主题下拉
-      const themeSwitcher = document.querySelector('.theme-switcher');
-      if (themeSwitcher && !themeSwitcher.contains(e.target)) {
-        closeThemeDropdown();
+      try {
+        // 平台切换
+        if (e.target && e.target.classList && e.target.classList.contains('platform-btn')) {
+          document.querySelectorAll('.platform-btn').forEach(b => b.classList.remove('active'));
+          e.target.classList.add('active');
+          if (e.target.dataset && e.target.dataset.platform) {
+            currentPlatform = e.target.dataset.platform;
+            updatePreview();
+          }
+        }
+        
+        // 关闭主题下拉
+        const themeSwitcher = document.querySelector('.theme-switcher');
+        if (themeSwitcher && e.target && !themeSwitcher.contains(e.target)) {
+          closeThemeDropdown();
+        }
+      } catch (error) {
+        console.error('Click event error:', error);
       }
     });
     
     // 窗口调整
     let resizeTimer;
     window.addEventListener('resize', function() {
-      clearTimeout(resizeTimer);
-      resizeTimer = setTimeout(function() {
-        if (vditor && isInitialized) {
-          vditor.resize();
-        }
-      }, 250);
+      try {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+          if (vditor && isInitialized && typeof vditor.resize === 'function') {
+            vditor.resize();
+          }
+        }, 250);
+      } catch (error) {
+        console.error('Resize event error:', error);
+      }
     });
   </script>
 </body>
