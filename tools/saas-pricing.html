@@ -40,19 +40,7 @@
       --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
     }
     
-    [data-theme="eyecare"] {
-      --bg-primary: #f5f0e6;
-      --bg-secondary: #faf8f3;
-      --bg-tertiary: #ede8dc;
-      --accent: #d97706;
-      --accent-hover: #f59e0b;
-      --text-primary: #3d3d3d;
-      --text-secondary: #6b6b6b;
-      --text-muted: #8b8b8b;
-      --border: #d4cfc4;
-      --card-bg: #faf8f3;
-      --card-shadow: 0 1px 3px rgba(0,0,0,0.08);
-    }
+
     
     [data-theme="purple"] {
       --bg-primary: #1a1b2e;
@@ -597,7 +585,7 @@
           <div class="theme-dropdown" id="themeDropdown">
             <div class="theme-option active" data-theme="light" onclick="switchTheme('light')">浅雪白</div>
             <div class="theme-option" data-theme="dark" onclick="switchTheme('dark')">深海蓝</div>
-            <div class="theme-option" data-theme="eyecare" onclick="switchTheme('eyecare')">护眼黄</div>
+
             <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">紫夜</div>
           </div>
         </div>
@@ -1017,7 +1005,7 @@
     }
 
     function getThemeName(theme) {
-      const names = { 'light': '浅雪白', 'dark': '深海蓝', 'eyecare': '护眼黄', 'purple': '紫夜' };
+      const names = { 'light': '浅雪白', 'dark': '深海蓝', 'purple': '紫夜' };
       return names[theme] || '浅雪白';
     }
 

@@ -37,19 +37,7 @@
       --error: #ef4444;
     }
     
-    [data-theme="eyecare"] {
-      --bg-primary: #f5f0e6;
-      --bg-secondary: #faf8f3;
-      --bg-tertiary: #ede8dc;
-      --accent: #d97706;
-      --accent-hover: #f59e0b;
-      --text-primary: #3d3d3d;
-      --text-secondary: #6b6b6b;
-      --border: #d4cfc4;
-      --success: #059669;
-      --warning: #d97706;
-      --error: #dc2626;
-    }
+
     
     [data-theme="purple"] {
       --bg-primary: #1a1b2e;
@@ -574,7 +562,7 @@
         <div class="theme-dropdown" id="themeDropdown">
           <div class="theme-option active" data-theme="dark" onclick="switchTheme('dark')">深海蓝</div>
           <div class="theme-option" data-theme="light" onclick="switchTheme('light')">浅雪白</div>
-          <div class="theme-option" data-theme="eyecare" onclick="switchTheme('eyecare')">护眼黄</div>
+
           <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">紫夜</div>
         </div>
       </div>
@@ -763,7 +751,7 @@
     }
 
     function getThemeName(theme) {
-      const names = { 'dark': '深海蓝', 'light': '浅雪白', 'eyecare': '护眼黄', 'purple': '紫夜' };
+      const names = { 'dark': '深海蓝', 'light': '浅雪白', 'purple': '紫夜' };
       return names[theme] || '深海蓝';
     }
 
