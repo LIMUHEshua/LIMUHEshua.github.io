@@ -391,6 +391,66 @@
       opacity: 1;
     }
 
+    /* 主题切换按钮 */
+    .nav-btn, .theme-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 12px;
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-primary);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-btn:hover, .theme-btn:hover {
+      border-color: var(--accent);
+    }
+
+    .nav-btn svg, .theme-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .theme-switcher { position: relative; }
+
+    .theme-dropdown {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      margin-top: 8px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      min-width: 120px;
+      display: none;
+      z-index: 1001;
+    }
+
+    .theme-dropdown.show {
+      display: block;
+    }
+
+    .theme-option {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 13px;
+      transition: background-color 0.2s;
+    }
+
+    .theme-option:hover {
+      background: var(--bg-tertiary);
+    }
+
+    .theme-option.active {
+      color: var(--accent);
+      font-weight: 500;
+    }
+
     /* 响应式 */
     @media (max-width: 768px) {
       .main-content {
@@ -407,12 +467,26 @@
   <!-- 主内容 -->
   <!-- 主题切换 -->
   <div class="theme-switcher" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
-    <select id="theme-select" class="form-select" style="padding: 8px 12px; font-size: 13px;">
-      <option value="default">默认主题</option>
-      <option value="light">浅色主题</option>
-      <option value="purple">紫色主题</option>
-      <option value="custom">自定义主题</option>
-    </select>
+    <button class="theme-btn" onclick="toggleThemeDropdown()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"></circle>
+        <line x1="12" y1="1" x2="12" y2="3"></line>
+        <line x1="12" y1="21" x2="12" y2="23"></line>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+        <line x1="1" y1="12" x2="3" y2="12"></line>
+        <line x1="21" y1="12" x2="23" y2="12"></line>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+      </svg>
+      <span>主题</span>
+    </button>
+    <div class="theme-dropdown" id="themeDropdown">
+      <div class="theme-option active" data-theme="dark" onclick="switchTheme('dark')">深海蓝</div>
+      <div class="theme-option" data-theme="light" onclick="switchTheme('light')">浅雪白</div>
+      <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">紫夜</div>
+      <div class="theme-option" data-theme="custom" onclick="switchTheme('custom')">自定义</div>
+    </div>
   </div>
 
   <!-- 自定义主题编辑器 -->
@@ -863,52 +937,94 @@
       }
     });
 
+    // 主题相关
+    const THEME_STORAGE_KEY = 'pdf_tool_theme';
+    let currentTheme = 'dark';
+
     // 初始化主题系统
     function initThemeSystem() {
       try {
-        const themeSelect = document.getElementById('theme-select');
-        const customThemeEditor = document.getElementById('custom-theme-editor');
-        const saveCustomThemeBtn = document.getElementById('save-custom-theme');
-
-        // 加载保存的主题
-        const savedTheme = localStorage.getItem('pdf-tool-theme');
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
         if (savedTheme) {
-          if (savedTheme === 'custom') {
-            applyCustomTheme();
-          } else {
-            document.body.setAttribute('data-theme', savedTheme);
-            themeSelect.value = savedTheme;
-          }
+          switchTheme(savedTheme);
+        } else {
+          switchTheme('dark');
         }
 
-        // 主题选择事件
-        if (themeSelect) {
-          themeSelect.addEventListener('change', function() {
-            const selectedTheme = this.value;
-            if (selectedTheme === 'custom') {
-              customThemeEditor.style.display = 'block';
-              loadCustomThemeValues();
-            } else {
-              customThemeEditor.style.display = 'none';
-              document.body.setAttribute('data-theme', selectedTheme === 'default' ? '' : selectedTheme);
-              localStorage.setItem('pdf-tool-theme', selectedTheme);
-            }
-          });
-        }
+        // 点击外部关闭主题下拉菜单
+        document.addEventListener('click', function(e) {
+          const themeSwitcher = document.querySelector('.theme-switcher');
+          if (themeSwitcher && !themeSwitcher.contains(e.target)) {
+            document.getElementById('themeDropdown').classList.remove('show');
+          }
+        });
 
         // 保存自定义主题
+        const saveCustomThemeBtn = document.getElementById('save-custom-theme');
         if (saveCustomThemeBtn) {
           saveCustomThemeBtn.addEventListener('click', function() {
             saveCustomTheme();
             applyCustomTheme();
-            customThemeEditor.style.display = 'none';
-            localStorage.setItem('pdf-tool-theme', 'custom');
+            document.getElementById('custom-theme-editor').style.display = 'none';
+            localStorage.setItem(THEME_STORAGE_KEY, 'custom');
             showToast('自定义主题已保存');
           });
         }
       } catch (error) {
         console.error('Theme system initialization error:', error);
       }
+    }
+
+    // 切换主题下拉菜单
+    function toggleThemeDropdown() {
+      document.getElementById('themeDropdown').classList.toggle('show');
+    }
+
+    // 切换主题
+    function switchTheme(theme) {
+      if (theme === currentTheme) {
+        document.getElementById('themeDropdown').classList.remove('show');
+        return;
+      }
+
+      const body = document.body;
+      const customThemeEditor = document.getElementById('custom-theme-editor');
+
+      if (theme === 'custom') {
+        customThemeEditor.style.display = 'block';
+        loadCustomThemeValues();
+      } else {
+        customThemeEditor.style.display = 'none';
+        body.removeAttribute('data-theme');
+        if (theme !== 'dark') {
+          body.setAttribute('data-theme', theme);
+        }
+      }
+
+      localStorage.setItem(THEME_STORAGE_KEY, theme);
+      currentTheme = theme;
+
+      // 更新主题选项状态
+      document.querySelectorAll('.theme-option').forEach(option => {
+        option.classList.remove('active');
+        if (option.dataset.theme === theme) {
+          option.classList.add('active');
+        }
+      });
+
+      showToast(`已切换到${getThemeName(theme)}主题`);
+      document.getElementById('themeDropdown').classList.remove('show');
+    }
+
+    // 获取主题名称
+    function getThemeName(theme) {
+      const names = {
+        dark: '深海蓝',
+        light: '浅雪白',
+        purple: '紫夜',
+        custom: '自定义'
+      };
+      return names[theme] || '深海蓝';
     }
 
     // 加载自定义主题值
