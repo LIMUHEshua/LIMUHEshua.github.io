@@ -1065,6 +1065,14 @@
           document.documentElement.style.setProperty('--accent', customTheme.accent || '#e94560');
           document.documentElement.style.setProperty('--text-primary', customTheme.textPrimary || '#eaeaea');
           document.body.removeAttribute('data-theme');
+          currentTheme = 'custom';
+          // 更新主题选项状态
+          document.querySelectorAll('.theme-option').forEach(option => {
+            option.classList.remove('active');
+            if (option.dataset.theme === 'custom') {
+              option.classList.add('active');
+            }
+          });
         }
       } catch (error) {
         console.error('Apply custom theme error:', error);
