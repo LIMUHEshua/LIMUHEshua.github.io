@@ -977,43 +977,66 @@
 
     // 切换主题下拉菜单
     function toggleThemeDropdown() {
-      document.getElementById('themeDropdown').classList.toggle('show');
+      const dropdown = document.getElementById('themeDropdown');
+      if (dropdown) {
+        dropdown.classList.toggle('show');
+      }
     }
 
     // 切换主题
     function switchTheme(theme) {
-      if (theme === currentTheme) {
-        document.getElementById('themeDropdown').classList.remove('show');
-        return;
-      }
-
-      const body = document.body;
-      const customThemeEditor = document.getElementById('custom-theme-editor');
-
-      if (theme === 'custom') {
-        customThemeEditor.style.display = 'block';
-        loadCustomThemeValues();
-      } else {
-        customThemeEditor.style.display = 'none';
-        body.removeAttribute('data-theme');
-        if (theme !== 'dark') {
-          body.setAttribute('data-theme', theme);
+      try {
+        if (theme === currentTheme) {
+          const dropdown = document.getElementById('themeDropdown');
+          if (dropdown) {
+            dropdown.classList.remove('show');
+          }
+          return;
         }
-      }
 
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-      currentTheme = theme;
+        const body = document.body;
+        const customThemeEditor = document.getElementById('custom-theme-editor');
 
-      // 更新主题选项状态
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.remove('active');
-        if (option.dataset.theme === theme) {
-          option.classList.add('active');
+        if (theme === 'custom') {
+          if (customThemeEditor) {
+            customThemeEditor.style.display = 'block';
+            loadCustomThemeValues();
+          }
+        } else {
+          if (customThemeEditor) {
+            customThemeEditor.style.display = 'none';
+          }
+          if (body) {
+            body.removeAttribute('data-theme');
+            if (theme !== 'dark') {
+              body.setAttribute('data-theme', theme);
+            }
+          }
         }
-      });
 
-      showToast(`已切换到${getThemeName(theme)}主题`);
-      document.getElementById('themeDropdown').classList.remove('show');
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+        currentTheme = theme;
+
+        // 更新主题选项状态
+        const themeOptions = document.querySelectorAll('.theme-option');
+        if (themeOptions) {
+          themeOptions.forEach(option => {
+            option.classList.remove('active');
+            if (option.dataset.theme === theme) {
+              option.classList.add('active');
+            }
+          });
+        }
+
+        showToast(`已切换到${getThemeName(theme)}主题`);
+        const dropdown = document.getElementById('themeDropdown');
+        if (dropdown) {
+          dropdown.classList.remove('show');
+        }
+      } catch (error) {
+        console.error('Switch theme error:', error);
+        showToast('主题切换失败: ' + error.message);
+      }
     }
 
     // 获取主题名称
