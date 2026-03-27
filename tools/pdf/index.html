@@ -405,6 +405,40 @@
 </head>
 <body>
   <!-- 主内容 -->
+  <!-- 主题切换 -->
+  <div class="theme-switcher" style="position: fixed; top: 20px; right: 20px; z-index: 1000;">
+    <select id="theme-select" class="form-select" style="padding: 8px 12px; font-size: 13px;">
+      <option value="default">默认主题</option>
+      <option value="light">浅色主题</option>
+      <option value="purple">紫色主题</option>
+      <option value="custom">自定义主题</option>
+    </select>
+  </div>
+
+  <!-- 自定义主题编辑器 -->
+  <div id="custom-theme-editor" class="tool-card" style="position: fixed; top: 80px; right: 20px; width: 300px; display: none; z-index: 999;">
+    <h3 style="margin-bottom: 16px;">自定义主题</h3>
+    <div class="form-group">
+      <label class="form-label">主背景色</label>
+      <input type="color" class="form-input" id="custom-bg-primary" value="#1a1a2e">
+    </div>
+    <div class="form-group">
+      <label class="form-label">次要背景色</label>
+      <input type="color" class="form-input" id="custom-bg-secondary" value="#16213e">
+    </div>
+    <div class="form-group">
+      <label class="form-label">强调色</label>
+      <input type="color" class="form-input" id="custom-accent" value="#e94560">
+    </div>
+    <div class="form-group">
+      <label class="form-label">文本颜色</label>
+      <input type="color" class="form-input" id="custom-text-primary" value="#eaeaea">
+    </div>
+    <button id="save-custom-theme" class="action-btn primary" style="width: 100%; margin-top: 16px;">
+      保存自定义主题
+    </button>
+  </div>
+
   <main class="main-content">
     <div class="page-header">
       <h2>PDF转换处理工具</h2>
@@ -822,11 +856,104 @@
       try {
         initUploadAreas();
         initEventListeners();
+        initThemeSystem();
       } catch (error) {
         console.error('Initialization error:', error);
         showToast('初始化失败: ' + error.message);
       }
     });
+
+    // 初始化主题系统
+    function initThemeSystem() {
+      try {
+        const themeSelect = document.getElementById('theme-select');
+        const customThemeEditor = document.getElementById('custom-theme-editor');
+        const saveCustomThemeBtn = document.getElementById('save-custom-theme');
+
+        // 加载保存的主题
+        const savedTheme = localStorage.getItem('pdf-tool-theme');
+        if (savedTheme) {
+          if (savedTheme === 'custom') {
+            applyCustomTheme();
+          } else {
+            document.body.setAttribute('data-theme', savedTheme);
+            themeSelect.value = savedTheme;
+          }
+        }
+
+        // 主题选择事件
+        if (themeSelect) {
+          themeSelect.addEventListener('change', function() {
+            const selectedTheme = this.value;
+            if (selectedTheme === 'custom') {
+              customThemeEditor.style.display = 'block';
+              loadCustomThemeValues();
+            } else {
+              customThemeEditor.style.display = 'none';
+              document.body.setAttribute('data-theme', selectedTheme === 'default' ? '' : selectedTheme);
+              localStorage.setItem('pdf-tool-theme', selectedTheme);
+            }
+          });
+        }
+
+        // 保存自定义主题
+        if (saveCustomThemeBtn) {
+          saveCustomThemeBtn.addEventListener('click', function() {
+            saveCustomTheme();
+            applyCustomTheme();
+            customThemeEditor.style.display = 'none';
+            localStorage.setItem('pdf-tool-theme', 'custom');
+            showToast('自定义主题已保存');
+          });
+        }
+      } catch (error) {
+        console.error('Theme system initialization error:', error);
+      }
+    }
+
+    // 加载自定义主题值
+    function loadCustomThemeValues() {
+      try {
+        const customTheme = JSON.parse(localStorage.getItem('pdf-tool-custom-theme') || '{}');
+        document.getElementById('custom-bg-primary').value = customTheme.bgPrimary || '#1a1a2e';
+        document.getElementById('custom-bg-secondary').value = customTheme.bgSecondary || '#16213e';
+        document.getElementById('custom-accent').value = customTheme.accent || '#e94560';
+        document.getElementById('custom-text-primary').value = customTheme.textPrimary || '#eaeaea';
+      } catch (error) {
+        console.error('Load custom theme values error:', error);
+      }
+    }
+
+    // 保存自定义主题
+    function saveCustomTheme() {
+      try {
+        const customTheme = {
+          bgPrimary: document.getElementById('custom-bg-primary').value,
+          bgSecondary: document.getElementById('custom-bg-secondary').value,
+          accent: document.getElementById('custom-accent').value,
+          textPrimary: document.getElementById('custom-text-primary').value
+        };
+        localStorage.setItem('pdf-tool-custom-theme', JSON.stringify(customTheme));
+      } catch (error) {
+        console.error('Save custom theme error:', error);
+      }
+    }
+
+    // 应用自定义主题
+    function applyCustomTheme() {
+      try {
+        const customTheme = JSON.parse(localStorage.getItem('pdf-tool-custom-theme') || '{}');
+        if (Object.keys(customTheme).length > 0) {
+          document.documentElement.style.setProperty('--bg-primary', customTheme.bgPrimary || '#1a1a2e');
+          document.documentElement.style.setProperty('--bg-secondary', customTheme.bgSecondary || '#16213e');
+          document.documentElement.style.setProperty('--accent', customTheme.accent || '#e94560');
+          document.documentElement.style.setProperty('--text-primary', customTheme.textPrimary || '#eaeaea');
+          document.body.removeAttribute('data-theme');
+        }
+      } catch (error) {
+        console.error('Apply custom theme error:', error);
+      }
+    }
 
     // 初始化上传区域
     function initUploadAreas() {
