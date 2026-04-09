@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LIMUHEshua博客</title>
+  <title>DC-DC 降压电路设计项目 | LIMUHEshua博客</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/syntax-highlight.css">
@@ -30,34 +30,13 @@
 
   <div class="container main-content">
     <main>
-      <div class="tag-page">
-  <h1>标签: 嵌入式系统</h1>
-  
-  <article class="post-archive">
-    <h2><a href="/2026/03/10/stm32-smart-fan-control-system/">STM32F103C8T6 智能风扇控制系统</a></h2>
+      <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">DC-DC 降压电路设计项目</h1>
     <div class="post-meta">
-      <time>2026-03-10</time>
-      
-      <span class="post-category">
-        | 
-          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a>
-        
-          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a>
-        
-          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/STM32/">STM32</a>
-        
-      </span>
-      
-    </div>
-    <div class="post-excerpt">
-      
-    </div>
-  </article>
-  
-  <article class="post-archive">
-    <h2><a href="/2025/10/15/2025-10-15-dc-dc-buck-circuit-design/">DC-DC 降压电路设计项目</a></h2>
-    <div class="post-meta">
-      <time>2025-10-15</time>
+      <time class="post-time" itemprop="datePublished" datetime="2025-10-14T16:00:00.000Z" content="2025-10-15">
+        2025-10-15
+      </time>
       
       <span class="post-category">
         | 
@@ -70,14 +49,248 @@
       </span>
       
     </div>
-    <div class="post-excerpt">
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h1 id="DC-DC-降压电路设计项目"><a href="#DC-DC-降压电路设计项目" class="headerlink" title="DC-DC 降压电路设计项目"></a>DC-DC 降压电路设计项目</h1><h2 id="项目概述"><a href="#项目概述" class="headerlink" title="项目概述"></a>项目概述</h2><p>在 2025 年 7 月至 10 月期间，我完成了一个高性能 DC-DC 降压电路设计项目，该项目具有以下特点：</p>
+<ul>
+<li><strong>宽输入电压范围</strong>：8-28V，适用于多种电源场景</li>
+<li><strong>双路输出电压</strong>：5V 和 3.3V，满足不同设备的供电需求</li>
+<li><strong>动态电流控制</strong>：支持 2A、1.5A 和 0.8A 三档电流输出</li>
+<li><strong>高效率</strong>：最高效率达到 92%，显著降低能量损耗</li>
+</ul>
+<h2 id="技术实现细节"><a href="#技术实现细节" class="headerlink" title="技术实现细节"></a>技术实现细节</h2><h3 id="核心组件选择"><a href="#核心组件选择" class="headerlink" title="核心组件选择"></a>核心组件选择</h3><ul>
+<li><strong>同步降压芯片</strong>：采用 MP2303 芯片，具有高效率、低功耗特性</li>
+<li><strong>电感</strong>：选用低 ESR 电感器，提高转换效率并减少热量产生</li>
+<li><strong>保护元件</strong>：添加 TVS 保护二极管，增强电路可靠性</li>
+</ul>
+<h3 id="电路优化"><a href="#电路优化" class="headerlink" title="电路优化"></a>电路优化</h3><ul>
+<li><strong>环路补偿网络</strong>：通过精心设计的环路补偿网络，确保电路在各种负载条件下稳定运行</li>
+<li><strong>热管理</strong>：通过优化布局和选用低 ESR 电感，实现了 15℃ 的温度降低</li>
+<li><strong>输出纹波</strong>：通过合理的滤波设计，将输出纹波控制在 30mV 以下</li>
+</ul>
+<h3 id="电路原理图"><a href="#电路原理图" class="headerlink" title="电路原理图"></a>电路原理图</h3><p>以下是项目的电路原理图，展示了完整的降压电路设计：</p>
+<p><img src="/images/dc-dc-buck-schematic.png" alt="DC-DC 降压电路原理图"></p>
+<h2 id="开发过程"><a href="#开发过程" class="headerlink" title="开发过程"></a>开发过程</h2><h3 id="设计阶段"><a href="#设计阶段" class="headerlink" title="设计阶段"></a>设计阶段</h3><ol>
+<li><strong>需求分析</strong>：明确输入电压范围、输出电压要求和电流等级</li>
+<li><strong>器件选型</strong>：对比不同降压芯片的性能参数，最终选择 MP2303</li>
+<li><strong>原理图设计</strong>：使用嘉立创 EDA 绘制详细的电路原理图</li>
+<li><strong>PCB 布局</strong>：采用 2 层板设计，优化元件布局以减少寄生参数</li>
+</ol>
+<h3 id="实现阶段"><a href="#实现阶段" class="headerlink" title="实现阶段"></a>实现阶段</h3><ol>
+<li><strong>PCB 设计</strong>：使用 Altium Designer 完成 2 层 PCB 布局</li>
+<li><strong>原型制作</strong>：完成电路板焊接和初步调试</li>
+<li><strong>性能测试</strong>：进行全面的性能测试，包括效率、纹波、温度等参数</li>
+<li><strong>文档编写</strong>：生成详细的 BOM（物料清单）和技术文档</li>
+</ol>
+<h3 id="PCB-布局设计"><a href="#PCB-布局设计" class="headerlink" title="PCB 布局设计"></a>PCB 布局设计</h3><p>以下是 PCB 布局设计图，展示了元件的合理排布：</p>
+<p><img src="/images/dc-dc-buck-pcb-layout.png" alt="DC-DC 降压电路 PCB 布局"></p>
+<h2 id="验证与应用"><a href="#验证与应用" class="headerlink" title="验证与应用"></a>验证与应用</h2><h3 id="测试结果"><a href="#测试结果" class="headerlink" title="测试结果"></a>测试结果</h3><ul>
+<li><strong>效率测试</strong>：在不同输入电压和负载条件下进行测试，最高效率达到 92%</li>
+<li><strong>温度测试</strong>：在 2A 满载条件下，芯片温度控制在 65℃ 以下</li>
+<li><strong>稳定性测试</strong>：连续运行 48 小时，无异常情况发生</li>
+<li><strong>纹波测试</strong>：输出纹波低于 30mV，满足敏感电子设备的要求</li>
+</ul>
+<h3 id="实际应用"><a href="#实际应用" class="headerlink" title="实际应用"></a>实际应用</h3><p>该降压电路成功集成到实验板电源系统中，为微控制器、传感器和其他电子元件提供稳定可靠的电源。其宽输入电压范围使其适用于多种应用场景，包括：</p>
+<ul>
+<li>工业控制系统</li>
+<li>嵌入式开发板</li>
+<li>便携式电子设备</li>
+<li>机器人控制系统</li>
+</ul>
+<h3 id="实物展示"><a href="#实物展示" class="headerlink" title="实物展示"></a>实物展示</h3><p>以下是制作完成的 DC-DC 降压电路实物图：</p>
+<p><img src="/images/dc-dc-buck-prototype.png" alt="DC-DC 降压电路实物图"></p>
+<h2 id="技术亮点"><a href="#技术亮点" class="headerlink" title="技术亮点"></a>技术亮点</h2><ol>
+<li><strong>宽输入电压范围</strong>：8-28V 的输入范围使其适用于多种电源系统</li>
+<li><strong>高效率设计</strong>：通过优化元件选择和布局，实现了 92% 的最高效率</li>
+<li><strong>热管理优化</strong>：通过选用低 ESR 电感和合理布局，降低了 15℃ 的工作温度</li>
+<li><strong>低纹波输出</strong>：输出纹波控制在 30mV 以下，满足敏感电子设备的要求</li>
+<li><strong>动态电流控制</strong>：支持三档电流输出，适应不同负载需求</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本项目成功设计并实现了一个高性能 DC-DC 降压电路，具有宽输入电压范围、高效率、低纹波和良好的热管理特性。该电路已成功应用于实验板电源系统，并通过了 48 小时的稳定性测试。</p>
+<p>该设计不仅满足了实际应用需求，也展示了现代电源设计的关键技术要点，包括元件选型、电路优化、热管理和稳定性设计等方面。这些经验对于未来的电源设计项目具有重要的参考价值。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    
+    <div class="post-tags">
+      
+      <a href="/tags/%E7%94%B5%E6%BA%90%E8%AE%BE%E8%AE%A1/#电源设计">#电源设计</a>
+      
+      <a href="/tags/DC-DC-%E8%BD%AC%E6%8D%A2/#DC-DC 转换">#DC-DC 转换</a>
+      
+      <a href="/tags/%E7%94%B5%E8%B7%AF%E8%AE%BE%E8%AE%A1/#电路设计">#电路设计</a>
+      
+      <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F/#嵌入式系统">#嵌入式系统</a>
       
     </div>
-  </article>
-  
+    
+  </footer>
 
+  <div class="comments-section">
+    <h3>评论区</h3>
+    <div class="comment-form">
+      <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+      <button onclick="submitComment()">发表评论</button>
+    </div>
+    <div id="comments-list"></div>
+  </div>
+</article>
+
+<script>
+  var postId = '2025/10/15/2025-10-15-dc-dc-buck-circuit-design/';
   
-</div>
+  function loadComments() {
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var postComments = comments.filter(function(comment) {
+      return comment.postId === postId;
+    });
+    
+    var commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+    
+    postComments.forEach(function(comment) {
+      var commentElement = createCommentElement(comment);
+      commentsList.appendChild(commentElement);
+    });
+  }
+  
+  function createCommentElement(comment, isReply = false) {
+    var div = document.createElement('div');
+    div.className = 'comment' + (isReply ? ' comment-reply' : '');
+    
+    var content = document.createElement('div');
+    content.className = 'comment-content';
+    content.textContent = comment.content;
+    
+    var meta = document.createElement('div');
+    meta.className = 'comment-meta';
+    meta.textContent = '匿名用户 • ' + comment.date;
+    
+    var actions = document.createElement('div');
+    actions.className = 'comment-actions';
+    
+    var replyButton = document.createElement('button');
+    replyButton.textContent = '回复';
+    replyButton.onclick = function() {
+      showReplyForm(comment.id);
+    };
+    actions.appendChild(replyButton);
+    
+    div.appendChild(content);
+    div.appendChild(meta);
+    div.appendChild(actions);
+    
+    if (comment.replies && comment.replies.length > 0) {
+      var repliesContainer = document.createElement('div');
+      repliesContainer.className = 'comment-replies';
+      
+      comment.replies.forEach(function(reply) {
+        var replyElement = createCommentElement(reply, true);
+        repliesContainer.appendChild(replyElement);
+      });
+      
+      div.appendChild(repliesContainer);
+    }
+    
+    return div;
+  }
+  
+  function submitComment(parentId = null) {
+    var input = document.getElementById('comment-input');
+    var content = input.value.trim();
+    
+    if (!content) {
+      alert('请输入评论内容');
+      return;
+    }
+    
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var newComment = {
+      id: Date.now(),
+      postId: postId,
+      content: content,
+      date: new Date().toLocaleString('zh-CN'),
+      replies: []
+    };
+    
+    if (parentId) {
+      var parentComment = comments.find(function(comment) {
+        return comment.id === parentId;
+      });
+      
+      if (parentComment) {
+        parentComment.replies.push({
+          id: Date.now(),
+          content: content,
+          date: new Date().toLocaleString('zh-CN')
+        });
+      }
+    } else {
+      comments.push(newComment);
+    }
+    
+    localStorage.setItem('comments', JSON.stringify(comments));
+    input.value = '';
+    
+    if (parentId) {
+      hideReplyForm();
+    }
+    
+    loadComments();
+    updateCommentCount();
+  }
+  
+  function showReplyForm(commentId) {
+    var existingForm = document.getElementById('reply-form-' + commentId);
+    if (existingForm) {
+      existingForm.remove();
+      return;
+    }
+    
+    var commentElement = document.querySelector('[data-comment-id="' + commentId + '"]');
+    if (!commentElement) return;
+    
+    var replyForm = document.createElement('div');
+    replyForm.id = 'reply-form-' + commentId;
+    replyForm.className = 'reply-form';
+    
+    var textarea = document.createElement('textarea');
+    textarea.placeholder = '回复评论...';
+    textarea.id = 'reply-input-' + commentId;
+    
+    var button = document.createElement('button');
+    button.textContent = '回复';
+    button.onclick = function() {
+      var input = document.getElementById('reply-input-' + commentId);
+      if (input.value.trim()) {
+        submitComment(commentId);
+      }
+    };
+    
+    var cancelButton = document.createElement('button');
+    cancelButton.textContent = '取消';
+    cancelButton.onclick = function() {
+      hideReplyForm();
+    };
+    
+    replyForm.appendChild(textarea);
+    replyForm.appendChild(button);
+    replyForm.appendChild(cancelButton);
+    
+    commentElement.appendChild(replyForm);
+  }
+  
+  function hideReplyForm() {
+    var replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(function(form) {
+      form.remove();
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadComments);
+</script>
     </main>
 
     <aside>
