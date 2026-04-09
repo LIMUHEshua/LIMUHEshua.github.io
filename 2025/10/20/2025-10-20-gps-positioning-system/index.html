@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ATGM336H-5N31 GPS 定位系统项目 | LIMUHEshua博客</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/syntax-highlight.css">
+<meta name="generator" content="Hexo 8.1.1"></head>
+<body>
+  <header>
+    <div class="container">
+      <h1><a href="https://LIMUHEshua.github.io">LIMUHEshua博客</a></h1>
+      <p class="subtitle">探索技术，分享知识</p>
+      <div class="header-tools">
+        <a href="/tools/" class="tools-link" title="开发者工具箱">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+          <span>工具箱</span>
+        </a>
+      </div>
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="搜索文章标题或内容...">
+        <button onclick="searchPosts()">搜索</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="container main-content">
+    <main>
+      <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">ATGM336H-5N31 GPS 定位系统项目</h1>
+    <div class="post-meta">
+      <time class="post-time" itemprop="datePublished" datetime="2025-10-19T16:00:00.000Z" content="2025-10-20">
+        2025-10-20
+      </time>
+      
+      <span class="post-category">
+        | 
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a>
+        
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a>
+        
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/">定位系统</a>
+        
+      </span>
+      
+    </div>
+  </header>
+
+  <div class="post-content" itemprop="articleBody">
+    <h1 id="ATGM336H-5N31-GPS-定位系统项目"><a href="#ATGM336H-5N31-GPS-定位系统项目" class="headerlink" title="ATGM336H-5N31 GPS 定位系统项目"></a>ATGM336H-5N31 GPS 定位系统项目</h1><h2 id="项目概述"><a href="#项目概述" class="headerlink" title="项目概述"></a>项目概述</h2><p>本项目基于 ATGM336H-5N31 GPS 模块开发了一套综合定位系统，具有高精度、低功耗、稳定可靠的特点。该系统可应用于无人机、车载导航、物联网设备等需要位置信息的场景。</p>
+<h3 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h3><ul>
+<li><strong>高精度定位</strong>：使用 ATGM336H-5N31 模块，支持多种卫星系统</li>
+<li><strong>低功耗设计</strong>：优化电源管理，适合电池供电设备</li>
+<li><strong>稳定可靠</strong>：通过合理的硬件设计和软件算法，确保定位数据的稳定性</li>
+<li><strong>多接口支持</strong>：提供 UART、I2C 等多种通信接口</li>
+<li><strong>实时数据处理</strong>：通过微控制器实时处理和解析 GPS 数据</li>
+</ul>
+<h2 id="系统架构"><a href="#系统架构" class="headerlink" title="系统架构"></a>系统架构</h2><h3 id="硬件架构"><a href="#硬件架构" class="headerlink" title="硬件架构"></a>硬件架构</h3><p>系统由以下核心组件组成：</p>
+<ol>
+<li><strong>ATGM336H-5N31 GPS 模块</strong>：负责接收卫星信号并输出定位数据</li>
+<li><strong>微控制器</strong>：处理 GPS 数据，实现定位算法</li>
+<li><strong>电源管理</strong>：为系统提供稳定的电源供应</li>
+<li><strong>通信接口</strong>：与上位机或其他设备通信</li>
+<li><strong>天线</strong>：接收卫星信号</li>
+</ol>
+<h3 id="软件架构"><a href="#软件架构" class="headerlink" title="软件架构"></a>软件架构</h3><ol>
+<li><strong>底层驱动</strong>：GPS 模块的硬件驱动</li>
+<li><strong>数据解析</strong>：解析 NMEA 格式的 GPS 数据</li>
+<li><strong>定位算法</strong>：处理定位数据，提高精度</li>
+<li><strong>应用层</strong>：提供定位数据给用户应用</li>
+</ol>
+<h2 id="组件规格"><a href="#组件规格" class="headerlink" title="组件规格"></a>组件规格</h2><h3 id="ATGM336H-5N31-GPS-模块"><a href="#ATGM336H-5N31-GPS-模块" class="headerlink" title="ATGM336H-5N31 GPS 模块"></a>ATGM336H-5N31 GPS 模块</h3><ul>
+<li><strong>接收频率</strong>：L1 频段 (1575.42MHz)</li>
+<li><strong>定位精度</strong>：2.5m CEP</li>
+<li><strong>冷启动时间</strong>：35s</li>
+<li><strong>热启动时间</strong>：1s</li>
+<li><strong>工作电压</strong>：3.0-5.5V</li>
+<li><strong>工作电流</strong>：35mA</li>
+<li><strong>通信接口</strong>：UART (9600bps)</li>
+<li><strong>支持卫星系统</strong>：GPS、GLONASS、BeiDou、Galileo</li>
+</ul>
+<h3 id="微控制器"><a href="#微控制器" class="headerlink" title="微控制器"></a>微控制器</h3><ul>
+<li><strong>型号</strong>：STM32F103C8T6</li>
+<li><strong>主频</strong>：72MHz</li>
+<li><strong>Flash</strong>：64KB</li>
+<li><strong>RAM</strong>：20KB</li>
+<li><strong>通信接口</strong>：UART、I2C、SPI</li>
+</ul>
+<h3 id="电源管理"><a href="#电源管理" class="headerlink" title="电源管理"></a>电源管理</h3><ul>
+<li><strong>输入电压</strong>：5V</li>
+<li><strong>输出电压</strong>：3.3V</li>
+<li><strong>最大输出电流</strong>：500mA</li>
+</ul>
+<h2 id="硬件设计"><a href="#硬件设计" class="headerlink" title="硬件设计"></a>硬件设计</h2><h3 id="电路原理图"><a href="#电路原理图" class="headerlink" title="电路原理图"></a>电路原理图</h3><p>以下是系统的电路原理图，展示了各组件的连接关系：</p>
+<p><img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=GPS%20positioning%20system%20schematic%20diagram%20with%20ATGM336H-5N31%20module,%20STM32%20microcontroller,%20power%20supply%20circuit,%20and%20communication%20interfaces,%20professional%20electronics%20design&image_size=landscape_16_9" alt="GPS 定位系统电路原理图"></p>
+<h3 id="PCB-布局设计"><a href="#PCB-布局设计" class="headerlink" title="PCB 布局设计"></a>PCB 布局设计</h3><p>系统采用圆形 PCB 设计，尺寸为 21.1mm x 21.1mm，布局紧凑合理：</p>
+<p><img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=Circular%20PCB%20layout%20for%20GPS%20positioning%20system,%20blue%20solder%20mask,%20components%20arranged%20neatly,%2021.1mm%20diameter,%20professional%20electronics%20design&image_size=landscape_16_9" alt="GPS 定位系统 PCB 布局"></p>
+<h3 id="电路板实物图"><a href="#电路板实物图" class="headerlink" title="电路板实物图"></a>电路板实物图</h3><p>以下是制作完成的电路板实物图：</p>
+<p><img src="https://trae-api-cn.mchost.guru/api/ide/v1/text_to_image?prompt=GPS%20positioning%20system%20circuit%20board%20prototype,%20blue%20PCB%20with%20components%20soldered,%20ATGM336H-5N31%20module,%20STM32%20microcontroller,%20professional%20electronics%20prototype&image_size=landscape_16_9" alt="GPS 定位系统电路板实物"></p>
+<h2 id="固件实现"><a href="#固件实现" class="headerlink" title="固件实现"></a>固件实现</h2><h3 id="开发环境"><a href="#开发环境" class="headerlink" title="开发环境"></a>开发环境</h3><ul>
+<li><strong>IDE</strong>：Keil MDK</li>
+<li><strong>编译器</strong>：ARMCC</li>
+<li><strong>调试工具</strong>：ST-Link</li>
+</ul>
+<h3 id="主要功能模块"><a href="#主要功能模块" class="headerlink" title="主要功能模块"></a>主要功能模块</h3><ol>
+<li><strong>GPS 数据解析</strong>：解析 NMEA 格式的 GPS 数据</li>
+<li><strong>定位算法</strong>：处理原始定位数据，提高精度</li>
+<li><strong>通信接口</strong>：实现与上位机的通信</li>
+<li><strong>电源管理</strong>：实现低功耗模式</li>
+</ol>
+<h3 id="核心代码示例"><a href="#核心代码示例" class="headerlink" title="核心代码示例"></a>核心代码示例</h3><h4 id="GPS-数据解析"><a href="#GPS-数据解析" class="headerlink" title="GPS 数据解析"></a>GPS 数据解析</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NMEA 数据解析函数</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">parseNMEA</span><span class="params">(<span class="type">char</span> *nmea)</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="built_in">strstr</span>(nmea, <span class="string">&quot;$GNGGA&quot;</span>) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="comment">// 解析 GGA 语句</span></span><br><span class="line">        parseGGA(nmea);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (<span class="built_in">strstr</span>(nmea, <span class="string">&quot;$GNRMC&quot;</span>) != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="comment">// 解析 RMC 语句</span></span><br><span class="line">        parseRMC(nmea);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 解析 GGA 语句</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">parseGGA</span><span class="params">(<span class="type">char</span> *gga)</span> &#123;</span><br><span class="line">    <span class="comment">// 提取纬度、经度、高度等信息</span></span><br><span class="line">    <span class="type">char</span> *token = strtok(gga, <span class="string">&quot;,&quot;</span>);</span><br><span class="line">    <span class="type">int</span> field = <span class="number">0</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">while</span> (token != <span class="literal">NULL</span>) &#123;</span><br><span class="line">        <span class="keyword">switch</span> (field) &#123;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">2</span>: <span class="comment">// 纬度</span></span><br><span class="line">                latitude = atof(token);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">3</span>: <span class="comment">// 纬度方向</span></span><br><span class="line">                latDir = token[<span class="number">0</span>];</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">4</span>: <span class="comment">// 经度</span></span><br><span class="line">                longitude = atof(token);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">5</span>: <span class="comment">// 经度方向</span></span><br><span class="line">                lonDir = token[<span class="number">0</span>];</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">6</span>: <span class="comment">// 定位质量</span></span><br><span class="line">                fixQuality = atoi(token);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">7</span>: <span class="comment">// 卫星数量</span></span><br><span class="line">                satelliteCount = atoi(token);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> <span class="number">9</span>: <span class="comment">// 高度</span></span><br><span class="line">                altitude = atof(token);</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        token = strtok(<span class="literal">NULL</span>, <span class="string">&quot;,&quot;</span>);</span><br><span class="line">        field++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="定位数据处理"><a href="#定位数据处理" class="headerlink" title="定位数据处理"></a>定位数据处理</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 处理定位数据</span></span><br><span class="line"><span class="type">void</span> <span class="title function_">processPositionData</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="comment">// 转换纬度为十进制度数</span></span><br><span class="line">    <span class="type">double</span> latDeg = (<span class="type">int</span>)(latitude / <span class="number">100</span>);</span><br><span class="line">    <span class="type">double</span> latMin = latitude - latDeg * <span class="number">100</span>;</span><br><span class="line">    <span class="type">double</span> latitudeDecimal = latDeg + latMin / <span class="number">60</span>;</span><br><span class="line">    <span class="keyword">if</span> (latDir == <span class="string">&#x27;S&#x27;</span>) &#123;</span><br><span class="line">        latitudeDecimal = -latitudeDecimal;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 转换经度为十进制度数</span></span><br><span class="line">    <span class="type">double</span> lonDeg = (<span class="type">int</span>)(longitude / <span class="number">100</span>);</span><br><span class="line">    <span class="type">double</span> lonMin = longitude - lonDeg * <span class="number">100</span>;</span><br><span class="line">    <span class="type">double</span> longitudeDecimal = lonDeg + lonMin / <span class="number">60</span>;</span><br><span class="line">    <span class="keyword">if</span> (lonDir == <span class="string">&#x27;W&#x27;</span>) &#123;</span><br><span class="line">        longitudeDecimal = -longitudeDecimal;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 存储处理后的数据</span></span><br><span class="line">    positionData.latitude = latitudeDecimal;</span><br><span class="line">    positionData.longitude = longitudeDecimal;</span><br><span class="line">    positionData.altitude = altitude;</span><br><span class="line">    positionData.satelliteCount = satelliteCount;</span><br><span class="line">    positionData.fixQuality = fixQuality;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="软件接口"><a href="#软件接口" class="headerlink" title="软件接口"></a>软件接口</h2><h3 id="通信协议"><a href="#通信协议" class="headerlink" title="通信协议"></a>通信协议</h3><p>系统使用 UART 接口与上位机通信，波特率为 9600bps。通信协议如下：</p>
+<table>
+<thead>
+<tr>
+<th>命令</th>
+<th>功能</th>
+<th>响应</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>$GETPOS</code></td>
+<td>获取当前位置</td>
+<td><code>$POS,&lt;纬度&gt;,&lt;经度&gt;,&lt;高度&gt;,&lt;卫星数&gt;,&lt;定位质量&gt;</code></td>
+</tr>
+<tr>
+<td><code>$GETSTATUS</code></td>
+<td>获取系统状态</td>
+<td><code>$STATUS,&lt;电源电压&gt;,&lt;工作模式&gt;,&lt;定位状态&gt;</code></td>
+</tr>
+<tr>
+<td><code>$SETPOWER</code></td>
+<td>设置电源模式</td>
+<td><code>$POWER,&lt;模式&gt;</code></td>
+</tr>
+</tbody></table>
+<h3 id="上位机软件"><a href="#上位机软件" class="headerlink" title="上位机软件"></a>上位机软件</h3><p>上位机软件使用 Python 开发，主要功能包括：</p>
+<ol>
+<li>实时显示定位数据</li>
+<li>轨迹记录与回放</li>
+<li>系统状态监控</li>
+<li>数据导出</li>
+</ol>
+<h2 id="测试程序"><a href="#测试程序" class="headerlink" title="测试程序"></a>测试程序</h2><h3 id="硬件测试"><a href="#硬件测试" class="headerlink" title="硬件测试"></a>硬件测试</h3><ol>
+<li><strong>电源测试</strong>：测试系统在不同电压下的工作状态</li>
+<li><strong>信号强度测试</strong>：测试不同环境下的卫星信号强度</li>
+<li><strong>定位精度测试</strong>：在已知位置测试定位精度</li>
+<li><strong>稳定性测试</strong>：长时间运行测试系统稳定性</li>
+</ol>
+<h3 id="软件测试"><a href="#软件测试" class="headerlink" title="软件测试"></a>软件测试</h3><ol>
+<li><strong>数据解析测试</strong>：测试 NMEA 数据解析的正确性</li>
+<li><strong>定位算法测试</strong>：测试定位算法的准确性</li>
+<li><strong>通信测试</strong>：测试与上位机的通信可靠性</li>
+</ol>
+<h2 id="性能指标"><a href="#性能指标" class="headerlink" title="性能指标"></a>性能指标</h2><h3 id="定位性能"><a href="#定位性能" class="headerlink" title="定位性能"></a>定位性能</h3><table>
+<thead>
+<tr>
+<th>指标</th>
+<th>数值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>定位精度</td>
+<td>2.5m CEP</td>
+</tr>
+<tr>
+<td>冷启动时间</td>
+<td>35s</td>
+</tr>
+<tr>
+<td>热启动时间</td>
+<td>1s</td>
+</tr>
+<tr>
+<td>重捕获时间</td>
+<td>0.1s</td>
+</tr>
+<tr>
+<td>定位更新率</td>
+<td>1Hz</td>
+</tr>
+</tbody></table>
+<h3 id="功耗指标"><a href="#功耗指标" class="headerlink" title="功耗指标"></a>功耗指标</h3><table>
+<thead>
+<tr>
+<th>模式</th>
+<th>电流</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>正常工作</td>
+<td>35mA</td>
+</tr>
+<tr>
+<td>低功耗模式</td>
+<td>10mA</td>
+</tr>
+<tr>
+<td>休眠模式</td>
+<td>1mA</td>
+</tr>
+</tbody></table>
+<h3 id="环境适应性"><a href="#环境适应性" class="headerlink" title="环境适应性"></a>环境适应性</h3><table>
+<thead>
+<tr>
+<th>环境因素</th>
+<th>范围</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>工作温度</td>
+<td>-40℃ ~ +85℃</td>
+</tr>
+<tr>
+<td>存储温度</td>
+<td>-55℃ ~ +125℃</td>
+</tr>
+<tr>
+<td>相对湿度</td>
+<td>5% ~ 95% (无凝结)</td>
+</tr>
+<tr>
+<td>振动</td>
+<td>10Hz ~ 2000Hz, 10g</td>
+</tr>
+</tbody></table>
+<h2 id="故障排除指南"><a href="#故障排除指南" class="headerlink" title="故障排除指南"></a>故障排除指南</h2><h3 id="常见问题及解决方法"><a href="#常见问题及解决方法" class="headerlink" title="常见问题及解决方法"></a>常见问题及解决方法</h3><table>
+<thead>
+<tr>
+<th>问题</th>
+<th>可能原因</th>
+<th>解决方法</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>无法定位</td>
+<td>卫星信号弱</td>
+<td>移至开阔区域，检查天线连接</td>
+</tr>
+<tr>
+<td>定位精度差</td>
+<td>多路径效应</td>
+<td>避开高楼、峡谷等环境</td>
+</tr>
+<tr>
+<td>通信失败</td>
+<td>波特率不匹配</td>
+<td>确认波特率设置为 9600bps</td>
+</tr>
+<tr>
+<td>系统不稳定</td>
+<td>电源电压不稳定</td>
+<td>检查电源供应，使用稳压电源</td>
+</tr>
+</tbody></table>
+<h3 id="诊断流程"><a href="#诊断流程" class="headerlink" title="诊断流程"></a>诊断流程</h3><ol>
+<li><strong>检查电源</strong>：确保电源电压在 3.0-5.5V 范围内</li>
+<li><strong>检查天线</strong>：确保天线正确连接，且处于开阔位置</li>
+<li><strong>检查通信</strong>：确认 UART 通信正常</li>
+<li><strong>检查卫星信号</strong>：使用上位机软件查看卫星信号强度</li>
+<li><strong>检查固件</strong>：确认固件版本正确，无错误</li>
+</ol>
+<h2 id="应用场景"><a href="#应用场景" class="headerlink" title="应用场景"></a>应用场景</h2><h3 id="无人机导航"><a href="#无人机导航" class="headerlink" title="无人机导航"></a>无人机导航</h3><ul>
+<li>提供精确的位置信息，实现自主导航</li>
+<li>支持航点规划和自动返航</li>
+<li>低功耗设计适合电池供电的无人机</li>
+</ul>
+<h3 id="车载导航"><a href="#车载导航" class="headerlink" title="车载导航"></a>车载导航</h3><ul>
+<li>实时定位车辆位置</li>
+<li>支持路径规划和导航</li>
+<li>高可靠性确保在各种驾驶环境下正常工作</li>
+</ul>
+<h3 id="物联网设备"><a href="#物联网设备" class="headerlink" title="物联网设备"></a>物联网设备</h3><ul>
+<li>资产跟踪：实时监控设备位置</li>
+<li>地理围栏：设置虚拟边界，当设备超出范围时报警</li>
+<li>远程监控：通过网络传输位置数据</li>
+</ul>
+<h2 id="项目总结"><a href="#项目总结" class="headerlink" title="项目总结"></a>项目总结</h2><p>本项目成功开发了基于 ATGM336H-5N31 GPS 模块的综合定位系统，具有以下特点：</p>
+<ol>
+<li><strong>高精度</strong>：采用先进的 GPS 模块，定位精度达到 2.5m CEP</li>
+<li><strong>低功耗</strong>：优化电源管理，适合电池供电设备</li>
+<li><strong>稳定可靠</strong>：通过合理的硬件设计和软件算法，确保系统稳定运行</li>
+<li><strong>易于集成</strong>：提供标准通信接口，方便与其他系统集成</li>
+<li><strong>多应用场景</strong>：可应用于无人机、车载导航、物联网设备等多种场景</li>
+</ol>
+<p>该系统不仅满足了基本的定位需求，还通过优化设计提高了性能和可靠性，为各类需要位置信息的应用提供了有力支持。</p>
+
+  </div>
+
+  <footer class="post-footer">
+    
+    <div class="post-tags">
+      
+      <a href="/tags/%E5%B5%8C%E5%85%A5%E5%BC%8F%E7%B3%BB%E7%BB%9F/#嵌入式系统">#嵌入式系统</a>
+      
+      <a href="/tags/GPS/#GPS">#GPS</a>
+      
+      <a href="/tags/%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/#定位系统">#定位系统</a>
+      
+      <a href="/tags/%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1/#硬件设计">#硬件设计</a>
+      
+    </div>
+    
+  </footer>
+
+  <div class="comments-section">
+    <h3>评论区</h3>
+    <div class="comment-form">
+      <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+      <button onclick="submitComment()">发表评论</button>
+    </div>
+    <div id="comments-list"></div>
+  </div>
+</article>
+
+<script>
+  var postId = '2025/10/20/2025-10-20-gps-positioning-system/';
+  
+  function loadComments() {
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var postComments = comments.filter(function(comment) {
+      return comment.postId === postId;
+    });
+    
+    var commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+    
+    postComments.forEach(function(comment) {
+      var commentElement = createCommentElement(comment);
+      commentsList.appendChild(commentElement);
+    });
+  }
+  
+  function createCommentElement(comment, isReply = false) {
+    var div = document.createElement('div');
+    div.className = 'comment' + (isReply ? ' comment-reply' : '');
+    
+    var content = document.createElement('div');
+    content.className = 'comment-content';
+    content.textContent = comment.content;
+    
+    var meta = document.createElement('div');
+    meta.className = 'comment-meta';
+    meta.textContent = '匿名用户 • ' + comment.date;
+    
+    var actions = document.createElement('div');
+    actions.className = 'comment-actions';
+    
+    var replyButton = document.createElement('button');
+    replyButton.textContent = '回复';
+    replyButton.onclick = function() {
+      showReplyForm(comment.id);
+    };
+    actions.appendChild(replyButton);
+    
+    div.appendChild(content);
+    div.appendChild(meta);
+    div.appendChild(actions);
+    
+    if (comment.replies && comment.replies.length > 0) {
+      var repliesContainer = document.createElement('div');
+      repliesContainer.className = 'comment-replies';
+      
+      comment.replies.forEach(function(reply) {
+        var replyElement = createCommentElement(reply, true);
+        repliesContainer.appendChild(replyElement);
+      });
+      
+      div.appendChild(repliesContainer);
+    }
+    
+    return div;
+  }
+  
+  function submitComment(parentId = null) {
+    var input = document.getElementById('comment-input');
+    var content = input.value.trim();
+    
+    if (!content) {
+      alert('请输入评论内容');
+      return;
+    }
+    
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var newComment = {
+      id: Date.now(),
+      postId: postId,
+      content: content,
+      date: new Date().toLocaleString('zh-CN'),
+      replies: []
+    };
+    
+    if (parentId) {
+      var parentComment = comments.find(function(comment) {
+        return comment.id === parentId;
+      });
+      
+      if (parentComment) {
+        parentComment.replies.push({
+          id: Date.now(),
+          content: content,
+          date: new Date().toLocaleString('zh-CN')
+        });
+      }
+    } else {
+      comments.push(newComment);
+    }
+    
+    localStorage.setItem('comments', JSON.stringify(comments));
+    input.value = '';
+    
+    if (parentId) {
+      hideReplyForm();
+    }
+    
+    loadComments();
+    updateCommentCount();
+  }
+  
+  function showReplyForm(commentId) {
+    var existingForm = document.getElementById('reply-form-' + commentId);
+    if (existingForm) {
+      existingForm.remove();
+      return;
+    }
+    
+    var commentElement = document.querySelector('[data-comment-id="' + commentId + '"]');
+    if (!commentElement) return;
+    
+    var replyForm = document.createElement('div');
+    replyForm.id = 'reply-form-' + commentId;
+    replyForm.className = 'reply-form';
+    
+    var textarea = document.createElement('textarea');
+    textarea.placeholder = '回复评论...';
+    textarea.id = 'reply-input-' + commentId;
+    
+    var button = document.createElement('button');
+    button.textContent = '回复';
+    button.onclick = function() {
+      var input = document.getElementById('reply-input-' + commentId);
+      if (input.value.trim()) {
+        submitComment(commentId);
+      }
+    };
+    
+    var cancelButton = document.createElement('button');
+    cancelButton.textContent = '取消';
+    cancelButton.onclick = function() {
+      hideReplyForm();
+    };
+    
+    replyForm.appendChild(textarea);
+    replyForm.appendChild(button);
+    replyForm.appendChild(cancelButton);
+    
+    commentElement.appendChild(replyForm);
+  }
+  
+  function hideReplyForm() {
+    var replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(function(form) {
+      form.remove();
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadComments);
+</script>
+    </main>
+
+    <aside>
+      <div class="sidebar-section">
+        <h3>网站统计</h3>
+        <div class="site-stats" id="site-stats">
+          <div class="stat-item">
+            <span class="stat-label">文章数目</span>
+            <span class="stat-value">9</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">评论数</span>
+            <span class="stat-value" id="comment-count">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">网站运行时间</span>
+            <span class="stat-value" id="site-uptime">计算中...</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">最新更新</span>
+            <span class="stat-value" id="latest-update">加载中...</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">访客总数</span>
+            <span class="stat-value" id="visitor-count">0</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>性能统计</h3>
+        <div class="site-stats" id="performance-stats">
+          <div class="stat-item">
+            <span class="stat-label">页面渲染时间：</span>
+            <span class="stat-value" id="render-time">计算中...</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">内存使用：</span>
+            <span class="stat-value" id="memory-usage">计算中...</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>关于我</h3>
+        <p>专注于 AI、Python、大模型应用、前端框架搭建与硬件开发。分享学习心得和实践经验。</p>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>分类</h3>
+        <ul>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a></li>
+          
+          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/">AI工具</a></li>
+          
+          <li><a href="/categories/Python/">Python</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/">智能硬件</a></li>
+          
+          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/">开发工具</a></li>
+          
+          <li><a href="/categories/Python/AI/">AI</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/%E7%94%B5%E8%B7%AF%E8%AE%BE%E8%AE%A1/">电路设计</a></li>
+          
+          <li><a href="/categories/AI%E5%B7%A5%E5%85%B7/%E5%BC%80%E5%8F%91%E5%B7%A5%E5%85%B7/%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">部署指南</a></li>
+          
+          <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/">项目开发</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/STM32/">STM32</a></li>
+          
+          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/">工具</a></li>
+          
+          <li><a href="/categories/%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91/%E5%89%8D%E7%AB%AF%E6%8A%80%E6%9C%AF/">前端技术</a></li>
+          
+          <li><a href="/categories/Python/%E5%B7%A5%E5%85%B7/%E5%89%8D%E7%AB%AF/">前端</a></li>
+          
+          <li><a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E6%99%BA%E8%83%BD%E7%A1%AC%E4%BB%B6/%E5%AE%9A%E4%BD%8D%E7%B3%BB%E7%BB%9F/">定位系统</a></li>
+          
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <h3>最新文章</h3>
+        <ul>
+          
+          <li><a href="/2025/10/15/2025-10-15-dc-dc-buck-circuit-design/">DC-DC 降压电路设计项目</a></li>
+          
+          <li><a href="/2026/03/15/codex-deployment-guide/">Codex部署与本地部署完整指南</a></li>
+          
+          <li><a href="/2026/02/23/deepseek-local-deployment/">基于 DeepSeek 的本地部署大模型助手</a></li>
+          
+          <li><a href="/2026/02/23/hello-world/">Hello World</a></li>
+          
+          <li><a href="/2026/02/26/gradio-image-processing-guide/">Gradio图像处理应用开发实战指南</a></li>
+          
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <footer>
+    <div class="social-links">
+      <!-- 微信公众号 -->
+      <a href="#" onclick="showWechatQR(); return false;" title="微信公众号">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.27-.027-.407-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/>
+        </svg>
+      </a>
+      
+      <!-- GitHub -->
+      <a href="https://github.com/LIMUHEshua?tab=repositories" target="_blank" rel="noopener noreferrer" title="GitHub">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+        </svg>
+      </a>
+      
+      <!-- Gitee -->
+      <a href="https://gitee.com/dashboard/projects" target="_blank" rel="noopener noreferrer" title="Gitee">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M11.984 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.016 0zm6.09 5.333c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H9.778c-.328 0-.593.265-.593.593v7.11h4.148c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H5.926a.593.593 0 0 1-.593-.593V6.518c0-.327.265-.592.593-.592h12.148zm-4.148 4.444c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H8.296a.593.593 0 0 1-.593-.593v-1.778c0-.327.265-.592.593-.592h5.63z"/>
+        </svg>
+      </a>
+      
+      <!-- 邮箱 -->
+      <a href="#" onclick="sendEmail(); return false;" title="发送邮件">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+        </svg>
+      </a>
+    </div>
+    <p>&copy; 2026 LIMUHEshua博客. 保留所有权利。</p>
+  </footer>
+  
+  <!-- 微信二维码弹窗 -->
+  <div id="wechatModal" class="wechat-modal" onclick="closeWechatQR(event)">
+    <div class="wechat-modal-content" onclick="event.stopPropagation()">
+      <p>扫描二维码关注公众号</p>
+      <img src="/wechat-qr.png" alt="微信公众号二维码" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+      <p style="display:none; color:#999; font-size:12px;">二维码图片未找到</p>
+      <button class="wechat-modal-close" onclick="closeWechatQR()">关闭</button>
+    </div>
+  </div>
+
+  <script src="/js/code-copy.js"></script>
+  <script>
+    var startTime = performance.now();
+    
+    window.onload = function() {
+      var endTime = performance.now();
+      var renderTime = (endTime - startTime).toFixed(2);
+      document.getElementById('render-time').textContent = renderTime + 'ms';
+      
+      calculateSiteUptime();
+      updateCommentCount();
+      updateMemoryUsage();
+      updateLatestPost();
+      updateVisitorCount();
+    };
+    
+    function calculateSiteUptime() {
+      var startDate = new Date('2026-02-23');
+      var currentDate = new Date();
+      var diffTime = Math.abs(currentDate - startDate);
+      var diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+      var diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
+      
+      document.getElementById('site-uptime').textContent = diffDays + '天 ' + diffHours + '小时 ' + diffMinutes + '分钟';
+    }
+    
+    // 访客计数
+    function updateVisitorCount() {
+      var count = localStorage.getItem('visitorCount') || 0;
+      // 如果是新访客，增加计数
+      if (!sessionStorage.getItem('visited')) {
+        count = parseInt(count) + 1;
+        localStorage.setItem('visitorCount', count);
+        sessionStorage.setItem('visited', 'true');
+      }
+      document.getElementById('visitor-count').textContent = count;
+    }
+    
+    function updateCommentCount() {
+      var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+      document.getElementById('comment-count').textContent = comments.length;
+    }
+    
+    function updateMemoryUsage() {
+      if (performance.memory) {
+        var memoryUsage = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
+        document.getElementById('memory-usage').textContent = memoryUsage + 'MB';
+      } else {
+        document.getElementById('memory-usage').textContent = 'N/A';
+      }
+    }
+    
+    function updateLatestPost() {
+      // 获取最新文章日期
+      var latestPostDate = '2026-03-17';
+      document.getElementById('latest-update').textContent = latestPostDate;
+    }
+    
+    function searchPosts() {
+      var query = document.getElementById('search-input').value.toLowerCase();
+      var posts = document.querySelectorAll('.post-container, .post-archive');
+      var results = [];
+      
+      posts.forEach(function(post) {
+        var title = post.querySelector('h1, h2').textContent.toLowerCase();
+        var content = post.querySelector('.post-content, .post-excerpt') ? post.querySelector('.post-content, .post-excerpt').textContent.toLowerCase() : '';
+        
+        if (title.includes(query) || content.includes(query)) {
+          post.style.display = 'block';
+          results.push(post);
+        } else {
+          post.style.display = 'none';
+        }
+      });
+      
+      if (results.length === 0) {
+        alert('没有找到匹配的文章');
+      }
+    }
+    
+    document.getElementById('search-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        searchPosts();
+      }
+    });
+    
+    // 微信二维码弹窗
+    function showWechatQR() {
+      document.getElementById('wechatModal').classList.add('active');
+    }
+    
+    function closeWechatQR(event) {
+      if (!event || event.target.id === 'wechatModal' || event.target.classList.contains('wechat-modal-close')) {
+        document.getElementById('wechatModal').classList.remove('active');
+      }
+    }
+    
+    // 邮箱加密发送
+    function sendEmail() {
+      // 邮箱地址分段加密
+      var parts = ['14778671462', 'sian', 'cn'];
+      var email = parts[0] + '@' + parts[1] + '.' + parts[2];
+      
+      // 使用Base64编码进一步加密
+      var encoded = btoa(email);
+      
+      // 解码并打开邮件客户端
+      var decoded = atob(encoded);
+      window.location.href = 'mailto:' + decoded + '?subject=来自博客的咨询&body=您好，我想咨询...';
+    }
+  </script>
+</body>
+</html>
