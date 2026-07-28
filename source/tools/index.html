@@ -1,667 +1,219 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="开发者工具集 - 提供Markdown编辑、代码辅助、天气查询、图像处理等实用工具">
-  <title>开发者工具集 | LIMUHEshua</title>
+  <meta name="description" content="开发者工具箱 - 面向教程、AI、嵌入式与工程化部署的实用工具集合">
+  <title>开发者工具箱 | LIMUHEshua</title>
   <link rel="icon" type="image/svg+xml" href="../favicon.svg">
   <link rel="stylesheet" href="./assets/css/tools.css">
-  <style>
-    /* 主题变量 */
-    :root {
-      --bg-primary: #f8fafc;
-      --bg-secondary: #ffffff;
-      --bg-tertiary: #f1f5f9;
-      --accent: #3b82f6;
-      --accent-hover: #2563eb;
-      --text-primary: #1e293b;
-      --text-secondary: #64748b;
-      --text-muted: #94a3b8;
-      --border: #e2e8f0;
-      --card-bg: #ffffff;
-      --card-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    
-    [data-theme="dark"] {
-      --bg-primary: #0f172a;
-      --bg-secondary: #1e293b;
-      --bg-tertiary: #334155;
-      --accent: #60a5fa;
-      --accent-hover: #3b82f6;
-      --text-primary: #f1f5f9;
-      --text-secondary: #cbd5e1;
-      --text-muted: #94a3b8;
-      --border: #334155;
-      --card-bg: #1e293b;
-      --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-    
-
-    
-    [data-theme="purple"] {
-      --bg-primary: #1a1b2e;
-      --bg-secondary: #252642;
-      --bg-tertiary: #2d2e4f;
-      --accent: #a855f7;
-      --accent-hover: #c084fc;
-      --text-primary: #f3f4f6;
-      --text-secondary: #9ca3af;
-      --text-muted: #6b7280;
-      --border: #374151;
-      --card-bg: #252642;
-      --card-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-
-    body {
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      transition: background-color 0.4s ease, color 0.4s ease;
-    }
-
-    .navbar {
-      background: var(--bg-secondary);
-      border-bottom: 1px solid var(--border);
-      transition: all 0.4s ease;
-    }
-
-    .brand-text {
-      color: var(--text-primary);
-    }
-
-    .nav-back {
-      color: var(--text-secondary);
-    }
-
-    .nav-back:hover {
-      color: var(--accent);
-    }
-
-    .page-header h1 {
-      color: var(--text-primary);
-    }
-
-    .subtitle {
-      color: var(--text-secondary);
-    }
-
-    .tool-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      box-shadow: var(--card-shadow);
-      transition: all 0.4s ease;
-    }
-
-    .tool-title {
-      color: var(--text-primary);
-    }
-
-    .tool-desc {
-      color: var(--text-secondary);
-    }
-
-    .tool-tag {
-      background: var(--bg-tertiary);
-      color: var(--text-secondary);
-    }
-
-    .tool-link {
-      color: var(--accent);
-    }
-
-    .tool-link:hover {
-      color: var(--accent-hover);
-    }
-
-    .features-section {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border);
-      border-bottom: 1px solid var(--border);
-      transition: all 0.4s ease;
-    }
-
-    .section-title {
-      color: var(--text-primary);
-    }
-
-    .feature-item h4 {
-      color: var(--text-primary);
-    }
-
-    .feature-item p {
-      color: var(--text-secondary);
-    }
-
-    .feature-icon {
-      color: var(--accent);
-    }
-
-    .policy-section {
-      background: var(--bg-tertiary);
-      transition: all 0.4s ease;
-    }
-
-    .policy-box {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-    }
-
-    .policy-title {
-      color: var(--text-primary);
-    }
-
-    .policy-label {
-      color: var(--text-secondary);
-    }
-
-    .policy-link {
-      color: var(--accent);
-    }
-
-    .footer {
-      background: var(--bg-secondary);
-      border-top: 1px solid var(--border);
-      color: var(--text-secondary);
-      transition: all 0.4s ease;
-    }
-
-    .footer a {
-      color: var(--text-secondary);
-    }
-
-    .footer a:hover {
-      color: var(--accent);
-    }
-
-    /* 页脚样式优化 */
-    .footer-content {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      text-align: center;
-    }
-
-    .footer-links {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .footer-separator {
-      color: var(--text-muted);
-    }
-
-    .email-link {
-      display: flex;
-      align-items: center;
-      font-weight: 500;
-      color: var(--accent);
-    }
-
-    .email-link:hover {
-      color: var(--accent-hover);
-    }
-
-    /* 主题切换器 */
-    .theme-switcher {
-      position: relative;
-    }
-
-    .theme-btn {
-      padding: 8px 14px;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-secondary);
-      cursor: pointer;
-      font-size: 13px;
-      transition: all 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .theme-btn:hover {
-      border-color: var(--accent);
-      color: var(--text-primary);
-    }
-
-    .theme-btn svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    .theme-dropdown {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      margin-top: 8px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 6px;
-      min-width: 120px;
-      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      opacity: 0;
-      visibility: hidden;
-      transform: translateY(-10px);
-      transition: all 0.2s;
-      z-index: 1000;
-    }
-
-    .theme-dropdown.show {
-      opacity: 1;
-      visibility: visible;
-      transform: translateY(0);
-    }
-
-    .theme-option {
-      padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s;
-      color: var(--text-secondary);
-      font-size: 13px;
-    }
-
-    .theme-option:hover {
-      background: var(--bg-tertiary);
-      color: var(--text-primary);
-    }
-
-    .theme-option.active {
-      background: var(--accent);
-      color: white;
-    }
-
-    /* Toast */
-    .toast {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      padding: 12px 20px;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-primary);
-      font-size: 14px;
-      transform: translateY(100px);
-      opacity: 0;
-      transition: all 0.3s;
-      z-index: 10000;
-    }
-
-    .toast.show {
-      transform: translateY(0);
-      opacity: 1;
-    }
-  </style>
 </head>
 <body>
-  <!-- 顶部导航 -->
-  <nav class="navbar">
-    <div class="container">
-      <div class="nav-brand">
-        <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
-          <line x1="8" y1="21" x2="16" y2="21"></line>
-          <line x1="12" y1="17" x2="12" y2="21"></line>
-        </svg>
-        <span class="brand-text">开发者工具集</span>
-      </div>
-      <div style="display: flex; align-items: center; gap: 16px;">
-        <!-- 主题切换器 -->
-        <div class="theme-switcher">
-          <button class="theme-btn" onclick="toggleThemeDropdown()">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="5"></circle>
-              <line x1="12" y1="1" x2="12" y2="3"></line>
-              <line x1="12" y1="21" x2="12" y2="23"></line>
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-              <line x1="1" y1="12" x2="3" y2="12"></line>
-              <line x1="21" y1="12" x2="23" y2="12"></line>
-              <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-              <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-            </svg>
-            主题
+  <div class="cyber-shell">
+    <div class="grid-overlay"></div>
+    <header class="cyber-header">
+      <div class="container nav-bar">
+        <div class="brand-block">
+          <p class="eyebrow">DEVOPS / AI / HARDWARE</p>
+          <h1><a href="/">开发者工具箱</a></h1>
+          <p class="subtitle">把文档处理、代码生成、天气查询与图像处理编织成一套面向开发者的高效工作流。</p>
+        </div>
+        <div class="header-actions">
+          <a href="/" class="tools-link">返回博客</a>
+          <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换主题">
+            <span class="theme-toggle__icon">☼</span>
+            <span class="theme-toggle__text">深色</span>
           </button>
-          <div class="theme-dropdown" id="themeDropdown">
-            <div class="theme-option active" data-theme="light" onclick="switchTheme('light')">浅雪白</div>
-            <div class="theme-option" data-theme="dark" onclick="switchTheme('dark')">深海蓝</div>
+        </div>
+      </div>
+    </header>
 
-            <div class="theme-option" data-theme="purple" onclick="switchTheme('purple')">紫夜</div>
+    <main class="container main-content">
+      <section class="hero-terminal" aria-label="工具箱终端预览">
+        <div class="hero-terminal__screen">
+          <div class="terminal-topbar">
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+            <span class="terminal-dot"></span>
+          </div>
+          <div class="terminal-body">
+            <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">npm run build</span></div>
+            <div class="terminal-line terminal-output">[INFO] 工具链已就绪 · 进入开发者工作台</div>
+            <div class="terminal-line terminal-output terminal-output--accent">[RUN] Markdown / PDF / API / 图像处理模块已加载</div>
+            <div class="terminal-line"><span class="prompt">$</span> <span class="cursor"></span></div>
           </div>
         </div>
-        <a href="/" class="nav-back">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
-          返回首页
-        </a>
-      </div>
-    </div>
-  </nav>
-
-  <!-- 主内容区 -->
-  <main class="main-content">
-    <div class="container">
-      
-      <!-- 页面标题 -->
-      <header class="page-header">
-        <h1>实用工具集合</h1>
-        <p class="subtitle">为开发者提供高效、便捷的工具服务</p>
-      </header>
-
-      <!-- 工具网格 -->
-      <section class="tools-grid" aria-label="工具列表">
-        
-        <!-- 工具1: Markdown编辑器 -->
-        <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-blue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-                <polyline points="10 9 9 9 8 9"></polyline>
-              </svg>
-            </div>
-            <h2 class="tool-title">Markdown编辑器</h2>
+        <div class="hero-copy">
+          <p class="eyebrow">LIVE CODE / PRODUCTIVITY</p>
+          <h2>面向教程社区与工程化交付的工具集，给每一段内容一个更快的落地方式。</h2>
+          <p>这里汇聚了 Markdown 合成、代码助手、天气与 API 查询、PDF 与图像处理等常用能力，适合内容创作者、开发者和产品迭代团队。</p>
+          <div class="hero-actions">
+            <a class="pill-btn" href="#tools-grid">浏览工具</a>
+            <a class="pill-btn pill-btn--ghost" href="./privacy.html">查看隐私说明</a>
           </div>
-          <p class="tool-desc">支持多平台格式转换的Markdown编辑器，适配微信公众号、知乎、掘金等平台</p>
-          <div class="tool-footer">
-            <span class="tool-tag">文档处理</span>
-            <a href="./markdown-editor.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
+        </div>
+      </section>
+
+      <section class="tools-grid" id="tools-grid" aria-label="工具列表">
+        <article class="tool-card">
+          <div class="tool-card__top">
+            <div class="tool-icon tool-icon--blue">✎</div>
+            <div>
+              <h3>Markdown 编辑器</h3>
+              <p>适配公众号、知乎和掘金的内容发布流程。</p>
+            </div>
+          </div>
+          <div class="tool-card__body">
+            <p>支持内容排版、格式转换与多平台输出，适合把技术文章快速整理成可发布稿件。</p>
+          </div>
+          <div class="tool-card__footer">
+            <span class="tool-tag">内容创作</span>
+            <a href="./markdown-editor.html" class="tool-link">进入工具 →</a>
           </div>
         </article>
 
-        <!-- 工具2: 代码助手 -->
         <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-purple">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="16 18 22 12 16 6"></polyline>
-                <polyline points="8 6 2 12 8 18"></polyline>
-              </svg>
+          <div class="tool-card__top">
+            <div class="tool-icon tool-icon--purple">⌘</div>
+            <div>
+              <h3>代码助手</h3>
+              <p>生成、诊断与重构代码片段。</p>
             </div>
-            <h2 class="tool-title">代码助手</h2>
           </div>
-          <p class="tool-desc">基于大语言模型的编程辅助工具，提供代码生成、问题诊断、技术咨询等功能</p>
-          <div class="tool-footer">
+          <div class="tool-card__body">
+            <p>为调试、文档编写与教程示例提供一套更快的代码协作入口。</p>
+          </div>
+          <div class="tool-card__footer">
             <span class="tool-tag">编程辅助</span>
-            <a href="./code-assistant.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
+            <a href="./code-assistant.html" class="tool-link">进入工具 →</a>
           </div>
         </article>
 
-        <!-- 工具3: 天气查询 -->
         <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-orange">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="5"></circle>
-                <line x1="12" y1="1" x2="12" y2="3"></line>
-                <line x1="12" y1="21" x2="12" y2="23"></line>
-                <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                <line x1="1" y1="12" x2="3" y2="12"></line>
-                <line x1="21" y1="12" x2="23" y2="12"></line>
-                <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-              </svg>
+          <div class="tool-card__top">
+            <div class="tool-icon tool-icon--cyan">☁</div>
+            <div>
+              <h3>天气查询</h3>
+              <p>快速获取实时天气、预报与空气质量信息。</p>
             </div>
-            <h2 class="tool-title">天气查询</h2>
           </div>
-          <p class="tool-desc">实时天气信息查询服务，支持全球城市天气、7天预报、空气质量监测</p>
-          <div class="tool-footer">
+          <div class="tool-card__body">
+            <p>支持城市搜索、天气趋势分析与多场景数据查询，让外部信息接入更顺手。</p>
+          </div>
+          <div class="tool-card__footer">
             <span class="tool-tag">数据服务</span>
-            <a href="./weather-query.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
+            <a href="./weather-query.html" class="tool-link">进入工具 →</a>
           </div>
         </article>
 
-        <!-- 工具4: 图像处理 -->
         <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-green">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                <circle cx="8.5" cy="8.5" r="1.5"></circle>
-                <polyline points="21 15 16 10 5 21"></polyline>
-              </svg>
+          <div class="tool-card__top">
+            <div class="tool-icon tool-icon--green">◉</div>
+            <div>
+              <h3>图像处理</h3>
+              <p>压缩、格式转换与基础效果处理。</p>
             </div>
-            <h2 class="tool-title">图像处理</h2>
           </div>
-          <p class="tool-desc">在线图像处理工具，支持图片压缩、格式转换、滤镜效果、背景移除等功能</p>
-          <div class="tool-footer">
-            <span class="tool-tag">图像处理</span>
-            <a href="./image-processor.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
+          <div class="tool-card__body">
+            <p>面向内容配图、项目展示图和社交媒体素材，帮助你快速完成一次可发布的视觉处理。</p>
+          </div>
+          <div class="tool-card__footer">
+            <span class="tool-tag">视觉处理</span>
+            <a href="./image-processor.html" class="tool-link">进入工具 →</a>
           </div>
         </article>
 
-        <!-- 工具5: PDF转换器 -->
         <article class="tool-card">
-          <div class="tool-header">
-            <div class="tool-icon icon-red">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <!-- PDF 文档基础形状 -->
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <!-- 图像处理元素：调整滑块 -->
-                <line x1="8" y1="12" x2="16" y2="12"></line>
-                <line x1="8" y1="16" x2="16" y2="16"></line>
-                <circle cx="10" cy="12" r="1.5" fill="currentColor"></circle>
-                <circle cx="14" cy="16" r="1.5" fill="currentColor"></circle>
-                <!-- 图像处理元素：滤镜效果 -->
-                <path d="M7 10L9 8L11 10"></path>
-                <path d="M13 10L15 8L17 10"></path>
-                <!-- 图像处理元素：图层指示器 -->
-                <rect x="9" y="14" width="6" height="2" rx="1" fill="none"></rect>
-                <rect x="10" y="12" width="4" height="2" rx="1" fill="none"></rect>
-              </svg>
+          <div class="tool-card__top">
+            <div class="tool-icon tool-icon--violet">▤</div>
+            <div>
+              <h3>PDF 转换器</h3>
+              <p>从文档流转到可交付作品。</p>
             </div>
-            <h2 class="tool-title">PDF转换器</h2>
           </div>
-          <p class="tool-desc">功能强大的PDF处理工具，支持PDF转图片、图片转PDF、文本提取、PDF压缩、PDF合并和PDF拆分</p>
-          <div class="tool-footer">
-            <span class="tool-tag">文档转换</span>
-            <a href="./pdf/index.html" class="tool-link">
-              进入工具
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="5" y1="12" x2="19" y2="12"></line>
-                <polyline points="12 5 19 12 12 19"></polyline>
-              </svg>
-            </a>
+          <div class="tool-card__body">
+            <p>支持图片转 PDF、PDF 转图片、压缩与拆分，让文档整理与内容交付更高效。</p>
+          </div>
+          <div class="tool-card__footer">
+            <span class="tool-tag">文档处理</span>
+            <a href="./pdf/index.html" class="tool-link">进入工具 →</a>
           </div>
         </article>
-
       </section>
 
-      <!-- 特性说明 -->
-      <section class="features-section">
-        <h3 class="section-title">服务特性</h3>
-        <div class="features-grid">
-          <div class="feature-item">
-            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-            </svg>
-            <h4>高效便捷</h4>
-            <p>无需安装，即开即用，所有工具均基于Web技术实现</p>
-          </div>
-          <div class="feature-item">
-            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-            </svg>
-            <h4>数据安全</h4>
-            <p>敏感信息本地存储，数据处理在浏览器端完成</p>
-          </div>
-          <div class="feature-item">
-            <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect>
-              <line x1="12" y1="18" x2="12.01" y2="18"></line>
-            </svg>
-            <h4>多端适配</h4>
-            <p>响应式设计，支持桌面端、平板、手机等多种设备</p>
-          </div>
-        </div>
+      <section class="feature-grid" aria-label="工具集特性">
+        <article class="feature-card">
+          <h3>高效工作流</h3>
+          <p>把内容创作、代码迭代与文档交付统一到一个界面中。</p>
+        </article>
+        <article class="feature-card">
+          <h3>本地优先</h3>
+          <p>敏感内容尽量本地处理，减少外部依赖与隐私风险。</p>
+        </article>
+        <article class="feature-card">
+          <h3>响应式适配</h3>
+          <p>适配桌面、平板与移动端，让工具箱始终保持可用。</p>
+        </article>
       </section>
 
-    </div>
-  </main>
+      <section class="panel-grid">
+        <article class="panel-card">
+          <h3>工作流建议</h3>
+          <ul>
+            <li>先用 Markdown 编辑器整理教程结构</li>
+            <li>再用代码助手补齐示例与调试片段</li>
+            <li>最后用 PDF / 图像工具统一输出交付物</li>
+          </ul>
+        </article>
+        <article class="panel-card">
+          <h3>社区支持</h3>
+          <ul>
+            <li>支持隐私政策 / 使用条款 / 联系信息入口</li>
+            <li>适合配合博客文章与教程发布流程使用</li>
+            <li>后续可继续扩展为 AI 生成内容工作台</li>
+          </ul>
+        </article>
+      </section>
+    </main>
 
-  <!-- 页脚 -->
-  <footer class="footer">
-    <div class="container">
-      <div class="footer-content">
-        <p class="copyright">&copy; 2026 LIMUHEshua. 保留所有权利。</p>
-        <div class="footer-links">
-          <a href="mailto:1547223208@qq.com" class="email-link">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px; vertical-align: middle;">
-              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
-              <polyline points="22,6 12,13 2,6"></polyline>
-            </svg>
-            1547223208@qq.com
-          </a>
-          <span class="footer-separator">|</span>
-          <a href="./privacy.html">隐私政策</a>
-          <span class="footer-separator">|</span>
-          <a href="./terms.html">服务条款</a>
-          <span class="footer-separator">|</span>
-          <a href="./refund.html">退款政策</a>
-          <span class="footer-separator">|</span>
-          <a href="./pricing.html">价格</a>
-          <span class="footer-separator">|</span>
-          <a href="./terms-of-use.html">使用条件</a>
-          <span class="footer-separator">|</span>
-          <a href="./data-processing.html">数据处理协议</a>
-          <span class="footer-separator">|</span>
-          <a href="./cookie-policy.html">Cookie政策</a>
-          <span class="footer-separator">|</span>
-          <a href="./intellectual-property.html">知识产权声明</a>
-          <span class="footer-separator">|</span>
-          <a href="/sitemap.xml">网站地图</a>
-          <span class="footer-separator">|</span>
-          <a href="./contact.html">联系信息</a>
-          <span class="footer-separator">|</span>
-          <a href="/">返回博客首页</a>
+    <footer class="cyber-footer">
+      <div class="container footer-content">
+        <div class="social-links">
+          <a href="/" title="博客首页">⌂</a>
+          <a href="./contact.html" title="联系信息">✉</a>
+          <a href="./privacy.html" title="隐私政策">⚑</a>
         </div>
+        <p>© 2026 LIMUHEshua · 面向开发者的工具箱与教程社区</p>
       </div>
-    </div>
-  </footer>
-
-  <!-- Toast提示 -->
-  <div class="toast" id="toast"></div>
+    </footer>
+  </div>
 
   <script>
-    // 主题管理
-    const THEME_STORAGE_KEY = 'tools_index_theme';
-    let currentTheme = 'light';
-
-    // 初始化
-    document.addEventListener('DOMContentLoaded', () => {
-      loadSavedTheme();
-    });
-
-    // 主题切换
-    function toggleThemeDropdown() {
-      document.getElementById('themeDropdown').classList.toggle('show');
-    }
-
-    function closeThemeDropdown() {
-      document.getElementById('themeDropdown').classList.remove('show');
-    }
-
-    function switchTheme(theme) {
-      if (theme === currentTheme) {
-        closeThemeDropdown();
-        return;
-      }
-
-      const body = document.body;
-      body.removeAttribute('data-theme');
-
-      if (theme !== 'light') {
-        body.setAttribute('data-theme', theme);
-      }
-
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-      currentTheme = theme;
-
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.remove('active');
-        if (option.dataset.theme === theme) {
-          option.classList.add('active');
+    var themeToggle = document.getElementById('theme-toggle');
+    var body = document.body;
+    function applyTheme() {
+      var stored = localStorage.getItem('tools-theme');
+      if (stored === 'light') {
+        body.classList.add('theme-light');
+        if (themeToggle) {
+          themeToggle.querySelector('.theme-toggle__text').textContent = '浅色';
+          themeToggle.querySelector('.theme-toggle__icon').textContent = '☀';
         }
-      });
-
-      closeThemeDropdown();
-      showToast(`已切换到${getThemeName(theme)}主题`);
-    }
-
-    function getThemeName(theme) {
-      const names = { 'light': '浅雪白', 'dark': '深海蓝', 'purple': '紫夜' };
-      return names[theme] || '浅雪白';
-    }
-
-    function loadSavedTheme() {
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'light';
-      if (savedTheme !== 'light') {
-        document.body.setAttribute('data-theme', savedTheme);
-        currentTheme = savedTheme;
-        document.querySelectorAll('.theme-option').forEach(option => {
-          option.classList.remove('active');
-          if (option.dataset.theme === savedTheme) {
-            option.classList.add('active');
-          }
-        });
       }
     }
-
-    // Toast提示
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2000);
-    }
-
-    // 点击外部关闭下拉菜单
-    document.addEventListener('click', (e) => {
-      const themeSwitcher = document.querySelector('.theme-switcher');
-      if (themeSwitcher && !themeSwitcher.contains(e.target)) {
-        closeThemeDropdown();
+    function toggleTheme() {
+      body.classList.toggle('theme-light');
+      var isLight = body.classList.contains('theme-light');
+      localStorage.setItem('tools-theme', isLight ? 'light' : 'dark');
+      if (themeToggle) {
+        themeToggle.querySelector('.theme-toggle__text').textContent = isLight ? '浅色' : '深色';
+        themeToggle.querySelector('.theme-toggle__icon').textContent = isLight ? '☀' : '☼';
       }
-    });
+    }
+    applyTheme();
+    if (themeToggle) {
+      themeToggle.addEventListener('click', toggleTheme);
+    }
   </script>
-
 </body>
 </html>
