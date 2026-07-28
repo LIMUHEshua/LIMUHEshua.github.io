@@ -120,4 +120,4 @@ theme: livemylife
 deploy:
   type: git
   repo: git@github.com:LIMUHEshua/LIMUHEshua.github.io.git
-  branch: main
+  branch: gh-pages
