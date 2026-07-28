@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="<%= page.description || config.description %>">
+  <meta name="keywords" content="<%= page.keywords || config.keywords %>">
+  <meta name="author" content="<%= config.author %>">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="<%= page.title || config.title %>">
+  <meta property="og:description" content="<%= page.description || config.description %>">
+  <meta property="og:site_name" content="<%= config.title %>">
+  <link rel="canonical" href="<%= config.url + url_for(page.path) %>">
   <title><% if (page.title) { %><%= page.title %> | <% } %><%= config.title %></title>
   <link rel="icon" type="image/svg+xml" href="<%= url_for('/favicon.svg') %>">
   <link rel="stylesheet" href="<%= url_for('/css/main.css') %>">
@@ -14,17 +22,18 @@
       <h1><a href="<%= config.url %>"><%= config.title %></a></h1>
       <p class="subtitle"><%= config.subtitle %></p>
       <div class="header-tools">
-        <a href="<%= url_for('/tools/') %>" class="tools-link" title="开发者工具箱">
+        <a href="<%= url_for('/tools/') %>" class="tools-link" title="开发者工具箱" aria-label="开发者工具箱">
           <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
           </svg>
           <span>工具箱</span>
         </a>
       </div>
-      <div class="search-box">
-        <input type="text" id="search-input" placeholder="搜索文章标题或内容...">
-        <button onclick="searchPosts()">搜索</button>
-      </div>
+      <form class="search-box" role="search" onsubmit="event.preventDefault(); searchPosts();">
+        <label class="sr-only" for="search-input">搜索文章</label>
+        <input type="text" id="search-input" placeholder="搜索文章标题或内容..." autocomplete="off">
+        <button type="submit">搜索</button>
+      </form>
     </div>
   </header>
 
@@ -145,18 +154,28 @@
   <script src="<%= url_for('/js/code-copy.js') %>"></script>
   <script>
     var startTime = performance.now();
-    
-    window.onload = function() {
+    var searchInput = document.getElementById('search-input');
+
+    function initializeSiteWidgets() {
       var endTime = performance.now();
       var renderTime = (endTime - startTime).toFixed(2);
-      document.getElementById('render-time').textContent = renderTime + 'ms';
-      
+      var renderNode = document.getElementById('render-time');
+      if (renderNode) {
+        renderNode.textContent = renderTime + 'ms';
+      }
+
       calculateSiteUptime();
       updateCommentCount();
       updateMemoryUsage();
       updateLatestPost();
       updateVisitorCount();
-    };
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initializeSiteWidgets);
+    } else {
+      initializeSiteWidgets();
+    }
     
     function calculateSiteUptime() {
       var startDate = new Date('2026-02-23');
@@ -223,11 +242,13 @@
       }
     }
     
-    document.getElementById('search-input').addEventListener('keypress', function(e) {
-      if (e.key === 'Enter') {
-        searchPosts();
-      }
-    });
+    if (searchInput) {
+      searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          searchPosts();
+        }
+      });
+    }
     
     // 微信二维码弹窗
     function showWechatQR() {

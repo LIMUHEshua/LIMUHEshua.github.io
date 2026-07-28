@@ -1,34 +1,7 @@
-<div class="archive">
+<section class="archive" aria-label="归档列表">
   <% page.posts.forEach(function(post) { %>
-  <article class="post-archive">
-    <h2><a href="<%= url_for(post.path) %>"><%= post.title %></a></h2>
-    <div class="post-meta">
-      <time><%= post.date.format('YYYY-MM-DD') %></time>
-      <% if (post.categories && post.categories.length > 0) { %>
-      <span class="post-category">
-        | <% post.categories.each(function(cat) { %>
-          <a href="<%= url_for(cat.path) %>"><%= cat.name %></a>
-        <% }); %>
-      </span>
-      <% } %>
-    </div>
-    <div class="post-excerpt">
-      <%- post.excerpt %>
-    </div>
-  </article>
+    <%- partial('_partial/post-card', { post: post }) %>
   <% }); %>
+</section>
 
-  <% if (page.total > 1) { %>
-  <div class="pagination">
-    <% if (page.prev) { %>
-    <a href="<%= url_for(page.prev_link) %>" class="prev">← 上一页</a>
-    <% } %>
-    
-    <span class="page-number">第 <%= page.current %> 页，共 <%= page.total %> 页</span>
-    
-    <% if (page.next) { %>
-    <a href="<%= url_for(page.next_link) %>" class="next">下一页 →</a>
-    <% } %>
-  </div>
-  <% } %>
-</div>
+<%- partial('_partial/pagination') %>

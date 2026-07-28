@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>多平台API测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #1a1a2e;
+            color: #eaeaea;
+        }
+        .container {
+            background-color: #16213e;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #e94560;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #48bb78;
+            color: white;
+        }
+        .error {
+            background-color: #f56565;
+            color: white;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #e94560;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #ff6b6b;
+        }
+        pre {
+            background-color: #0f3460;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .platform-test {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #2d3748;
+            border-radius: 8px;
+        }
+        .platform-test h3 {
+            margin-top: 0;
+            color: #e94560;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #0f3460;
+            border: 1px solid #2d3748;
+            border-radius: 4px;
+            color: #eaeaea;
+        }
+        select {
+            padding: 10px;
+            margin: 10px 0;
+            background-color: #0f3460;
+            border: 1px solid #2d3748;
+            border-radius: 4px;
+            color: #eaeaea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>多平台API测试</h1>
+        <p>测试不同AI平台的API密钥有效性</p>
+        
+        <div class="platform-test">
+            <h3>1. 选择平台</h3>
+            <select id="testPlatform">
+                <option value="alibaba">阿里云百炼</option>
+                <option value="deepseek">DeepSeek</option>
+                <option value="openai">OpenAI</option>
+                <option value="google">Google AI</option>
+                <option value="anthropic">Anthropic</option>
+            </select>
+        </div>
+        
+        <div class="platform-test">
+            <h3>2. 输入API密钥</h3>
+            <input type="text" id="testApiKey" placeholder="输入API密钥">
+        </div>
+        
+        <div class="platform-test">
+            <h3>3. 测试API调用</h3>
+            <button onclick="testAPI()">测试API调用</button>
+            <button onclick="detectPlatform()">自动检测平台</button>
+            <div id="testResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="platform-test">
+            <h3>4. 批量测试</h3>
+            <button onclick="runAllTests()">运行所有平台测试</button>
+            <div id="batchResult" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import apiService from './source/tools/assets/js/api-service.js';
+        import platformConfig from './source/tools/assets/js/platform-config.js';
+        
+        async function testAPI() {
+            const platform = document.getElementById('testPlatform').value;
+            const apiKey = document.getElementById('testApiKey').value.trim();
+            
+            if (!apiKey) {
+                showResult('请输入API密钥', 'error');
+                return;
+            }
+            
+            try {
+                const result = await apiService.directAPITest(apiKey, platform);
+                if (result.success) {
+                    showResult(`API调用成功！<br>平台: ${platformConfig.getPlatformConfig(platform).name}<br>响应: ${JSON.stringify(result.data, null, 2)}`, 'success');
+                } else {
+                    showResult(`API调用失败: ${result.message}`, 'error');
+                }
+            } catch (error) {
+                showResult(`测试失败: ${error.message}`, 'error');
+            }
+        }
+        
+        function detectPlatform() {
+            const apiKey = document.getElementById('testApiKey').value.trim();
+            if (!apiKey) {
+                showResult('请先输入API密钥', 'error');
+                return;
+            }
+            
+            const detectedPlatform = platformConfig.detectPlatform(apiKey);
+            if (detectedPlatform) {
+                document.getElementById('testPlatform').value = detectedPlatform;
+                showResult(`已自动检测到平台: ${platformConfig.getPlatformConfig(detectedPlatform).name}`, 'success');
+            } else {
+                showResult('无法自动检测平台，请手动选择', 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            const batchResult = document.getElementById('batchResult');
+            batchResult.innerHTML = '<p>正在运行所有平台测试...</p>';
+            
+            const platforms = ['alibaba', 'deepseek', 'openai', 'google', 'anthropic'];
+            const results = [];
+            
+            for (const platform of platforms) {
+                try {
+                    // 使用模拟API密钥进行测试（实际环境中需要用户输入）
+                    const testKey = getTestApiKey(platform);
+                    if (!testKey) {
+                        results.push(`<div style="color: #ed8936;">${platformConfig.getPlatformConfig(platform).name}: 未提供API密钥</div>`);
+                        continue;
+                    }
+                    
+                    const result = await apiService.directAPITest(testKey, platform);
+                    if (result.success) {
+                        results.push(`<div style="color: #48bb78;">${platformConfig.getPlatformConfig(platform).name}: 测试成功</div>`);
+                    } else {
+                        results.push(`<div style="color: #f56565;">${platformConfig.getPlatformConfig(platform).name}: 测试失败 - ${result.message}</div>`);
+                    }
+                } catch (error) {
+                    results.push(`<div style="color: #f56565;">${platformConfig.getPlatformConfig(platform).name}: 测试失败 - ${error.message}</div>`);
+                }
+            }
+            
+            batchResult.innerHTML = results.join('<br>');
+        }
+        
+        function getTestApiKey(platform) {
+            // 这里可以添加测试用的API密钥
+            // 实际环境中应该由用户输入
+            const testKeys = {
+                // 'alibaba': 'your-alibaba-api-key',
+                // 'deepseek': 'your-deepseek-api-key',
+                // 'openai': 'your-openai-api-key',
+                // 'google': 'your-google-api-key',
+                // 'anthropic': 'your-anthropic-api-key'
+            };
+            return testKeys[platform] || '';
+        }
+        
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('testResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = `test-result ${type}`;
+            resultDiv.innerHTML = message;
+        }
+    </script>
+</body>
+</html>

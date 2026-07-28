@@ -63,9 +63,15 @@ class CryptoService {
    */
   setSecureStorage(key, value) {
     try {
-      // 使用sessionStorage避免持久化敏感数据
-      const encrypted = this.encryptWithSessionKey(value);
-      sessionStorage.setItem(`secure_${key}`, encrypted);
+      // 使用localStorage持久化存储主密钥
+      // 对于API密钥等敏感信息，仍使用sessionStorage
+      if (key === 'master_key' || key === 'key_created_at') {
+        const encrypted = this.encryptWithSessionKey(value);
+        localStorage.setItem(`secure_${key}`, encrypted);
+      } else {
+        const encrypted = this.encryptWithSessionKey(value);
+        sessionStorage.setItem(`secure_${key}`, encrypted);
+      }
     } catch (e) {
       console.error('Secure storage failed:', e);
     }
@@ -73,15 +79,24 @@ class CryptoService {
 
   getSecureStorage(key) {
     try {
-      const encrypted = sessionStorage.getItem(`secure_${key}`);
-      return encrypted ? this.decryptWithSessionKey(encrypted) : null;
+      if (key === 'master_key' || key === 'key_created_at') {
+        const encrypted = localStorage.getItem(`secure_${key}`);
+        return encrypted ? this.decryptWithSessionKey(encrypted) : null;
+      } else {
+        const encrypted = sessionStorage.getItem(`secure_${key}`);
+        return encrypted ? this.decryptWithSessionKey(encrypted) : null;
+      }
     } catch (e) {
       return null;
     }
   }
 
   removeSecureStorage(key) {
-    sessionStorage.removeItem(`secure_${key}`);
+    if (key === 'master_key' || key === 'key_created_at') {
+      localStorage.removeItem(`secure_${key}`);
+    } else {
+      sessionStorage.removeItem(`secure_${key}`);
+    }
   }
 
   /**

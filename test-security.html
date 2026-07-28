@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>安全服务测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        .test-case {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 4px;
+        }
+        button {
+            padding: 8px 16px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>安全服务测试</h1>
+        
+        <!-- 反爬测试 -->
+        <div class="test-section">
+            <h2>1. 反爬机制测试</h2>
+            
+            <div class="test-case">
+                <h3>用户行为分析</h3>
+                <button onclick="testUserBehavior()">测试爬虫行为</button>
+                <button onclick="testHumanBehavior()">测试人类行为</button>
+                <div id="userBehaviorResult" class="result"></div>
+            </div>
+            
+            <div class="test-case">
+                <h3>请求频率限制</h3>
+                <button onclick="testRateLimit()">测试速率限制</button>
+                <div id="rateLimitResult" class="result"></div>
+            </div>
+            
+            <div class="test-case">
+                <h3>浏览器指纹检测</h3>
+                <button onclick="testBrowserFingerprint()">测试浏览器指纹</button>
+                <div id="fingerprintResult" class="result"></div>
+            </div>
+        </div>
+        
+        <!-- DDoS测试 -->
+        <div class="test-section">
+            <h2>2. DDoS和恶意软件防护测试</h2>
+            
+            <div class="test-case">
+                <h3>流量过滤</h3>
+                <button onclick="testTrafficFilter()">测试恶意请求</button>
+                <div id="trafficFilterResult" class="result"></div>
+            </div>
+            
+            <div class="test-case">
+                <h3>恶意软件检测</h3>
+                <button onclick="testMalwareDetection()">测试恶意代码</button>
+                <div id="malwareResult" class="result"></div>
+            </div>
+        </div>
+        
+        <!-- 高流量处理测试 -->
+        <div class="test-section">
+            <h2>3. 高流量处理测试</h2>
+            
+            <div class="test-case">
+                <h3>自动缩放</h3>
+                <button onclick="testAutoScaling()">测试自动缩放</button>
+                <div id="autoScalingResult" class="result"></div>
+            </div>
+        </div>
+        
+        <!-- 日志测试 -->
+        <div class="test-section">
+            <h2>4. 日志记录测试</h2>
+            
+            <div class="test-case">
+                <h3>安全事件日志</h3>
+                <button onclick="testLogging()">测试日志记录</button>
+                <div id="loggingResult" class="result"></div>
+            </div>
+        </div>
+        
+        <!-- 事件响应测试 -->
+        <div class="test-section">
+            <h2>5. 事件响应测试</h2>
+            
+            <div class="test-case">
+                <h3>安全事件处理</h3>
+                <button onclick="testIncidentResponse()">测试事件响应</button>
+                <div id="incidentResult" class="result"></div>
+            </div>
+        </div>
+        
+        <!-- 综合测试 -->
+        <div class="test-section">
+            <h2>6. 综合安全检查</h2>
+            
+            <div class="test-case">
+                <h3>完整安全检查</h3>
+                <button onclick="testCompleteSecurityCheck()">测试完整安全检查</button>
+                <div id="completeResult" class="result"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 安全服务 -->
+    <script src="source/tools/assets/js/security-service.js"></script>
+    
+    <script>
+        // 测试用户行为分析
+        function testUserBehavior() {
+            const resultDiv = document.getElementById('userBehaviorResult');
+            
+            const crawlerBehavior = {
+                pageNavSpeed: 100, // 快速导航
+                mouseMovement: false, // 无鼠标移动
+                scroll: false, // 无滚动
+                clickPattern: 'robot' // 机器人点击模式
+            };
+            
+            const isCrawler = securityService.detectUserBehavior(
+                'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+                {},
+                crawlerBehavior
+            );
+            
+            resultDiv.className = 'result ' + (isCrawler ? 'error' : 'success');
+            resultDiv.innerHTML = `
+                <strong>爬虫行为测试结果:</strong><br>
+                检测结果: ${isCrawler ? '检测到爬虫' : '未检测到爬虫'}<br>
+                行为模式: ${JSON.stringify(crawlerBehavior)}
+            `;
+        }
+        
+        function testHumanBehavior() {
+            const resultDiv = document.getElementById('userBehaviorResult');
+            
+            const humanBehavior = {
+                pageNavSpeed: 2000, // 正常导航速度
+                mouseMovement: true, // 有鼠标移动
+                scroll: true, // 有滚动
+                clickPattern: 'human' // 人类点击模式
+            };
+            
+            const isCrawler = securityService.detectUserBehavior(
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+                {},
+                humanBehavior
+            );
+            
+            resultDiv.className = 'result ' + (isCrawler ? 'error' : 'success');
+            resultDiv.innerHTML = `
+                <strong>人类行为测试结果:</strong><br>
+                检测结果: ${isCrawler ? '检测到爬虫' : '未检测到爬虫'}<br>
+                行为模式: ${JSON.stringify(humanBehavior)}
+            `;
+        }
+        
+        // 测试速率限制
+        function testRateLimit() {
+            const resultDiv = document.getElementById('rateLimitResult');
+            const ip = '192.168.1.100';
+            
+            // 模拟快速请求
+            let blockedCount = 0;
+            for (let i = 0; i < 120; i++) {
+                if (securityService.detectRequestFrequency(ip)) {
+                    blockedCount++;
+                }
+            }
+            
+            resultDiv.className = 'result ' + (blockedCount > 0 ? 'error' : 'success');
+            resultDiv.innerHTML = `
+                <strong>速率限制测试结果:</strong><br>
+                模拟请求数: 120<br>
+                被阻止的请求数: ${blockedCount}<br>
+                结果: ${blockedCount > 0 ? '触发速率限制' : '未触发速率限制'}
+            `;
+        }
+        
+        // 测试浏览器指纹
+        function testBrowserFingerprint() {
+            const resultDiv = document.getElementById('fingerprintResult');
+            
+            const fingerprint = {
+                userAgent: navigator.userAgent,
+                screenSize: `${window.screen.width}x${window.screen.height}`,
+                timezone: new Date().getTimezoneOffset(),
+                language: navigator.language
+            };
+            
+            // 模拟快速会话创建
+            let blocked = false;
+            for (let i = 0; i < 10; i++) {
+                if (securityService.detectBrowserFingerprint(fingerprint)) {
+                    blocked = true;
+                    break;
+                }
+            }
+            
+            resultDiv.className = 'result ' + (blocked ? 'error' : 'success');
+            resultDiv.innerHTML = `
+                <strong>浏览器指纹测试结果:</strong><br>
+                检测结果: ${blocked ? '检测到异常会话' : '未检测到异常会话'}<br>
+                指纹信息: ${JSON.stringify(fingerprint)}
+            `;
+        }
+        
+        // 测试流量过滤
+        function testTrafficFilter() {
+            const resultDiv = document.getElementById('trafficFilterResult');
+            
+            // 恶意请求
+            const maliciousRequest = {
+                method: 'POST',
+                endpoint: '/api/chat',
+                data: {
+                    prompt: '<script>alert("XSS")</script>',
+                    eval: 'console.log("malicious")'
+                }
+            };
+            
+            const isMalicious = !securityService.trafficFilter(maliciousRequest);
+            
+            resultDiv.className = 'result ' + (isMalicious ? 'error' : 'success');
+            resultDiv.innerHTML = `
+                <strong>流量过滤测试结果:</strong><br>
+                检测结果: ${isMalicious ? '检测到恶意请求' : '未检测到恶意请求'}<br>
+                请求内容: ${JSON.stringify(maliciousRequest)}
+            `;
+        }
+        
+        // 测试恶意软件检测
+        function testMalwareDetection() {
+            const resultDiv = document.getElementById('malwareResult');
+            
+            // 恶意代码
+            const maliciousCode = `
+                eval('alert("malware")');
+                document.write('<iframe src="http://malicious.com"></iframe>');
+                setTimeout(function() {
+                    new Function('console.log("executed")')();
+                }, 1000);
+            `;
+            
+            const hasMalware = securityService.virusScanner(maliciousCode);
+            
+            resultDiv.className = 'result ' + (hasMalware ? 'error' : 'success');
+            resultDiv.innerHTML = `
+                <strong>恶意软件检测测试结果:</strong><br>
+                检测结果: ${hasMalware ? '检测到恶意代码' : '未检测到恶意代码'}<br>
+                代码片段: ${maliciousCode.substring(0, 100)}...
+            `;
+        }
+        
+        // 测试自动缩放
+        function testAutoScaling() {
+            const resultDiv = document.getElementById('autoScalingResult');
+            
+            // 初始服务器数量
+            const initialServers = securityService.distributedArchitecture.servers.length;
+            
+            // 模拟高流量
+            securityService.autoScale(90); // 90%流量
+            
+            // 模拟低流量
+            securityService.autoScale(20); // 20%流量
+            
+            const finalServers = securityService.distributedArchitecture.servers.length;
+            
+            resultDiv.className = 'result info';
+            resultDiv.innerHTML = `
+                <strong>自动缩放测试结果:</strong><br>
+                初始服务器数量: ${initialServers}<br>
+                最终服务器数量: ${finalServers}<br>
+                服务器列表: ${JSON.stringify(securityService.distributedArchitecture.servers)}
+            `;
+        }
+        
+        // 测试日志记录
+        function testLogging() {
+            const resultDiv = document.getElementById('loggingResult');
+            
+            // 生成安全事件
+            securityService.logSecurityEvent('Test Event', 'This is a test security event');
+            securityService.logSecurityEvent('Crawler Detection', 'Test crawler detected');
+            
+            // 获取最近的日志
+            const recentEvents = securityService.securityEvents.slice(-5);
+            
+            resultDiv.className = 'result info';
+            resultDiv.innerHTML = `
+                <strong>日志记录测试结果:</strong><br>
+                总事件数: ${securityService.securityEvents.length}<br>
+                最近5个事件:<br>
+                <pre>${JSON.stringify(recentEvents, null, 2)}</pre>
+            `;
+        }
+        
+        // 测试事件响应
+        function testIncidentResponse() {
+            const resultDiv = document.getElementById('incidentResult');
+            
+            // 测试不同类型的事件响应
+            const incidents = [
+                { type: 'Crawler Detection', details: 'Test crawler detected', timestamp: new Date().toISOString() },
+                { type: 'DDoS Protection', details: 'High traffic detected', timestamp: new Date().toISOString() },
+                { type: 'Malware Detection', details: 'Malicious code found', timestamp: new Date().toISOString() }
+            ];
+            
+            const responses = incidents.map(incident => ({
+                incident: incident.type,
+                response: securityService.handleSecurityIncident(incident)
+            }));
+            
+            resultDiv.className = 'result info';
+            resultDiv.innerHTML = `
+                <strong>事件响应测试结果:</strong><br>
+                <pre>${JSON.stringify(responses, null, 2)}</pre>
+            `;
+        }
+        
+        // 测试完整安全检查
+        function testCompleteSecurityCheck() {
+            const resultDiv = document.getElementById('completeResult');
+            
+            const request = {
+                method: 'POST',
+                endpoint: '/api/chat',
+                data: {
+                    prompt: 'Hello, world!'
+                }
+            };
+            
+            const userAgent = navigator.userAgent;
+            const headers = {
+                'user-agent': userAgent
+            };
+            
+            const behavior = {
+                pageNavSpeed: 1000,
+                mouseMovement: true,
+                scroll: true,
+                clickPattern: 'human',
+                screenSize: `${window.screen.width}x${window.screen.height}`
+            };
+            
+            const result = securityService.performSecurityChecks(request, userAgent, headers, behavior);
+            
+            resultDiv.className = 'result ' + (result.blocked ? 'error' : 'success');
+            resultDiv.innerHTML = `
+                <strong>完整安全检查测试结果:</strong><br>
+                检查结果: ${result.blocked ? '被阻止' : '通过'}<br>
+                原因: ${result.reason || '无'}<br>
+                请求信息: ${JSON.stringify(request)}<br>
+                行为信息: ${JSON.stringify(behavior)}
+            `;
+        }
+    </script>
+</body>
+</html>

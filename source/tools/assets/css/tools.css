@@ -338,32 +338,82 @@ body {
 .footer {
   background-color: var(--color-bg-primary);
   border-top: 1px solid var(--color-border);
-  padding: var(--spacing-xl) 0;
-  margin-top: auto;
+  padding: var(--spacing-lg) 0;
 }
 
 .footer .container {
   text-align: center;
 }
 
-.footer p {
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+}
+
+.copyright {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
+  margin: 0;
 }
 
 .footer-links {
-  margin-top: var(--spacing-sm);
+  display: flex;
+  gap: var(--spacing-md);
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
 }
 
 .footer-links a {
+  font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   text-decoration: none;
   transition: color var(--transition-fast);
+  position: relative;
+}
+
+.footer-links a::after {
+  content: '|';
+  margin-left: var(--spacing-md);
+  color: var(--color-text-muted);
+  position: absolute;
+  right: -10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.footer-links a:last-child::after {
+  display: none;
 }
 
 .footer-links a:hover {
   color: var(--color-blue);
 }
+
+@media (max-width: 768px) {
+  .footer-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .footer-links {
+    justify-content: center;
+  }
+  
+  .footer-links a {
+    font-size: var(--font-size-xs);
+  }
+  
+  .footer-links a::after {
+    margin-left: var(--spacing-sm);
+    right: -8px;
+  }
+}
+
+
 
 /* ============================================
    响应式适配

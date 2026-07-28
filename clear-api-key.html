@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>清除API Key</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #c82333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>清除API Key</h1>
+        <p>点击按钮清除存储的API Key</p>
+        <button onclick="clearAPIKey()">清除API Key</button>
+        <div id="result" class="result" style="display: none;"></div>
+    </div>
+
+    <script type="module">
+        import apiService from './source/tools/assets/js/api-service.js';
+        import cryptoService from './source/tools/assets/js/crypto-service.js';
+        
+        async function clearAPIKey() {
+            // 清除API服务中的API key
+            apiService.clearAPIKey();
+            
+            // 清除localStorage中的主密钥
+            cryptoService.removeSecureStorage('master_key');
+            cryptoService.removeSecureStorage('key_created_at');
+            cryptoService.removeSecureStorage('master_key_backup');
+            
+            // 清除sessionStorage中的所有安全存储
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                if (key && key.startsWith('secure_')) {
+                    sessionStorage.removeItem(key);
+                }
+            }
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = '<p>API Key已成功清除</p>';
+        }
+    </script>
+</body>
+</html>

@@ -32,11 +32,20 @@ skip_render:
   - 'tools/markdown-editor.html'
   - 'tools/index.html'
   - 'tools/pricing.html'
+  - 'tools/saas-pricing.html'
   - 'tools/privacy.html'
   - 'tools/refund.html'
   - 'tools/terms.html'
   - 'tools/code-assistant.html'
+  - 'tools/weather-query.html'
+  - 'tools/image-processor.html'
+  - 'tools/pdf/**'
   - 'tools/assets/**'
+  - 'tools/terms-of-use.html'
+  - 'tools/data-processing.html'
+  - 'tools/cookie-policy.html'
+  - 'tools/intellectual-property.html'
+  - 'tools/contact.html'
 
 # Writing
 new_post_name: :title.md # File name of new posts

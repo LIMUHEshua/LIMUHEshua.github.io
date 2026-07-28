@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>完整功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        .test-result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #0069d9;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .step h3 {
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>完整功能测试</h1>
+        <p>测试API密钥存储和调用的完整流程</p>
+        
+        <div class="step">
+            <h3>步骤1: 设置API密钥</h3>
+            <input type="text" id="apiKeyInput" value="sk-86fc2bb1a95d46058fdd083c7fa0d97b" style="width: 100%; padding: 10px; margin-bottom: 10px;">
+            <button onclick="setAPIKey()">设置API密钥</button>
+            <div id="setKeyResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="step">
+            <h3>步骤2: 保存API密钥（加密存储）</h3>
+            <button onclick="saveAPIKey()">保存API密钥</button>
+            <div id="saveKeyResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="step">
+            <h3>步骤3: 读取API密钥（解密）</h3>
+            <button onclick="loadAPIKey()">读取API密钥</button>
+            <div id="loadKeyResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="step">
+            <h3>步骤4: 测试API调用</h3>
+            <button onclick="testAPICall()">测试API调用</button>
+            <div id="apiCallResult" class="test-result" style="display: none;"></div>
+        </div>
+        
+        <div class="step">
+            <h3>步骤5: 完整流程测试</h3>
+            <button onclick="testCompleteFlow()">测试完整流程</button>
+            <div id="completeFlowResult" class="test-result" style="display: none;"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // 导入API服务
+        import apiService from './source/tools/assets/js/api-service.js';
+        
+        let currentApiKey = '';
+        
+        async function setAPIKey() {
+            const apiKey = document.getElementById('apiKeyInput').value;
+            currentApiKey = apiKey;
+            apiService.setAPIKey(apiKey);
+            
+            const resultDiv = document.getElementById('setKeyResult');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'test-result success';
+            resultDiv.innerHTML = '<p>API密钥已设置</p>';
+        }
+        
+        async function saveAPIKey() {
+            if (!currentApiKey) {
+                const resultDiv = document.getElementById('saveKeyResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = '<p>请先设置API密钥</p>';
+                return;
+            }
+            
+            const result = await apiService.saveAPIKey(currentApiKey);
+            const resultDiv = document.getElementById('saveKeyResult');
+            resultDiv.style.display = 'block';
+            
+            if (result) {
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = '<p>API密钥保存成功（加密存储）</p>';
+            } else {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = '<p>API密钥保存失败</p>';
+            }
+        }
+        
+        async function loadAPIKey() {
+            await apiService.loadAPIKey();
+            const resultDiv = document.getElementById('loadKeyResult');
+            resultDiv.style.display = 'block';
+            
+            if (apiService.apiKey) {
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = `<p>API密钥读取成功: ${apiService.apiKey.substring(0, 6)}...${apiService.apiKey.substring(apiService.apiKey.length - 4)}</p>`;
+            } else {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = '<p>API密钥读取失败</p>';
+            }
+        }
+        
+        async function testAPICall() {
+            if (!apiService.apiKey) {
+                const resultDiv = document.getElementById('apiCallResult');
+                resultDiv.style.display = 'block';
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = '<p>请先设置和保存API密钥</p>';
+                return;
+            }
+            
+            const resultDiv = document.getElementById('apiCallResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p>测试中...</p>';
+            
+            try {
+                const response = await apiService.techQA('什么是JavaScript？');
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = `
+                    <p>API调用成功！</p>
+                    <p>响应内容:</p>
+                    <pre>${response.substring(0, 500)}${response.length > 500 ? '...' : ''}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `
+                    <p>API调用失败: ${error.message}</p>
+                `;
+            }
+        }
+        
+        async function testCompleteFlow() {
+            const apiKey = document.getElementById('apiKeyInput').value;
+            const resultDiv = document.getElementById('completeFlowResult');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<p>测试中...</p>';
+            
+            try {
+                // 1. 设置API密钥
+                apiService.setAPIKey(apiKey);
+                
+                // 2. 保存API密钥
+                const saveResult = await apiService.saveAPIKey(apiKey);
+                if (!saveResult) {
+                    throw new Error('保存API密钥失败');
+                }
+                
+                // 3. 模拟页面刷新（重新加载API密钥）
+                await apiService.loadAPIKey();
+                if (!apiService.apiKey) {
+                    throw new Error('读取API密钥失败');
+                }
+                
+                // 4. 测试API调用
+                const response = await apiService.techQA('什么是CSS？');
+                
+                resultDiv.className = 'test-result success';
+                resultDiv.innerHTML = `
+                    <p>完整流程测试成功！</p>
+                    <p>1. API密钥设置: 成功</p>
+                    <p>2. API密钥保存: 成功</p>
+                    <p>3. API密钥读取: 成功</p>
+                    <p>4. API调用: 成功</p>
+                    <p>响应内容:</p>
+                    <pre>${response.substring(0, 500)}${response.length > 500 ? '...' : ''}</pre>
+                `;
+            } catch (error) {
+                resultDiv.className = 'test-result error';
+                resultDiv.innerHTML = `
+                    <p>完整流程测试失败: ${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

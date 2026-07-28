@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="API密钥申请教程 - 为各AI平台申请API密钥的详细步骤">
+  <title>API密钥申请教程 | LIMUHEshua</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    /* 主题颜色方案 */
+    :root {
+      --bg-primary: #1a1a2e;
+      --bg-secondary: #16213e;
+      --bg-tertiary: #0f3460;
+      --accent: #e94560;
+      --accent-hover: #ff6b6b;
+      --text-primary: #eaeaea;
+      --text-secondary: #a0a0a0;
+      --border: #2d3748;
+      --success: #48bb78;
+      --warning: #ed8936;
+      --error: #f56565;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
+    
+    header {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    
+    h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    
+    .subtitle {
+      font-size: 18px;
+      color: var(--text-secondary);
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .platform-nav {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin: 40px 0;
+      flex-wrap: wrap;
+    }
+    
+    .platform-btn {
+      padding: 10px 20px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .platform-btn:hover {
+      border-color: var(--accent);
+      color: var(--text-primary);
+      background: var(--bg-tertiary);
+    }
+    
+    .platform-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    .platform-section {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px;
+      margin-bottom: 40px;
+    }
+    
+    .platform-header {
+      margin-bottom: 30px;
+    }
+    
+    .platform-title {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--text-primary);
+    }
+    
+    .platform-desc {
+      color: var(--text-secondary);
+      font-size: 16px;
+    }
+    
+    .step-section {
+      margin-bottom: 40px;
+    }
+    
+    .step-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .step-number {
+      width: 32px;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    
+    .step-content {
+      margin-left: 44px;
+    }
+    
+    .step-content p {
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    
+    .step-content ul {
+      margin-bottom: 16px;
+      padding-left: 20px;
+    }
+    
+    .step-content li {
+      margin-bottom: 8px;
+      color: var(--text-secondary);
+    }
+    
+    .screenshot {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    
+    .screenshot-placeholder {
+      background: var(--bg-primary);
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 40px;
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .security-tips {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      margin: 30px 0;
+    }
+    
+    .security-tips h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--text-primary);
+    }
+    
+    .security-tips ul {
+      padding-left: 20px;
+    }
+    
+    .security-tips li {
+      margin-bottom: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .faq-section {
+      margin-top: 40px;
+    }
+    
+    .faq-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    
+    .faq-item {
+      margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+    
+    .faq-question {
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .faq-answer {
+      color: var(--text-secondary);
+      margin-top: 8px;
+      display: none;
+    }
+    
+    .faq-answer.show {
+      display: block;
+    }
+    
+    .faq-toggle {
+      transition: transform 0.3s;
+    }
+    
+    .faq-toggle.active {
+      transform: rotate(180deg);
+    }
+    
+    .back-link {
+      display: inline-block;
+      margin-top: 40px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 16px;
+      transition: color 0.2s;
+    }
+    
+    .back-link:hover {
+      color: var(--accent-hover);
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px 16px;
+      }
+      
+      h1 {
+        font-size: 28px;
+      }
+      
+      .platform-section {
+        padding: 20px;
+      }
+      
+      .platform-nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      
+      .platform-btn {
+        width: 100%;
+        text-align: center;
+      }
+      
+      .step-content {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>API密钥申请教程</h1>
+      <p class="subtitle">为各AI平台申请API密钥的详细步骤指南，帮助您快速获取和配置API密钥</p>
+    </header>
+    
+    <nav class="platform-nav">
+      <a href="#alibaba" class="platform-btn">阿里云百炼</a>
+      <a href="#deepseek" class="platform-btn">DeepSeek</a>
+      <a href="#openai" class="platform-btn">OpenAI</a>
+      <a href="#google" class="platform-btn">Google AI</a>
+      <a href="#anthropic" class="platform-btn">Anthropic</a>
+    </nav>
+    
+    <!-- 阿里云百炼 -->
+    <section id="alibaba" class="platform-section">
+      <div class="platform-header">
+        <h2 class="platform-title">阿里云百炼</h2>
+        <p class="platform-desc">阿里云百炼是阿里云推出的大模型服务平台，提供多种大模型API</p>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">1</span>
+          注册阿里云账号
+        </h3>
+        <div class="step-content">
+          <p>1. 访问 <a href="https://www.aliyun.com" target="_blank" style="color: var(--accent);">阿里云官网</a></p>
+          <p>2. 点击右上角的「注册」按钮</p>
+          <p>3. 按照提示完成账号注册，需要手机号验证</p>
+          <p>4. 完成实名认证（部分功能需要）</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">2</span>
+          进入百炼平台
+        </h3>
+        <div class="step-content">
+          <p>1. 登录阿里云控制台</p>
+          <p>2. 在搜索框中输入「百炼」并搜索</p>
+          <p>3. 点击进入「百炼大模型服务平台」</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">3</span>
+          申请API密钥
+        </h3>
+        <div class="step-content">
+          <p>1. 在百炼平台左侧导航栏中找到「API密钥管理」</p>
+          <p>2. 点击「创建API密钥」按钮</p>
+          <p>3. 填写密钥名称和描述</p>
+          <p>4. 点击「确定」生成API密钥</p>
+          <p>5. 保存生成的API密钥，注意：密钥只显示一次</p>
+        </div>
+      </div>
+      
+      <div class="security-tips">
+        <h3>密钥安全保管建议</h3>
+        <ul>
+          <li>不要将API密钥分享给他人</li>
+          <li>不要在代码中硬编码API密钥</li>
+          <li>定期轮换API密钥</li>
+          <li>设置合理的API调用限额</li>
+          <li>监控API使用情况，及时发现异常</li>
+        </ul>
+      </div>
+      
+      <div class="faq-section">
+        <h3 class="faq-title">常见问题</h3>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            API密钥有使用限额吗？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            是的，阿里云百炼平台对API调用有一定的免费额度，超出后需要付费。具体额度请查看阿里云百炼平台的 pricing 页面。
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            如何查看API使用情况？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            在阿里云百炼平台的控制台中，进入「使用统计」页面可以查看API调用情况和费用。
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            API密钥过期了怎么办？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            阿里云百炼的API密钥默认没有过期时间，但建议定期轮换以提高安全性。如果密钥泄露，应立即在控制台中删除并生成新的密钥。
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- DeepSeek -->
+    <section id="deepseek" class="platform-section">
+      <div class="platform-header">
+        <h2 class="platform-title">DeepSeek</h2>
+        <p class="platform-desc">DeepSeek是专注于代码和数学推理的大模型提供商</p>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">1</span>
+          注册DeepSeek账号
+        </h3>
+        <div class="step-content">
+          <p>1. 访问 <a href="https://www.deepseek.com" target="_blank" style="color: var(--accent);">DeepSeek官网</a></p>
+          <p>2. 点击「注册」按钮</p>
+          <p>3. 使用邮箱或手机号注册账号</p>
+          <p>4. 完成邮箱验证</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">2</span>
+          进入API密钥管理
+        </h3>
+        <div class="step-content">
+          <p>1. 登录DeepSeek账号</p>
+          <p>2. 点击右上角的用户头像，选择「API密钥」</p>
+          <p>3. 进入API密钥管理页面</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">3</span>
+          创建API密钥
+        </h3>
+        <div class="step-content">
+          <p>1. 点击「创建新密钥」按钮</p>
+          <p>2. 填写密钥名称</p>
+          <p>3. 点击「创建」按钮</p>
+          <p>4. 保存生成的API密钥，注意：密钥只显示一次</p>
+        </div>
+      </div>
+      
+      <div class="security-tips">
+        <h3>密钥安全保管建议</h3>
+        <ul>
+          <li>不要将API密钥分享给他人</li>
+          <li>不要在代码中硬编码API密钥</li>
+          <li>定期轮换API密钥</li>
+          <li>设置合理的API调用限额</li>
+          <li>监控API使用情况，及时发现异常</li>
+        </ul>
+      </div>
+      
+      <div class="faq-section">
+        <h3 class="faq-title">常见问题</h3>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            DeepSeek API的使用费用是多少？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            DeepSeek提供免费额度和付费套餐，具体费用请查看DeepSeek官网的 pricing 页面。
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            API密钥有使用限制吗？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            是的，免费额度有调用次数限制，超出后需要升级到付费套餐。
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- OpenAI -->
+    <section id="openai" class="platform-section">
+      <div class="platform-header">
+        <h2 class="platform-title">OpenAI</h2>
+        <p class="platform-desc">OpenAI是GPT系列模型的开发者，提供最先进的大语言模型API</p>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">1</span>
+          注册OpenAI账号
+        </h3>
+        <div class="step-content">
+          <p>1. 访问 <a href="https://platform.openai.com" target="_blank" style="color: var(--accent);">OpenAI平台</a></p>
+          <p>2. 点击「Sign Up」按钮</p>
+          <p>3. 使用邮箱或Google账号注册</p>
+          <p>4. 完成手机号验证</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">2</span>
+          进入API密钥管理
+        </h3>
+        <div class="step-content">
+          <p>1. 登录OpenAI账号</p>
+          <p>2. 点击右上角的用户头像，选择「View API keys」</p>
+          <p>3. 进入API密钥管理页面</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">3</span>
+          创建API密钥
+        </h3>
+        <div class="step-content">
+          <p>1. 点击「Create new secret key」按钮</p>
+          <p>2. 填写密钥名称（可选）</p>
+          <p>3. 点击「Create secret key」按钮</p>
+          <p>4. 保存生成的API密钥，注意：密钥只显示一次</p>
+        </div>
+      </div>
+      
+      <div class="security-tips">
+        <h3>密钥安全保管建议</h3>
+        <ul>
+          <li>不要将API密钥分享给他人</li>
+          <li>不要在代码中硬编码API密钥</li>
+          <li>定期轮换API密钥</li>
+          <li>设置合理的API调用限额</li>
+          <li>监控API使用情况，及时发现异常</li>
+        </ul>
+      </div>
+      
+      <div class="faq-section">
+        <h3 class="faq-title">常见问题</h3>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            OpenAI API的使用费用是多少？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            OpenAI采用按量计费的方式，不同模型的价格不同。新用户通常会获得一定的免费额度。具体费用请查看OpenAI官网的 pricing 页面。
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            如何设置API调用限额？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            在OpenAI平台的「Billing」页面，可以设置每月的使用限额，避免意外的高费用。
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Google AI -->
+    <section id="google" class="platform-section">
+      <div class="platform-header">
+        <h2 class="platform-title">Google AI</h2>
+        <p class="platform-desc">Google AI提供Gemini系列模型的API服务</p>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">1</span>
+          注册Google Cloud账号
+        </h3>
+        <div class="step-content">
+          <p>1. 访问 <a href="https://console.cloud.google.com" target="_blank" style="color: var(--accent);">Google Cloud控制台</a></p>
+          <p>2. 点击「开始免费试用」按钮</p>
+          <p>3. 使用Google账号登录</p>
+          <p>4. 完成账号设置和支付方式验证</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">2</span>
+          启用Gemini API
+        </h3>
+        <div class="step-content">
+          <p>1. 在Google Cloud控制台中，搜索「Gemini API」</p>
+          <p>2. 点击「启用」按钮</p>
+          <p>3. 等待服务启用完成</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">3</span>
+          创建API密钥
+        </h3>
+        <div class="step-content">
+          <p>1. 在Google Cloud控制台中，进入「API和服务」→「凭据」</p>
+          <p>2. 点击「创建凭据」→「API密钥」</p>
+          <p>3. 生成API密钥后，点击「限制密钥」设置使用限制</p>
+          <p>4. 保存生成的API密钥</p>
+        </div>
+      </div>
+      
+      <div class="security-tips">
+        <h3>密钥安全保管建议</h3>
+        <ul>
+          <li>不要将API密钥分享给他人</li>
+          <li>不要在代码中硬编码API密钥</li>
+          <li>设置API密钥的使用限制（如IP限制、API限制）</li>
+          <li>定期轮换API密钥</li>
+          <li>监控API使用情况，及时发现异常</li>
+        </ul>
+      </div>
+      
+      <div class="faq-section">
+        <h3 class="faq-title">常见问题</h3>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            Google AI API的使用费用是多少？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Google Cloud提供免费额度，超出后按使用量计费。具体费用请查看Google Cloud的 pricing 页面。
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            如何设置API密钥的使用限制？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            在Google Cloud控制台的凭据页面，可以为API密钥设置使用限制，包括API限制、IP限制等，提高安全性。
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Anthropic -->
+    <section id="anthropic" class="platform-section">
+      <div class="platform-header">
+        <h2 class="platform-title">Anthropic</h2>
+        <p class="platform-desc">Anthropic是Claude系列模型的开发者，提供安全可靠的AI服务</p>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">1</span>
+          注册Anthropic账号
+        </h3>
+        <div class="step-content">
+          <p>1. 访问 <a href="https://console.anthropic.com" target="_blank" style="color: var(--accent);">Anthropic控制台</a></p>
+          <p>2. 点击「Sign Up」按钮</p>
+          <p>3. 使用邮箱注册账号</p>
+          <p>4. 完成邮箱验证</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">2</span>
+          进入API密钥管理
+        </h3>
+        <div class="step-content">
+          <p>1. 登录Anthropic账号</p>
+          <p>2. 在左侧导航栏中选择「API Keys」</p>
+          <p>3. 进入API密钥管理页面</p>
+        </div>
+      </div>
+      
+      <div class="step-section">
+        <h3 class="step-title">
+          <span class="step-number">3</span>
+          创建API密钥
+        </h3>
+        <div class="step-content">
+          <p>1. 点击「Create Key」按钮</p>
+          <p>2. 填写密钥名称和描述</p>
+          <p>3. 点击「Create Key」按钮</p>
+          <p>4. 保存生成的API密钥，注意：密钥只显示一次</p>
+        </div>
+      </div>
+      
+      <div class="security-tips">
+        <h3>密钥安全保管建议</h3>
+        <ul>
+          <li>不要将API密钥分享给他人</li>
+          <li>不要在代码中硬编码API密钥</li>
+          <li>定期轮换API密钥</li>
+          <li>设置合理的API调用限额</li>
+          <li>监控API使用情况，及时发现异常</li>
+        </ul>
+      </div>
+      
+      <div class="faq-section">
+        <h3 class="faq-title">常见问题</h3>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            Anthropic API的使用费用是多少？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            Anthropic采用按量计费的方式，不同模型的价格不同。新用户通常会获得一定的免费额度。具体费用请查看Anthropic官网的 pricing 页面。
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-question" onclick="toggleFaq(this)">
+            API密钥有使用限制吗？
+            <span class="faq-toggle">▼</span>
+          </div>
+          <div class="faq-answer">
+            是的，Anthropic对API调用有速率限制，具体限制请查看Anthropic的API文档。
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <a href="./code-assistant.html" class="back-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; margin-right: 8px; vertical-align: middle;">
+        <line x1="19" y1="12" x2="5" y2="12"></line>
+        <polyline points="12 19 5 12 12 5"></polyline>
+      </svg>
+      返回代码助手
+    </a>
+  </div>
+  
+  <script>
+    // FAQ切换功能
+    function toggleFaq(element) {
+      const answer = element.nextElementSibling;
+      const toggle = element.querySelector('.faq-toggle');
+      answer.classList.toggle('show');
+      toggle.classList.toggle('active');
+    }
+    
+    // 平台按钮激活状态
+    document.addEventListener('DOMContentLoaded', function() {
+      const platformButtons = document.querySelectorAll('.platform-btn');
+      
+      // 监听滚动，更新激活的平台按钮
+      window.addEventListener('scroll', function() {
+        const scrollPosition = window.scrollY + 100;
+        
+        platformButtons.forEach(button => {
+          const targetId = button.getAttribute('href').substring(1);
+          const targetSection = document.getElementById(targetId);
+          
+          if (targetSection) {
+            const sectionTop = targetSection.offsetTop;
+            const sectionBottom = sectionTop + targetSection.offsetHeight;
+            
+            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+              platformButtons.forEach(btn => btn.classList.remove('active'));
+              button.classList.add('active');
+            }
+          }
+        });
+      });
+      
+      // 初始触发一次滚动事件
+      window.dispatchEvent(new Event('scroll'));
+    });
+  </script>
+</body>
+</html>

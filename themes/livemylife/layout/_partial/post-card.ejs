@@ -1,0 +1,23 @@
+<article class="post-card">
+  <header class="post-card__header">
+    <div class="post-card__meta">
+      <time datetime="<%= post.date.format('YYYY-MM-DD') %>"><%= post.date.format('YYYY-MM-DD') %></time>
+      <% if (post.categories && post.categories.length > 0) { %>
+      <span class="post-card__categories">
+        <% post.categories.each(function(cat) { %>
+        <a href="<%= url_for(cat.path) %>"><%= cat.name %></a>
+        <% }); %>
+      </span>
+      <% } %>
+    </div>
+    <h2><a href="<%= url_for(post.path) %>"><%= post.title %></a></h2>
+  </header>
+
+  <div class="post-card__excerpt">
+    <%- post.excerpt %>
+  </div>
+
+  <div class="post-card__footer">
+    <a class="read-more" href="<%= url_for(post.path) %>">阅读全文</a>
+  </div>
+</article>
