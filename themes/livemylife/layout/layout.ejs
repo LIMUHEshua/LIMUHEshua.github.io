@@ -17,131 +17,194 @@
   <link rel="stylesheet" href="<%= url_for('/css/syntax-highlight.css') %>">
 </head>
 <body>
-  <header>
-    <div class="container">
-      <h1><a href="<%= config.url %>"><%= config.title %></a></h1>
-      <p class="subtitle"><%= config.subtitle %></p>
-      <div class="header-tools">
-        <a href="<%= url_for('/tools/') %>" class="tools-link" title="开发者工具箱" aria-label="开发者工具箱">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+  <div class="cyber-shell">
+    <div class="grid-overlay"></div>
+    <header class="cyber-header" id="top">
+      <div class="container">
+        <div class="brand-block">
+          <p class="eyebrow">AI / CODE / HARDWARE</p>
+          <h1><a href="<%= config.url %>"><%= config.title %></a></h1>
+          <p class="subtitle"><%= config.subtitle %></p>
+        </div>
+        <button class="menu-toggle" id="menu-toggle" type="button" aria-label="展开菜单">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="header-actions" id="header-actions">
+          <div class="header-actions__row">
+            <a href="<%= url_for('/tools/') %>" class="tools-link" title="开发者工具箱" aria-label="开发者工具箱">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+              </svg>
+              <span>工具箱</span>
+            </a>
+            <button class="theme-toggle" id="theme-toggle" type="button" aria-label="切换主题">
+              <span class="theme-toggle__icon">☼</span>
+              <span class="theme-toggle__text">深色</span>
+            </button>
+          </div>
+          <form class="search-box command-panel" role="search" onsubmit="event.preventDefault(); searchPosts();">
+            <span class="command-prompt">></span>
+            <label class="sr-only" for="search-input">搜索文章</label>
+            <input type="text" id="search-input" placeholder="搜索文章标题或内容..." autocomplete="off">
+            <button type="submit">执行</button>
+          </form>
+        </div>
+      </div>
+    </header>
+
+    <div class="container main-content">
+      <div class="content-column">
+        <section class="hero-terminal" aria-label="开发者终端">
+          <div class="hero-terminal__screen">
+            <div class="terminal-topbar">
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot"></span>
+              <span class="terminal-dot"></span>
+            </div>
+            <div class="terminal-body">
+              <div class="terminal-line"><span class="prompt">$</span> <span class="cmd">npx hexo new post "cyber-ui"</span></div>
+              <div class="terminal-line terminal-output">[INFO] 生成教程模板成功 · 终端已接入社区主题</div>
+              <div class="terminal-line terminal-output terminal-output--accent">[RUN] 代码片段、部署说明与案例演示正在同步</div>
+              <div class="terminal-line"><span class="prompt">$</span> <span class="cursor"></span></div>
+            </div>
+          </div>
+          <div class="hero-copy">
+            <p class="eyebrow">LIVE CODE / COMMUNITY</p>
+            <h2>把教程、代码与产品体验凝成一场沉浸式开发之夜</h2>
+            <p>这里将硬件设计、AI 工具、嵌入式开发与工程化部署融合成统一的阅读体验，让每篇文章都像一段可执行的开发日志。</p>
+            <div class="hero-actions">
+              <a class="pill-btn" href="<%= url_for('/tools/') %>">进入开发工具箱</a>
+              <a class="pill-btn pill-btn--ghost" href="<%= config.url %>">查看最新文章</a>
+            </div>
+          </div>
+        </section>
+
+        <main class="cyber-main">
+          <div class="signal-line"></div>
+          <%- body %>
+        </main>
+      </div>
+
+      <aside class="cyber-aside">
+        <div class="sidebar-section">
+          <h3>站点状态</h3>
+          <div class="site-stats" id="site-stats">
+            <div class="stat-item">
+              <span class="stat-label">文章数目</span>
+              <span class="stat-value"><%= site.posts.length %></span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">评论数</span>
+              <span class="stat-value" id="comment-count">0</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">网站运行时间</span>
+              <span class="stat-value" id="site-uptime">计算中...</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">最新更新</span>
+              <span class="stat-value" id="latest-update">加载中...</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">访客总数</span>
+              <span class="stat-value" id="visitor-count">0</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>系统性能</h3>
+          <div class="site-stats" id="performance-stats">
+            <div class="stat-item">
+              <span class="stat-label">页面渲染时间</span>
+              <span class="stat-value" id="render-time">计算中...</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">内存占用</span>
+              <span class="stat-value" id="memory-usage">计算中...</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="avatar-badge">⚡</div>
+          <h3>开发者档案</h3>
+          <p><%= config.description %></p>
+          <p>专注于嵌入式、AI 工具链与可部署教程内容的持续输出。</p>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>学习路线</h3>
+          <ol class="step-list">
+            <li><span>01</span><div><strong>定义目标</strong><br>从问题场景切入，明确硬件/软件/体验边界。</div></li>
+            <li><span>02</span><div><strong>实现原型</strong><br>通过代码、图纸和脚本把方案落成可验证成果。</div></li>
+            <li><span>03</span><div><strong>部署传播</strong><br>将教程、示例与工具箱整理成可复用的社区内容。</div></li>
+          </ol>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>分类</h3>
+          <ul>
+            <% site.categories.each(function(category) { %>
+            <li><a href="<%= url_for(category.path) %>"><%= category.name %></a></li>
+            <% }); %>
+          </ul>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>标签云</h3>
+          <div class="tag-cloud">
+            <% site.tags.each(function(tag) { %>
+            <a href="<%= url_for(tag.path) %>"><%= tag.name %></a>
+            <% }); %>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <h3>最新文章</h3>
+          <ul>
+            <% site.posts.limit(5).forEach(function(post) { %>
+            <li><a href="<%= url_for(post.path) %>"><%= post.title %></a></li>
+            <% }); %>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="cyber-footer">
+      <div class="social-links">
+        <a href="#" onclick="showWechatQR(); return false;" title="微信公众号">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.27-.027-.407-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/>
           </svg>
-          <span>工具箱</span>
+        </a>
+        <a href="https://github.com/LIMUHEshua?tab=repositories" target="_blank" rel="noopener noreferrer" title="GitHub">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+          </svg>
+        </a>
+        <a href="https://gitee.com/dashboard/projects" target="_blank" rel="noopener noreferrer" title="Gitee">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M11.984 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.016 0zm6.09 5.333c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H9.778c-.328 0-.593.265-.593.593v7.11h4.148c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H5.926a.593.593 0 0 1-.593-.593V6.518c0-.327.265-.592.593-.592h12.148zm-4.148 4.444c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H8.296a.593.593 0 0 1-.593-.593v-1.778c0-.327.265-.592.593-.592h5.63z"/>
+          </svg>
+        </a>
+        <a href="#" onclick="sendEmail(); return false;" title="发送邮件">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
+          </svg>
         </a>
       </div>
-      <form class="search-box" role="search" onsubmit="event.preventDefault(); searchPosts();">
-        <label class="sr-only" for="search-input">搜索文章</label>
-        <input type="text" id="search-input" placeholder="搜索文章标题或内容..." autocomplete="off">
-        <button type="submit">搜索</button>
-      </form>
-    </div>
-  </header>
-
-  <div class="container main-content">
-    <main>
-      <%- body %>
-    </main>
-
-    <aside>
-      <div class="sidebar-section">
-        <h3>网站统计</h3>
-        <div class="site-stats" id="site-stats">
-          <div class="stat-item">
-            <span class="stat-label">文章数目</span>
-            <span class="stat-value"><%= site.posts.length %></span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">评论数</span>
-            <span class="stat-value" id="comment-count">0</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">网站运行时间</span>
-            <span class="stat-value" id="site-uptime">计算中...</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">最新更新</span>
-            <span class="stat-value" id="latest-update">加载中...</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">访客总数</span>
-            <span class="stat-value" id="visitor-count">0</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <h3>性能统计</h3>
-        <div class="site-stats" id="performance-stats">
-          <div class="stat-item">
-            <span class="stat-label">页面渲染时间：</span>
-            <span class="stat-value" id="render-time">计算中...</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">内存使用：</span>
-            <span class="stat-value" id="memory-usage">计算中...</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="sidebar-section">
-        <h3>关于我</h3>
-        <p><%= config.description %></p>
-      </div>
-
-      <div class="sidebar-section">
-        <h3>分类</h3>
-        <ul>
-          <% site.categories.each(function(category) { %>
-          <li><a href="<%= url_for(category.path) %>"><%= category.name %></a></li>
-          <% }); %>
-        </ul>
-      </div>
-
-      <div class="sidebar-section">
-        <h3>最新文章</h3>
-        <ul>
-          <% site.posts.limit(5).forEach(function(post) { %>
-          <li><a href="<%= url_for(post.path) %>"><%= post.title %></a></li>
-          <% }); %>
-        </ul>
-      </div>
-    </aside>
+      <p>&copy; <%= moment().format('YYYY') %> <%= config.title %>. 保留所有权利。</p>
+    </footer>
   </div>
 
-  <footer>
-    <div class="social-links">
-      <!-- 微信公众号 -->
-      <a href="#" onclick="showWechatQR(); return false;" title="微信公众号">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M8.691 2.188C3.891 2.188 0 5.476 0 9.53c0 2.212 1.17 4.203 3.002 5.55a.59.59 0 0 1 .213.665l-.39 1.48c-.019.07-.048.141-.048.213 0 .163.13.295.29.295a.326.326 0 0 0 .167-.054l1.903-1.114a.864.864 0 0 1 .717-.098 10.16 10.16 0 0 0 2.837.403c.276 0 .543-.027.811-.05-.857-2.578.157-4.972 1.932-6.446 1.703-1.415 3.882-1.98 5.853-1.838-.576-3.583-4.196-6.348-8.596-6.348zM5.785 5.991c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178A1.17 1.17 0 0 1 4.623 7.17c0-.651.52-1.18 1.162-1.18zm5.813 0c.642 0 1.162.529 1.162 1.18a1.17 1.17 0 0 1-1.162 1.178 1.17 1.17 0 0 1-1.162-1.178c0-.651.52-1.18 1.162-1.18zm5.34 2.867c-1.797-.052-3.746.512-5.28 1.786-1.72 1.428-2.687 3.72-1.78 6.22.942 2.453 3.666 4.229 6.884 4.229.826 0 1.622-.12 2.361-.336a.722.722 0 0 1 .598.082l1.584.926a.272.272 0 0 0 .14.047c.134 0 .24-.111.24-.247 0-.06-.023-.12-.038-.177l-.327-1.233a.582.582 0 0 1-.023-.156.49.49 0 0 1 .201-.398C23.024 18.48 24 16.82 24 14.98c0-3.21-2.931-5.837-6.656-6.088V8.89c-.135-.01-.27-.027-.407-.03zm-2.53 3.274c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.97-.982zm4.844 0c.535 0 .969.44.969.982a.976.976 0 0 1-.969.983.976.976 0 0 1-.969-.983c0-.542.434-.982.969-.982z"/>
-        </svg>
-      </a>
-      
-      <!-- GitHub -->
-      <a href="https://github.com/LIMUHEshua?tab=repositories" target="_blank" rel="noopener noreferrer" title="GitHub">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-        </svg>
-      </a>
-      
-      <!-- Gitee -->
-      <a href="https://gitee.com/dashboard/projects" target="_blank" rel="noopener noreferrer" title="Gitee">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M11.984 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.016 0zm6.09 5.333c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H9.778c-.328 0-.593.265-.593.593v7.11h4.148c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H5.926a.593.593 0 0 1-.593-.593V6.518c0-.327.265-.592.593-.592h12.148zm-4.148 4.444c.328 0 .593.266.593.593v1.778a.593.593 0 0 1-.593.593H8.296a.593.593 0 0 1-.593-.593v-1.778c0-.327.265-.592.593-.592h5.63z"/>
-        </svg>
-      </a>
-      
-      <!-- 邮箱 -->
-      <a href="#" onclick="sendEmail(); return false;" title="发送邮件">
-        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-        </svg>
-      </a>
-    </div>
-    <p>&copy; <%= moment().format('YYYY') %> <%= config.title %>. 保留所有权利。</p>
-  </footer>
-  
-  <!-- 微信二维码弹窗 -->
+  <div class="mobile-bottom-bar">
+    <a href="<%= config.url %>">首页</a>
+    <a href="<%= url_for('/tools/') %>">工具箱</a>
+    <a href="#top">顶部</a>
+  </div>
+  <a href="#top" class="fab" aria-label="回到顶部">↑</a>
+
   <div id="wechatModal" class="wechat-modal" onclick="closeWechatQR(event)">
     <div class="wechat-modal-content" onclick="event.stopPropagation()">
       <p>扫描二维码关注公众号</p>
@@ -155,6 +218,47 @@
   <script>
     var startTime = performance.now();
     var searchInput = document.getElementById('search-input');
+    var themeToggle = document.getElementById('theme-toggle');
+    var menuToggle = document.getElementById('menu-toggle');
+    var headerActions = document.getElementById('header-actions');
+    var body = document.body;
+
+    function applyStoredTheme() {
+      var storedTheme = localStorage.getItem('theme');
+      if (storedTheme === 'light') {
+        body.classList.add('theme-light');
+        if (themeToggle) {
+          themeToggle.querySelector('.theme-toggle__text').textContent = '浅色';
+          themeToggle.querySelector('.theme-toggle__icon').textContent = '☀';
+        }
+      }
+    }
+
+    function toggleTheme() {
+      body.classList.toggle('theme-light');
+      var isLight = body.classList.contains('theme-light');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      if (themeToggle) {
+        themeToggle.querySelector('.theme-toggle__text').textContent = isLight ? '浅色' : '深色';
+        themeToggle.querySelector('.theme-toggle__icon').textContent = isLight ? '☀' : '☼';
+      }
+    }
+
+    function toggleMenu() {
+      if (headerActions) {
+        headerActions.classList.toggle('is-open');
+      }
+    }
+
+    applyStoredTheme();
+
+    if (themeToggle) {
+      themeToggle.addEventListener('click', toggleTheme);
+    }
+
+    if (menuToggle) {
+      menuToggle.addEventListener('click', toggleMenu);
+    }
 
     function initializeSiteWidgets() {
       var endTime = performance.now();
@@ -176,7 +280,7 @@
     } else {
       initializeSiteWidgets();
     }
-    
+
     function calculateSiteUptime() {
       var startDate = new Date('2026-02-23');
       var currentDate = new Date();
@@ -184,14 +288,12 @@
       var diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
       var diffHours = Math.floor((diffTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       var diffMinutes = Math.floor((diffTime % (1000 * 60 * 60)) / (1000 * 60));
-      
+
       document.getElementById('site-uptime').textContent = diffDays + '天 ' + diffHours + '小时 ' + diffMinutes + '分钟';
     }
-    
-    // 访客计数
+
     function updateVisitorCount() {
       var count = localStorage.getItem('visitorCount') || 0;
-      // 如果是新访客，增加计数
       if (!sessionStorage.getItem('visited')) {
         count = parseInt(count) + 1;
         localStorage.setItem('visitorCount', count);
@@ -199,12 +301,12 @@
       }
       document.getElementById('visitor-count').textContent = count;
     }
-    
+
     function updateCommentCount() {
       var comments = JSON.parse(localStorage.getItem('comments') || '[]');
       document.getElementById('comment-count').textContent = comments.length;
     }
-    
+
     function updateMemoryUsage() {
       if (performance.memory) {
         var memoryUsage = (performance.memory.usedJSHeapSize / 1048576).toFixed(2);
@@ -213,22 +315,21 @@
         document.getElementById('memory-usage').textContent = 'N/A';
       }
     }
-    
+
     function updateLatestPost() {
-      // 获取最新文章日期
       var latestPostDate = '<%= site.posts.sort("date", -1).first().date.format("YYYY-MM-DD") %>';
       document.getElementById('latest-update').textContent = latestPostDate;
     }
-    
+
     function searchPosts() {
       var query = document.getElementById('search-input').value.toLowerCase();
-      var posts = document.querySelectorAll('.post-container, .post-archive');
+      var posts = document.querySelectorAll('.post-card, .post-container, .post-archive');
       var results = [];
-      
+
       posts.forEach(function(post) {
-        var title = post.querySelector('h1, h2').textContent.toLowerCase();
+        var title = post.querySelector('h1, h2') ? post.querySelector('h1, h2').textContent.toLowerCase() : '';
         var content = post.querySelector('.post-content, .post-excerpt') ? post.querySelector('.post-content, .post-excerpt').textContent.toLowerCase() : '';
-        
+
         if (title.includes(query) || content.includes(query)) {
           post.style.display = 'block';
           results.push(post);
@@ -236,12 +337,12 @@
           post.style.display = 'none';
         }
       });
-      
+
       if (results.length === 0) {
         alert('没有找到匹配的文章');
       }
     }
-    
+
     if (searchInput) {
       searchInput.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
@@ -249,28 +350,21 @@
         }
       });
     }
-    
-    // 微信二维码弹窗
+
     function showWechatQR() {
       document.getElementById('wechatModal').classList.add('active');
     }
-    
+
     function closeWechatQR(event) {
       if (!event || event.target.id === 'wechatModal' || event.target.classList.contains('wechat-modal-close')) {
         document.getElementById('wechatModal').classList.remove('active');
       }
     }
-    
-    // 邮箱加密发送
+
     function sendEmail() {
-      // 邮箱地址分段加密
       var parts = ['14778671462', 'sian', 'cn'];
       var email = parts[0] + '@' + parts[1] + '.' + parts[2];
-      
-      // 使用Base64编码进一步加密
       var encoded = btoa(email);
-      
-      // 解码并打开邮件客户端
       var decoded = atob(encoded);
       window.location.href = 'mailto:' + decoded + '?subject=来自博客的咨询&body=您好，我想咨询...';
     }

@@ -29,13 +29,20 @@
     <% } %>
   </footer>
 
-  <div class="comments-section">
-    <h3>评论区</h3>
-    <div class="comment-form">
-      <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
-      <button onclick="submitComment()">发表评论</button>
+  <div class="comments-section terminal-panel">
+    <div class="terminal-panel__bar">
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-panel__title">community/feedback</span>
     </div>
-    <div id="comments-list"></div>
+    <div class="terminal-panel__body">
+      <div class="comment-form">
+        <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+        <button onclick="submitComment()">发表评论</button>
+      </div>
+      <div id="comments-list" class="comment-list"></div>
+    </div>
   </div>
 </article>
 
@@ -60,6 +67,7 @@
   function createCommentElement(comment, isReply = false) {
     var div = document.createElement('div');
     div.className = 'comment' + (isReply ? ' comment-reply' : '');
+    div.setAttribute('data-comment-id', comment.id);
     
     var content = document.createElement('div');
     content.className = 'comment-content';
