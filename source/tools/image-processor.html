@@ -710,298 +710,235 @@
   <canvas id="processCanvas" style="display: none;"></canvas>
 
   <script>
-    // 主题管理
-    const THEME_STORAGE_KEY = 'image_processor_theme';
-    let currentTheme = 'dark';
-    let currentImages = {};
-    let processedImages = {};
-
-    // 初始化
-    document.addEventListener('DOMContentLoaded', () => {
-      loadSavedTheme();
-      setupDragAndDrop();
-    });
-
-    // 主题切换
-    function toggleThemeDropdown() {
-      document.getElementById('themeDropdown').classList.toggle('show');
-    }
-
-    function switchTheme(theme) {
-      if (theme === currentTheme) {
-        closeThemeDropdown();
-        return;
-      }
-
-      const body = document.body;
-      body.removeAttribute('data-theme');
-      if (theme !== 'dark') {
-        body.setAttribute('data-theme', theme);
-      }
-
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-      currentTheme = theme;
-
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.remove('active');
-        if (option.dataset.theme === theme) {
-          option.classList.add('active');
-        }
-      });
-
-      closeThemeDropdown();
-      showToast(`已切换到${getThemeName(theme)}主题`);
-    }
-
-    function closeThemeDropdown() {
-      document.getElementById('themeDropdown').classList.remove('show');
-    }
-
-    function getThemeName(theme) {
-      const names = { 'dark': '深海蓝', 'light': '浅雪白', 'purple': '紫夜' };
-      return names[theme] || '深海蓝';
-    }
-
-    function loadSavedTheme() {
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
-      if (savedTheme !== 'dark') {
-        document.body.setAttribute('data-theme', savedTheme);
-        currentTheme = savedTheme;
-        document.querySelectorAll('.theme-option').forEach(option => {
-          option.classList.remove('active');
-          if (option.dataset.theme === savedTheme) {
-            option.classList.add('active');
-          }
-        });
-      }
-    }
-
-    // 拖拽上传设置
-    function setupDragAndDrop() {
-      const uploadAreas = document.querySelectorAll('.upload-area');
-      
-      uploadAreas.forEach(area => {
-        area.addEventListener('dragover', (e) => {
-          e.preventDefault();
-          area.classList.add('dragover');
-        });
-        
-        area.addEventListener('dragleave', () => {
-          area.classList.remove('dragover');
-        });
-        
-        area.addEventListener('drop', (e) => {
-          e.preventDefault();
-          area.classList.remove('dragover');
-          
-          const files = e.dataTransfer.files;
-          if (files.length > 0 && files[0].type.startsWith('image/')) {
-            const type = area.onclick.toString().match(/'(\w+)'/)[1];
-            handleFile(files[0], type);
-          }
-        });
-      });
-    }
-
-    // 图片上传处理
-    function handleImageUpload(input, type) {
-      if (input.files && input.files[0]) {
-        handleFile(input.files[0], type);
-      }
-    }
-
-    function handleFile(file, type) {
-      if (!file.type.startsWith('image/')) {
-        showToast('请上传图片文件');
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          currentImages[type] = img;
-          processedImages[type] = img;
-          
-          // 显示预览
-          const preview = document.getElementById(`${type}Preview`);
-          const image = document.getElementById(`${type}Image`);
-          const info = document.getElementById(`${type}Info`);
-          
-          image.src = e.target.result;
-          info.textContent = `${file.name} | ${img.width} x ${img.height} | ${(file.size / 1024).toFixed(1)} KB`;
-          preview.classList.add('show');
-          
-          showToast('图片上传成功');
-        };
-        img.src = e.target.result;
+    const imageProcessor = (() => {
+      const THEME_STORAGE_KEY = 'image_processor_theme';
+      const state = {
+        currentTheme: 'dark',
+        currentImages: {},
+        processedImages: {}
       };
-      reader.readAsDataURL(file);
-    }
 
-    // 更新质量标签
-    function updateQualityLabel(value) {
-      document.getElementById('qualityValue').textContent = value + '%';
-    }
-
-    // 压缩图片
-    function compressImage() {
-      if (!currentImages['compress']) {
-        showToast('请先上传图片');
-        return;
+      function showToast(message) {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.classList.add('show');
+        clearTimeout(showToast.timer);
+        showToast.timer = setTimeout(() => toast.classList.remove('show'), 3000);
       }
 
-      showLoading(true);
-      
-      setTimeout(() => {
-        const img = currentImages['compress'];
-        const quality = document.getElementById('qualitySlider').value / 100;
-        const canvas = document.getElementById('processCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        
-        const compressedDataUrl = canvas.toDataURL('image/jpeg', quality);
-        document.getElementById('compressImage').src = compressedDataUrl;
-        
-        showLoading(false);
-        showToast('图片压缩完成');
-      }, 500);
-    }
-
-    // 转换格式
-    function convertImage() {
-      if (!currentImages['convert']) {
-        showToast('请先上传图片');
-        return;
+      function showLoading(show) {
+        document.getElementById('loading').classList.toggle('show', show);
       }
 
-      showLoading(true);
-      
-      setTimeout(() => {
-        const img = currentImages['convert'];
-        const format = document.getElementById('formatSelect').value;
-        const canvas = document.getElementById('processCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
-        
-        let mimeType = 'image/jpeg';
-        if (format === 'png') mimeType = 'image/png';
-        if (format === 'webp') mimeType = 'image/webp';
-        
-        const convertedDataUrl = canvas.toDataURL(mimeType, 0.9);
-        document.getElementById('convertImage').src = convertedDataUrl;
-        
-        showLoading(false);
-        showToast(`已转换为 ${format.toUpperCase()} 格式`);
-      }, 500);
-    }
-
-    // 应用滤镜
-    function applyFilter(filterType) {
-      if (!currentImages['filter']) {
-        showToast('请先上传图片');
-        return;
+      function getThemeName(theme) {
+        return { dark: '深海蓝', light: '浅雪白', purple: '紫夜' }[theme] || '深海蓝';
       }
 
-      showLoading(true);
-      
-      setTimeout(() => {
-        const img = currentImages['filter'];
-        const canvas = document.getElementById('processCanvas');
-        const ctx = canvas.getContext('2d');
-        
-        canvas.width = img.width;
-        canvas.height = img.height;
-        
-        // 应用滤镜效果
-        let filterString = '';
-        switch(filterType) {
-          case 'grayscale':
-            filterString = 'grayscale(100%)';
-            break;
-          case 'sepia':
-            filterString = 'sepia(100%)';
-            break;
-          case 'blur':
-            filterString = 'blur(5px)';
-            break;
-          case 'sharpen':
-            filterString = 'contrast(150%) saturate(150%)';
-            break;
-          case 'invert':
-            filterString = 'invert(100%)';
-            break;
-          case 'brightness':
-            filterString = 'brightness(150%)';
-            break;
+      function toggleThemeDropdown() {
+        document.getElementById('themeDropdown').classList.toggle('show');
+      }
+
+      function closeThemeDropdown() {
+        document.getElementById('themeDropdown').classList.remove('show');
+      }
+
+      function switchTheme(theme) {
+        if (theme === state.currentTheme) {
+          closeThemeDropdown();
+          return;
         }
-        
-        ctx.filter = filterString;
-        ctx.drawImage(img, 0, 0);
-        
-        const filteredDataUrl = canvas.toDataURL('image/png');
-        document.getElementById('filterImage').src = filteredDataUrl;
-        processedImages['filter'] = canvas;
-        
-        showLoading(false);
-        showToast('滤镜应用成功');
-      }, 300);
-    }
-
-    // 重置滤镜
-    function resetFilter() {
-      if (!currentImages['filter']) {
-        showToast('请先上传图片');
-        return;
-      }
-      
-      document.getElementById('filterImage').src = currentImages['filter'].src;
-      processedImages['filter'] = currentImages['filter'];
-      showToast('已重置');
-    }
-
-    // 下载图片
-    function downloadImage(type) {
-      const img = document.getElementById(`${type}Image`);
-      if (!img || !img.src || img.src === '') {
-        showToast('没有可下载的图片');
-        return;
-      }
-
-      const link = document.createElement('a');
-      link.download = `processed_image_${type}_${Date.now()}.png`;
-      link.href = img.src;
-      link.click();
-      
-      showToast('图片下载中...');
-    }
-
-    // 显示/隐藏加载动画
-    function showLoading(show) {
-      document.getElementById('loading').classList.toggle('show', show);
-    }
-
-    // Toast提示
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3000);
-    }
-
-    // 点击外部关闭下拉菜单
-    document.addEventListener('click', (e) => {
-      const themeSwitcher = document.querySelector('.theme-switcher');
-      if (themeSwitcher && !themeSwitcher.contains(e.target)) {
+        const body = document.body;
+        body.removeAttribute('data-theme');
+        if (theme !== 'dark') {
+          body.setAttribute('data-theme', theme);
+        }
+        localStorage.setItem(THEME_STORAGE_KEY, theme);
+        state.currentTheme = theme;
+        document.querySelectorAll('.theme-option').forEach((option) => {
+          option.classList.toggle('active', option.dataset.theme === theme);
+        });
         closeThemeDropdown();
+        showToast(`已切换到${getThemeName(theme)}主题`);
       }
-    });
+
+      function loadSavedTheme() {
+        const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
+        if (savedTheme !== 'dark') {
+          document.body.setAttribute('data-theme', savedTheme);
+          state.currentTheme = savedTheme;
+          document.querySelectorAll('.theme-option').forEach((option) => {
+            option.classList.toggle('active', option.dataset.theme === savedTheme);
+          });
+        }
+      }
+
+      function setupDragAndDrop() {
+        document.querySelectorAll('.upload-area').forEach((area) => {
+          area.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            area.classList.add('dragover');
+          });
+          area.addEventListener('dragleave', () => {
+            area.classList.remove('dragover');
+          });
+          area.addEventListener('drop', (event) => {
+            event.preventDefault();
+            area.classList.remove('dragover');
+            const files = event.dataTransfer.files;
+            if (files.length > 0 && files[0].type.startsWith('image/')) {
+              handleFile(files[0], area.dataset.type);
+            }
+          });
+        });
+      }
+
+      function handleImageUpload(input, type) {
+        if (input.files && input.files[0]) {
+          handleFile(input.files[0], type);
+        }
+      }
+
+      function handleFile(file, type) {
+        if (!file.type.startsWith('image/')) {
+          showToast('请上传图片文件');
+          return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            state.currentImages[type] = img;
+            state.processedImages[type] = img;
+            const preview = document.getElementById(`${type}Preview`);
+            const image = document.getElementById(`${type}Image`);
+            const info = document.getElementById(`${type}Info`);
+            image.src = event.target.result;
+            info.textContent = `${file.name} | ${img.width} x ${img.height} | ${(file.size / 1024).toFixed(1)} KB`;
+            preview.classList.add('show');
+            showToast('图片上传成功');
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+
+      function updateQualityLabel(value) {
+        document.getElementById('qualityValue').textContent = value + '%';
+      }
+
+      function processImage(type, operation) {
+        if (!state.currentImages[type]) {
+          showToast('请先上传图片');
+          return;
+        }
+        showLoading(true);
+        setTimeout(() => {
+          const img = state.currentImages[type];
+          const canvas = document.getElementById('processCanvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0);
+
+          if (operation === 'compress') {
+            const quality = Number(document.getElementById('qualitySlider').value) / 100;
+            const dataUrl = canvas.toDataURL('image/jpeg', quality);
+            document.getElementById('compressImage').src = dataUrl;
+            showToast('图片压缩完成');
+          } else if (operation === 'convert') {
+            const format = document.getElementById('formatSelect').value;
+            const mimeType = format === 'png' ? 'image/png' : format === 'webp' ? 'image/webp' : 'image/jpeg';
+            const dataUrl = canvas.toDataURL(mimeType, 0.9);
+            document.getElementById('convertImage').src = dataUrl;
+            showToast(`已转换为 ${format.toUpperCase()} 格式`);
+          } else if (operation === 'filter') {
+            const filterType = document.body.dataset.activeFilter || 'grayscale';
+            const filters = {
+              grayscale: 'grayscale(100%)',
+              sepia: 'sepia(100%)',
+              blur: 'blur(5px)',
+              sharpen: 'contrast(150%) saturate(150%)',
+              invert: 'invert(100%)',
+              brightness: 'brightness(150%)'
+            };
+            ctx.filter = filters[filterType] || filters.grayscale;
+            ctx.drawImage(img, 0, 0);
+            const dataUrl = canvas.toDataURL('image/png');
+            document.getElementById('filterImage').src = dataUrl;
+            state.processedImages.filter = canvas;
+            showToast('滤镜应用成功');
+          }
+          showLoading(false);
+        }, 300);
+      }
+
+      function compressImage() {
+        processImage('compress', 'compress');
+      }
+
+      function convertImage() {
+        processImage('convert', 'convert');
+      }
+
+      function applyFilter(filterType) {
+        document.body.dataset.activeFilter = filterType;
+        processImage('filter', 'filter');
+      }
+
+      function resetFilter() {
+        if (!state.currentImages.filter) {
+          showToast('请先上传图片');
+          return;
+        }
+        document.getElementById('filterImage').src = state.currentImages.filter.src;
+        state.processedImages.filter = state.currentImages.filter;
+        showToast('已重置');
+      }
+
+      function downloadImage(type) {
+        const img = document.getElementById(`${type}Image`);
+        if (!img || !img.src || img.src === '') {
+          showToast('没有可下载的图片');
+          return;
+        }
+        const link = document.createElement('a');
+        link.download = `processed_image_${type}_${Date.now()}.png`;
+        link.href = img.src;
+        link.click();
+        showToast('图片下载中...');
+      }
+
+      function bindEvents() {
+        document.addEventListener('click', (event) => {
+          const themeSwitcher = document.querySelector('.theme-switcher');
+          if (themeSwitcher && !themeSwitcher.contains(event.target)) {
+            closeThemeDropdown();
+          }
+        });
+      }
+
+      function init() {
+        loadSavedTheme();
+        setupDragAndDrop();
+        bindEvents();
+      }
+
+      return { init, toggleThemeDropdown, switchTheme, updateQualityLabel, compressImage, convertImage, applyFilter, resetFilter, downloadImage, handleImageUpload };
+    })();
+
+    window.imageProcessor = imageProcessor;
+    window.toggleThemeDropdown = () => imageProcessor.toggleThemeDropdown();
+    window.switchTheme = (theme) => imageProcessor.switchTheme(theme);
+    window.updateQualityLabel = (value) => imageProcessor.updateQualityLabel(value);
+    window.handleImageUpload = (input, type) => imageProcessor.handleImageUpload(input, type);
+    window.compressImage = () => imageProcessor.compressImage();
+    window.convertImage = () => imageProcessor.convertImage();
+    window.applyFilter = (filterType) => imageProcessor.applyFilter(filterType);
+    window.resetFilter = () => imageProcessor.resetFilter();
+    window.downloadImage = (type) => imageProcessor.downloadImage(type);
+    document.addEventListener('DOMContentLoaded', () => imageProcessor.init());
   </script>
 </body>
 </html>

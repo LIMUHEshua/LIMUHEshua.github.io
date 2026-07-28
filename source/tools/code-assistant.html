@@ -910,506 +910,427 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
   <script type="module">
-    // 导入服务模块
     import apiService from './assets/js/api-service.js';
     import storageService from './assets/js/storage-service.js';
     import cryptoService from './assets/js/crypto-service.js';
     import platformConfig from './assets/js/platform-config.js';
 
-    // 全局状态
-    let currentMode = 'generate';
-    let currentOutput = '';
-    let isProcessing = false;
+    const codeAssistant = (() => {
+      const state = {
+        currentMode: 'generate',
+        currentOutput: '',
+        isProcessing: false,
+        currentTheme: 'dark'
+      };
 
-    // 模式配置
-    const modeConfig = {
-      generate: {
-        title: '代码生成',
-        desc: '输入自然语言描述，AI将为您生成高质量的代码',
-        inputLabel: '功能描述',
-        inputPlaceholder: '请描述您需要的代码功能，例如：写一个快速排序算法',
-        buttonText: '生成代码',
-        showLanguage: true,
-        showTargetLanguage: false,
-        showError: false
-      },
-      explain: {
-        title: '代码解释',
-        desc: '粘贴代码，AI将为您详细解释其工作原理',
-        inputLabel: '代码输入',
-        inputPlaceholder: '请粘贴需要解释的代码...',
-        buttonText: '解释代码',
-        showLanguage: true,
-        showTargetLanguage: false,
-        showError: false
-      },
-      convert: {
-        title: '代码转换',
-        desc: '将代码从一种语言转换到另一种语言',
-        inputLabel: '源代码',
-        inputPlaceholder: '请粘贴需要转换的代码...',
-        buttonText: '转换代码',
-        showLanguage: true,
-        showTargetLanguage: true,
-        showError: false
-      },
-      debug: {
-        title: '调试助手',
-        desc: '分析代码错误并提供修复建议',
-        inputLabel: '代码',
-        inputPlaceholder: '请粘贴出现错误的代码...',
-        buttonText: '分析错误',
-        showLanguage: true,
-        showTargetLanguage: false,
-        showError: true
-      },
-      qa: {
-        title: '技术问答',
-        desc: '询问任何技术相关的问题',
-        inputLabel: '问题',
-        inputPlaceholder: '请输入您的问题，例如：什么是闭包？',
-        buttonText: '获取答案',
-        showLanguage: false,
-        showTargetLanguage: false,
-        showError: false
-      }
-    };
-
-    // 切换模式
-    window.switchMode = (mode) => {
-      currentMode = mode;
-      const config = modeConfig[mode];
-      
-      // 更新侧边栏激活状态
-      document.querySelectorAll('.function-item').forEach(item => {
-        item.classList.remove('active');
-        if (item.dataset.mode === mode) {
-          item.classList.add('active');
+      const modeConfig = {
+        generate: {
+          title: '代码生成',
+          desc: '输入自然语言描述，AI将为您生成高质量的代码',
+          inputLabel: '功能描述',
+          inputPlaceholder: '请描述您需要的代码功能，例如：写一个快速排序算法',
+          buttonText: '生成代码',
+          showLanguage: true,
+          showTargetLanguage: false,
+          showError: false
+        },
+        explain: {
+          title: '代码解释',
+          desc: '粘贴代码，AI将为您详细解释其工作原理',
+          inputLabel: '代码输入',
+          inputPlaceholder: '请粘贴需要解释的代码...',
+          buttonText: '解释代码',
+          showLanguage: true,
+          showTargetLanguage: false,
+          showError: false
+        },
+        convert: {
+          title: '代码转换',
+          desc: '将代码从一种语言转换到另一种语言',
+          inputLabel: '源代码',
+          inputPlaceholder: '请粘贴需要转换的代码...',
+          buttonText: '转换代码',
+          showLanguage: true,
+          showTargetLanguage: true,
+          showError: false
+        },
+        debug: {
+          title: '调试助手',
+          desc: '分析代码错误并提供修复建议',
+          inputLabel: '代码',
+          inputPlaceholder: '请粘贴出现错误的代码...',
+          buttonText: '分析错误',
+          showLanguage: true,
+          showTargetLanguage: false,
+          showError: true
+        },
+        qa: {
+          title: '技术问答',
+          desc: '询问任何技术相关的问题',
+          inputLabel: '问题',
+          inputPlaceholder: '请输入您的问题，例如：什么是闭包？',
+          buttonText: '获取答案',
+          showLanguage: false,
+          showTargetLanguage: false,
+          showError: false
         }
-      });
-      
-      // 更新页面内容
-      document.getElementById('pageTitle').textContent = config.title;
-      document.getElementById('pageDesc').textContent = config.desc;
-      document.getElementById('inputLabel').textContent = config.inputLabel;
-      document.getElementById('mainInput').placeholder = config.inputPlaceholder;
-      document.getElementById('submitBtn').innerHTML = `
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <line x1="22" y1="2" x2="11" y2="13"></line>
-          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-        </svg>
-        ${config.buttonText}
-      `;
-      
-      // 显示/隐藏相关字段
-      document.getElementById('languageGroup').style.display = config.showLanguage ? 'block' : 'none';
-      document.getElementById('targetLanguageGroup').style.display = config.showTargetLanguage ? 'block' : 'none';
-      document.getElementById('errorGroup').style.display = config.showError ? 'block' : 'none';
-      
-      // 清空输出
-      clearOutput();
-    };
+      };
 
-    // 处理提交
-    window.handleSubmit = async () => {
-      if (isProcessing) return;
-      
-      const input = document.getElementById('mainInput').value.trim();
-      if (!input) {
-        showToast('请输入内容', 'error');
-        return;
+      function showToast(message, type = 'info') {
+        const toast = document.getElementById('toast');
+        toast.textContent = message;
+        toast.className = `toast show ${type}`;
+        clearTimeout(showToast.timerId);
+        showToast.timerId = setTimeout(() => toast.classList.remove('show'), 3000);
       }
-      
-      // 检查API Key
-      if (!apiService.apiKey) {
-        showSettings();
-        showToast('请先设置API Key', 'error');
-        return;
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
       }
-      
-      isProcessing = true;
-      const btn = document.getElementById('submitBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<div class="spinner" style="width: 16px; height: 16px; border-width: 2px;"></div> 处理中...';
-      
-      showLoading();
-      
-      try {
-        let result;
-        const language = document.getElementById('languageSelect').value;
-        
-        switch (currentMode) {
-          case 'generate':
-            result = await apiService.generateCode(input, language);
-            break;
-          case 'explain':
-            result = await apiService.explainCode(input, language);
-            break;
-          case 'convert':
-            const targetLang = document.getElementById('targetLanguageSelect').value;
-            result = await apiService.convertCode(input, language, targetLang);
-            break;
-          case 'debug':
-            const error = document.getElementById('errorInput').value;
-            result = await apiService.debugCode(input, error, language);
-            break;
-          case 'qa':
-            result = await apiService.techQA(input);
-            break;
-        }
-        
-        currentOutput = result;
-        showOutput(result);
-        
-        // 保存到历史记录
-        await storageService.saveHistory({
-          type: currentMode,
-          input: input,
-          output: result,
-          language: language
+
+      function showLoading() {
+        document.getElementById('outputContent').innerHTML = `
+          <div class="loading">
+            <div class="spinner"></div>
+            <span>AI正在思考中...</span>
+          </div>
+        `;
+      }
+
+      function clearOutput() {
+        document.getElementById('outputContent').innerHTML = `
+          <div class="output-placeholder">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="16 18 22 12 16 6"></polyline>
+              <polyline points="8 6 2 12 8 18"></polyline>
+            </svg>
+            <p>输入内容后点击生成按钮，AI将为您处理</p>
+          </div>
+        `;
+        document.getElementById('outputActions').style.display = 'none';
+        state.currentOutput = '';
+      }
+
+      function switchMode(mode) {
+        state.currentMode = mode;
+        const config = modeConfig[mode];
+        document.querySelectorAll('.function-item').forEach((item) => {
+          item.classList.toggle('active', item.dataset.mode === mode);
         });
-        
-        // 刷新历史列表
-        loadHistory();
-        
-      } catch (error) {
-        console.error('Error:', error);
-        let errorMessage = error.message;
-        
-        // 处理特定错误类型
-        if (error.status === 401) {
-          errorMessage = 'API密钥无效或已过期，请重新设置API Key';
-          showSettings();
-        } else if (error.status === 403) {
-          errorMessage = 'API访问被拒绝，可能是API密钥权限不足';
-        } else if (error.status === 429) {
-          errorMessage = 'API请求过于频繁，请稍后再试';
-        } else if (error.status === 500) {
-          errorMessage = '服务器内部错误，请稍后再试';
-        }
-        
-        showToast('处理失败: ' + errorMessage, 'error');
-        showError(errorMessage);
-      } finally {
-        isProcessing = false;
-        btn.disabled = false;
-        btn.innerHTML = `
+        document.getElementById('pageTitle').textContent = config.title;
+        document.getElementById('pageDesc').textContent = config.desc;
+        document.getElementById('inputLabel').textContent = config.inputLabel;
+        document.getElementById('mainInput').placeholder = config.inputPlaceholder;
+        document.getElementById('submitBtn').innerHTML = `
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="22" y1="2" x2="11" y2="13"></line>
             <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
           </svg>
-          ${modeConfig[currentMode].buttonText}
+          ${config.buttonText}
         `;
+        document.getElementById('languageGroup').style.display = config.showLanguage ? 'block' : 'none';
+        document.getElementById('targetLanguageGroup').style.display = config.showTargetLanguage ? 'block' : 'none';
+        document.getElementById('errorGroup').style.display = config.showError ? 'block' : 'none';
+        clearOutput();
       }
-    };
 
-    // 显示加载状态
-    function showLoading() {
-      document.getElementById('outputContent').innerHTML = `
-        <div class="loading">
-          <div class="spinner"></div>
-          <span>AI正在思考中...</span>
-        </div>
-      `;
-    }
-
-    // 显示输出
-    function showOutput(content) {
-      // 提取代码块
-      const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
-      let html = content;
-      
-      // 处理代码块
-      html = html.replace(codeBlockRegex, (match, lang, code) => {
-        const language = lang || 'plaintext';
-        return `<pre><code class="language-${language}">${escapeHtml(code.trim())}</code></pre>`;
-      });
-      
-      // 处理行内代码
-      html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-      
-      // 处理换行
-      html = html.replace(/\n/g, '<br>');
-      
-      document.getElementById('outputContent').innerHTML = html;
-      document.getElementById('outputActions').style.display = 'flex';
-      
-      // 高亮代码
-      document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightElement(block);
-      });
-    }
-
-    // 显示错误
-    function showError(message) {
-      document.getElementById('outputContent').innerHTML = `
-        <div class="output-placeholder" style="color: var(--error);">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"></circle>
-            <line x1="15" y1="9" x2="9" y2="15"></line>
-            <line x1="9" y1="9" x2="15" y2="15"></line>
-          </svg>
-          <p>${message}</p>
-        </div>
-      `;
-    }
-
-    // 清空输出
-    function clearOutput() {
-      document.getElementById('outputContent').innerHTML = `
-        <div class="output-placeholder">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <polyline points="16 18 22 12 16 6"></polyline>
-            <polyline points="8 6 2 12 8 18"></polyline>
-          </svg>
-          <p>输入内容后点击生成按钮，AI将为您处理</p>
-        </div>
-      `;
-      document.getElementById('outputActions').style.display = 'none';
-      currentOutput = '';
-    }
-
-    // 清空输入
-    window.clearInput = () => {
-      document.getElementById('mainInput').value = '';
-      document.getElementById('errorInput').value = '';
-      clearOutput();
-    };
-
-    // 复制输出
-    window.copyOutput = async () => {
-      try {
-        await navigator.clipboard.writeText(currentOutput);
-        showToast('已复制到剪贴板', 'success');
-      } catch (e) {
-        showToast('复制失败', 'error');
-      }
-    };
-
-    // 收藏
-    window.saveToFavorites = async () => {
-      showToast('功能开发中...', 'success');
-    };
-
-    // 显示设置
-    window.showSettings = () => {
-      document.getElementById('settingsModal').classList.add('show');
-    };
-
-    // 关闭设置
-    window.closeSettings = () => {
-      document.getElementById('settingsModal').classList.remove('show');
-    };
-
-    // 保存设置
-    window.saveSettings = async () => {
-      const apiKey = document.getElementById('apiKeyInput').value.trim();
-      const platform = document.getElementById('platformSelect').value;
-      
-      if (!apiKey) {
-        showToast('请输入API Key', 'error');
-        return;
-      }
-      
-      await apiService.saveAPIKey(apiKey, platform);
-      closeSettings();
-      showToast('设置已保存', 'success');
-    };
-    
-    // 自动检测平台
-    window.detectPlatform = () => {
-      const apiKey = document.getElementById('apiKeyInput').value.trim();
-      if (!apiKey) {
-        showToast('请先输入API Key', 'error');
-        return;
-      }
-      
-      const detectedPlatform = platformConfig.detectPlatform(apiKey);
-      if (detectedPlatform) {
-        document.getElementById('platformSelect').value = detectedPlatform;
-        showToast(`已自动检测到平台: ${platformConfig.getPlatformConfig(detectedPlatform).name}`, 'success');
-      } else {
-        showToast('无法自动检测平台，请手动选择', 'error');
-      }
-    };
-
-    // 显示Toast
-    function showToast(message, type = 'info') {
-      const toast = document.getElementById('toast');
-      toast.textContent = message;
-      toast.className = 'toast show ' + type;
-      
-      setTimeout(() => {
-        toast.classList.remove('show');
-      }, 3000);
-    }
-
-    // 加载历史记录
-    async function loadHistory() {
-      try {
-        const history = await storageService.getHistoryList({ limit: 10 });
-        const container = document.getElementById('historyList');
-        
-        if (history.length === 0) {
-          container.innerHTML = '<div class="history-item">暂无历史记录</div>';
+      async function handleSubmit() {
+        if (state.isProcessing) return;
+        const input = document.getElementById('mainInput').value.trim();
+        if (!input) {
+          showToast('请输入内容', 'error');
           return;
         }
-        
-        container.innerHTML = history.map(item => `
-          <div class="history-item" onclick="loadHistoryItem('${item.id}')">
-            ${item.input.substring(0, 30)}...
+        if (!apiService.apiKey) {
+          showSettings();
+          showToast('请先设置API Key', 'error');
+          return;
+        }
+
+        state.isProcessing = true;
+        const button = document.getElementById('submitBtn');
+        button.disabled = true;
+        button.innerHTML = '<div class="spinner" style="width: 16px; height: 16px; border-width: 2px;"></div> 处理中...';
+        showLoading();
+
+        try {
+          const language = document.getElementById('languageSelect').value;
+          let result;
+          switch (state.currentMode) {
+            case 'generate':
+              result = await apiService.generateCode(input, language);
+              break;
+            case 'explain':
+              result = await apiService.explainCode(input, language);
+              break;
+            case 'convert': {
+              const targetLang = document.getElementById('targetLanguageSelect').value;
+              result = await apiService.convertCode(input, language, targetLang);
+              break;
+            }
+            case 'debug': {
+              const error = document.getElementById('errorInput').value;
+              result = await apiService.debugCode(input, error, language);
+              break;
+            }
+            case 'qa':
+              result = await apiService.techQA(input);
+              break;
+          }
+          state.currentOutput = result;
+          showOutput(result);
+          await storageService.saveHistory({
+            type: state.currentMode,
+            input,
+            output: result,
+            language
+          });
+          await loadHistory();
+        } catch (error) {
+          console.error('Error:', error);
+          let errorMessage = error.message;
+          if (error.status === 401) {
+            errorMessage = 'API密钥无效或已过期，请重新设置API Key';
+            showSettings();
+          } else if (error.status === 403) {
+            errorMessage = 'API访问被拒绝，可能是API密钥权限不足';
+          } else if (error.status === 429) {
+            errorMessage = 'API请求过于频繁，请稍后再试';
+          } else if (error.status === 500) {
+            errorMessage = '服务器内部错误，请稍后再试';
+          }
+          showToast('处理失败: ' + errorMessage, 'error');
+          showError(errorMessage);
+        } finally {
+          state.isProcessing = false;
+          button.disabled = false;
+          button.innerHTML = `
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            ${modeConfig[state.currentMode].buttonText}
+          `;
+        }
+      }
+
+      function showOutput(content) {
+        const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/g;
+        let html = content;
+        html = html.replace(codeBlockRegex, (_, lang, code) => `<pre><code class="language-${lang || 'plaintext'}">${escapeHtml(code.trim())}</code></pre>`);
+        html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+        html = html.replace(/\n/g, '<br>');
+        document.getElementById('outputContent').innerHTML = html;
+        document.getElementById('outputActions').style.display = 'flex';
+        document.querySelectorAll('pre code').forEach((block) => hljs.highlightElement(block));
+      }
+
+      function showError(message) {
+        document.getElementById('outputContent').innerHTML = `
+          <div class="output-placeholder" style="color: var(--error);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="15" y1="9" x2="9" y2="15"></line>
+              <line x1="9" y1="9" x2="15" y2="15"></line>
+            </svg>
+            <p>${message}</p>
           </div>
-        `).join('');
-      } catch (e) {
-        console.error('Failed to load history:', e);
+        `;
       }
-    }
 
-    // 加载历史项
-    window.loadHistoryItem = async (id) => {
-      try {
-        const item = await storageService.getHistoryItem(id);
-        if (item) {
-          document.getElementById('mainInput').value = item.input;
-          showOutput(item.output);
-          currentOutput = item.output;
+      function clearInput() {
+        document.getElementById('mainInput').value = '';
+        document.getElementById('errorInput').value = '';
+        clearOutput();
+      }
+
+      async function copyOutput() {
+        try {
+          await navigator.clipboard.writeText(state.currentOutput);
+          showToast('已复制到剪贴板', 'success');
+        } catch (error) {
+          showToast('复制失败', 'error');
         }
-      } catch (e) {
-        showToast('加载失败', 'error');
       }
-    };
 
-    // HTML转义
-    function escapeHtml(text) {
-      const div = document.createElement('div');
-      div.textContent = text;
-      return div.innerHTML;
-    }
+      async function saveToFavorites() {
+        showToast('功能开发中...', 'success');
+      }
 
-    // 主题管理
-    const THEME_STORAGE_KEY = 'code_assistant_theme';
-    let currentTheme = 'dark';
-    
-    // 切换主题下拉菜单
-    window.toggleThemeDropdown = () => {
-      const dropdown = document.getElementById('themeDropdown');
-      dropdown.classList.toggle('show');
-    };
-    
-    // 切换主题
-    window.switchTheme = (theme) => {
-      if (theme === currentTheme) {
+      function showSettings() {
+        document.getElementById('settingsModal').classList.add('show');
+      }
+
+      function closeSettings() {
+        document.getElementById('settingsModal').classList.remove('show');
+      }
+
+      async function saveSettings() {
+        const apiKey = document.getElementById('apiKeyInput').value.trim();
+        const platform = document.getElementById('platformSelect').value;
+        if (!apiKey) {
+          showToast('请输入API Key', 'error');
+          return;
+        }
+        await apiService.saveAPIKey(apiKey, platform);
+        closeSettings();
+        showToast('设置已保存', 'success');
+      }
+
+      function detectPlatform() {
+        const apiKey = document.getElementById('apiKeyInput').value.trim();
+        if (!apiKey) {
+          showToast('请先输入API Key', 'error');
+          return;
+        }
+        const detectedPlatform = platformConfig.detectPlatform(apiKey);
+        if (detectedPlatform) {
+          document.getElementById('platformSelect').value = detectedPlatform;
+          showToast(`已自动检测到平台: ${platformConfig.getPlatformConfig(detectedPlatform).name}`, 'success');
+        } else {
+          showToast('无法自动检测平台，请手动选择', 'error');
+        }
+      }
+
+      async function loadHistory() {
+        try {
+          const history = await storageService.getHistoryList({ limit: 10 });
+          const container = document.getElementById('historyList');
+          if (history.length === 0) {
+            container.innerHTML = '<div class="history-item">暂无历史记录</div>';
+            return;
+          }
+          container.innerHTML = history.map((item) => `
+            <div class="history-item" onclick="codeAssistant.loadHistoryItem('${item.id}')">
+              ${item.input.substring(0, 30)}...
+            </div>
+          `).join('');
+        } catch (error) {
+          console.error('Failed to load history:', error);
+        }
+      }
+
+      async function loadHistoryItem(id) {
+        try {
+          const item = await storageService.getHistoryItem(id);
+          if (item) {
+            document.getElementById('mainInput').value = item.input;
+            showOutput(item.output);
+            state.currentOutput = item.output;
+          }
+        } catch (error) {
+          showToast('加载失败', 'error');
+        }
+      }
+
+      function getThemeName(theme) {
+        return { dark: '深海蓝', light: '浅雪白', purple: '紫夜' }[theme] || '深海蓝';
+      }
+
+      function updateThemeUI(theme) {
+        document.querySelectorAll('.theme-option').forEach((option) => {
+          option.classList.toggle('active', option.dataset.theme === theme);
+        });
+      }
+
+      function applyTheme(theme) {
+        document.body.removeAttribute('data-theme');
+        if (theme !== 'dark') {
+          document.body.setAttribute('data-theme', theme);
+        }
+        const highlightLink = document.querySelector('link[href*="highlight.js"]');
+        if (highlightLink) {
+          const themeMap = { dark: 'atom-one-dark', light: 'github', eyecare: 'github', purple: 'atom-one-dark' };
+          highlightLink.href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${themeMap[theme] || 'atom-one-dark'}.min.css`;
+        }
+      }
+
+      function loadSavedTheme() {
+        const savedTheme = localStorage.getItem('code_assistant_theme') || 'dark';
+        if (savedTheme && savedTheme !== 'dark') {
+          applyTheme(savedTheme);
+          state.currentTheme = savedTheme;
+          updateThemeUI(savedTheme);
+        }
+      }
+
+      function toggleThemeDropdown() {
+        document.getElementById('themeDropdown').classList.toggle('show');
+      }
+
+      function closeThemeDropdown() {
+        document.getElementById('themeDropdown').classList.remove('show');
+      }
+
+      function switchTheme(theme) {
+        if (theme === state.currentTheme) {
+          closeThemeDropdown();
+          return;
+        }
+        applyTheme(theme);
+        localStorage.setItem('code_assistant_theme', theme);
+        state.currentTheme = theme;
+        updateThemeUI(theme);
         closeThemeDropdown();
-        return;
+        showToast(`已切换到${getThemeName(theme)}主题`, 'success');
       }
-      
-      // 应用主题
-      applyTheme(theme);
-      
-      // 保存到本地存储
-      localStorage.setItem(THEME_STORAGE_KEY, theme);
-      currentTheme = theme;
-      
-      // 更新UI
-      updateThemeUI(theme);
-      closeThemeDropdown();
-      
-      showToast(`已切换到${getThemeName(theme)}主题`, 'success');
-    };
-    
-    // 应用主题
-    function applyTheme(theme) {
-      const body = document.body;
-      
-      // 移除所有主题属性
-      body.removeAttribute('data-theme');
-      
-      // 应用新主题（默认深色不需要data-theme）
-      if (theme !== 'dark') {
-        body.setAttribute('data-theme', theme);
-      }
-      
-      // 更新代码高亮主题
-      updateCodeHighlightTheme(theme);
-    }
-    
-    // 更新代码高亮主题
-    function updateCodeHighlightTheme(theme) {
-      const highlightLink = document.querySelector('link[href*="highlight.js"]');
-      if (highlightLink) {
-        const themeMap = {
-          'dark': 'atom-one-dark',
-          'light': 'github',
-          'eyecare': 'github',
-          'purple': 'atom-one-dark'
-        };
-        const newTheme = themeMap[theme] || 'atom-one-dark';
-        highlightLink.href = `https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/${newTheme}.min.css`;
-      }
-    }
-    
-    // 更新主题UI
-    function updateThemeUI(theme) {
-      document.querySelectorAll('.theme-option').forEach(option => {
-        option.classList.remove('active');
-        if (option.dataset.theme === theme) {
-          option.classList.add('active');
-        }
-      });
-    }
-    
-    // 关闭主题下拉菜单
-    function closeThemeDropdown() {
-      document.getElementById('themeDropdown').classList.remove('show');
-    }
-    
-    // 获取主题名称
-    function getThemeName(theme) {
-      const names = {
-        'dark': '深海蓝',
-        'light': '浅雪白',
 
-        'purple': '紫夜'
+      function bindEvents() {
+        document.addEventListener('click', (event) => {
+          const themeSwitcher = document.querySelector('.theme-switcher');
+          if (themeSwitcher && !themeSwitcher.contains(event.target)) {
+            closeThemeDropdown();
+          }
+          if (event.target === document.getElementById('settingsModal')) {
+            closeSettings();
+          }
+        });
+      }
+
+      function init() {
+        loadHistory();
+        loadSavedTheme();
+        bindEvents();
+      }
+
+      return {
+        switchMode,
+        handleSubmit,
+        clearInput,
+        copyOutput,
+        saveToFavorites,
+        showSettings,
+        closeSettings,
+        saveSettings,
+        detectPlatform,
+        toggleThemeDropdown,
+        switchTheme,
+        loadHistoryItem,
+        init
       };
-      return names[theme] || '深海蓝';
-    }
-    
-    // 加载保存的主题
-    function loadSavedTheme() {
-      const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) || 'dark';
-      if (savedTheme && savedTheme !== 'dark') {
-        applyTheme(savedTheme);
-        currentTheme = savedTheme;
-        updateThemeUI(savedTheme);
-      }
-    }
-    
-    // 点击外部关闭主题下拉菜单
-    document.addEventListener('click', (e) => {
-      const themeSwitcher = document.querySelector('.theme-switcher');
-      if (themeSwitcher && !themeSwitcher.contains(e.target)) {
-        closeThemeDropdown();
-      }
-    });
-    
-    // 初始化
-    document.addEventListener('DOMContentLoaded', () => {
-      loadHistory();
-      loadSavedTheme();
-      
-      // 点击模态框外部关闭
-      document.getElementById('settingsModal').addEventListener('click', (e) => {
-        if (e.target === e.currentTarget) {
-          closeSettings();
-        }
-      });
-    });
+    })();
 
-    // 导出到全局
+    window.codeAssistant = codeAssistant;
+    window.switchMode = (mode) => codeAssistant.switchMode(mode);
+    window.handleSubmit = () => codeAssistant.handleSubmit();
+    window.clearInput = () => codeAssistant.clearInput();
+    window.copyOutput = () => codeAssistant.copyOutput();
+    window.saveToFavorites = () => codeAssistant.saveToFavorites();
+    window.showSettings = () => codeAssistant.showSettings();
+    window.closeSettings = () => codeAssistant.closeSettings();
+    window.saveSettings = () => codeAssistant.saveSettings();
+    window.detectPlatform = () => codeAssistant.detectPlatform();
+    window.toggleThemeDropdown = () => codeAssistant.toggleThemeDropdown();
+    window.switchTheme = (theme) => codeAssistant.switchTheme(theme);
+    window.loadHistoryItem = (id) => codeAssistant.loadHistoryItem(id);
     window.apiService = apiService;
     window.storageService = storageService;
     window.cryptoService = cryptoService;
     window.securityService = securityService;
+
+    document.addEventListener('DOMContentLoaded', () => codeAssistant.init());
   </script>
   <!-- Security Service -->
   <script src="assets/js/security-service.js"></script>

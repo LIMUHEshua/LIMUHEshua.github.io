@@ -94,27 +94,34 @@
   </div>
 
   <script>
-    function buildPlan() {
-      const topic = document.getElementById('topic').value.trim();
-      const script = document.getElementById('script').value.trim();
-      const result = document.getElementById('result');
-      if (!topic && !script) {
-        result.innerHTML = '请至少输入一个主题方向或核心脚本。';
-        return;
+    const aiVideoCreator = (() => {
+      function buildPlan() {
+        const topic = document.getElementById('topic').value.trim();
+        const script = document.getElementById('script').value.trim();
+        const result = document.getElementById('result');
+        if (!topic && !script) {
+          result.innerHTML = '请至少输入一个主题方向或核心脚本。';
+          return;
+        }
+
+        const topicText = topic || '通用内容创作';
+        const scriptText = script || '以清晰的价值主张和视觉节奏展开叙事。';
+        result.innerHTML = `
+          <strong>主题：</strong>${topicText}<br><br>
+          <strong>创作结构：</strong><br>
+          1. 开头钩子：用 1 个强句抓取注意力<br>
+          2. 价值呈现：用 3 个短段落解释核心亮点<br>
+          3. 视觉切换：每 4-6 秒换一个镜头或字幕块<br>
+          4. 收尾引导：给出明确行动提示或评论引导<br><br>
+          <strong>脚本要点：</strong>${scriptText}<br><br>
+          <strong>推荐输出：</strong>短视频文案、字幕稿、封面标题和发布时的 3 个标签。
+        `;
       }
-      const topicText = topic || '通用内容创作';
-      const scriptText = script || '以清晰的价值主张和视觉节奏展开叙事。';
-      result.innerHTML = `
-        <strong>主题：</strong>${topicText}<br><br>
-        <strong>创作结构：</strong><br>
-        1. 开头钩子：用 1 个强句抓取注意力<br>
-        2. 价值呈现：用 3 个短段落解释核心亮点<br>
-        3. 视觉切换：每 4-6 秒换一个镜头或字幕块<br>
-        4. 收尾引导：给出明确行动提示或评论引导<br><br>
-        <strong>脚本要点：</strong>${scriptText}<br><br>
-        <strong>推荐输出：</strong>短视频文案、字幕稿、封面标题和发布时的 3 个标签。
-      `;
-    }
+
+      return { buildPlan };
+    })();
+
+    window.buildPlan = () => aiVideoCreator.buildPlan();
   </script>
 </body>
 </html>
