@@ -7,11 +7,11 @@
   <meta name="keywords" content="Python,AI, DeepSeek,Gradio,技术博客,电子信息工程,硬件开发">
   <meta name="author" content="LIMUHEshua">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="LIMUHEshua博客">
+  <meta property="og:title" content="可调LDO电源模块设计">
   <meta property="og:description" content="专注于 AI、Python、大模型应用、前端框架搭建与硬件开发。分享学习心得和实践经验。">
   <meta property="og:site_name" content="LIMUHEshua博客">
-  <link rel="canonical" href="https://LIMUHEshua.github.io/categories/%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%A4%96%E8%AE%BE/%E6%8E%A5%E5%8F%A3%E6%89%A9%E5%B1%95/index.html">
-  <title>LIMUHEshua博客</title>
+  <link rel="canonical" href="https://LIMUHEshua.github.io/2026/07/28/2025-10-27-adjustable-ldo-power-supply/">
+  <title>可调LDO电源模块设计 | LIMUHEshua博客</title>
   <link rel="icon" type="image/svg+xml" href="/favicon.svg">
   <link rel="stylesheet" href="/css/main.css">
   <link rel="stylesheet" href="/css/syntax-highlight.css">
@@ -81,60 +81,317 @@
 
         <main class="cyber-main">
           <div class="signal-line"></div>
-          <section class="category-page">
-  <h1>分类: 接口扩展</h1>
-  <div class="post-list">
-    
-      <article class="post-card">
-  <div class="post-card__progress"></div>
-  <header class="post-card__header">
-    <div class="post-card__meta">
-      <time datetime="2025-10-29">2025-10-29</time>
-      <span class="post-card__status">教程 / 实战</span>
+          <article class="post-container post-container--single" itemscope itemtype="http://schema.org/BlogPosting">
+  <header class="post-header">
+    <h1 class="post-title" itemprop="name headline">可调LDO电源模块设计</h1>
+    <div class="post-meta">
+      <time class="post-time" itemprop="datePublished" datetime="2026-07-28T09:47:51.543Z" content="2026-07-28">
+        2026-07-28
+      </time>
       
-      <span class="post-card__categories">
+      <span class="post-category">
+        | 
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/">嵌入式开发</a>
         
-        <a href="/categories/%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1/">硬件设计</a>
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1/">硬件设计</a>
         
-        <a href="/categories/%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%A4%96%E8%AE%BE/">计算机外设</a>
-        
-        <a href="/categories/%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%A4%96%E8%AE%BE/%E6%8E%A5%E5%8F%A3%E6%89%A9%E5%B1%95/">接口扩展</a>
+          <a href="/categories/%E5%B5%8C%E5%85%A5%E5%BC%8F%E5%BC%80%E5%8F%91/%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1/%E7%94%B5%E6%BA%90%E7%AE%A1%E7%90%86/">电源管理</a>
         
       </span>
       
     </div>
-    <h2><a href="/2025/10/29/2025-10-29-docking-station/">多功能拓展坞设计</a></h2>
   </header>
 
-  <div class="post-card__excerpt">
-    
+  <div class="post-content" itemprop="articleBody">
+    <h1 id="可调LDO电源模块设计"><a href="#可调LDO电源模块设计" class="headerlink" title="可调LDO电源模块设计"></a>可调LDO电源模块设计</h1><h2 id="项目概述"><a href="#项目概述" class="headerlink" title="项目概述"></a>项目概述</h2><p>本项目设计并实现了一款高性能可调LDO（低压差线性稳压器）电源模块，具有输出电压可调、纹波小、稳定性好等特点。该模块采用先进的LDO芯片，支持宽输入电压范围和稳定的输出电压调节，可广泛应用于嵌入式系统、智能硬件、测试设备等需要稳定电源的场景。</p>
+<h3 id="主要特性"><a href="#主要特性" class="headerlink" title="主要特性"></a>主要特性</h3><ul>
+<li><strong>宽输入电压范围</strong>：支持多种输入电压</li>
+<li><strong>输出电压可调</strong>：通过电位器调节输出电压</li>
+<li><strong>低纹波</strong>：输出纹波小，适合敏感电子设备</li>
+<li><strong>过流保护</strong>：内置过流保护功能</li>
+<li><strong>热保护</strong>：内置过热保护功能</li>
+</ul>
+<h2 id="核心功能说明"><a href="#核心功能说明" class="headerlink" title="核心功能说明"></a>核心功能说明</h2><ol>
+<li><strong>电压调节</strong>：通过电位器调节输出电压</li>
+<li><strong>过流保护</strong>：当输出电流超过设定值时自动保护</li>
+<li><strong>热保护</strong>：当芯片温度过高时自动保护</li>
+<li><strong>短路保护</strong>：当输出短路时自动保护</li>
+<li><strong>电源指示</strong>：通过LED指示电源状态</li>
+</ol>
+<h2 id="技术细节解析"><a href="#技术细节解析" class="headerlink" title="技术细节解析"></a>技术细节解析</h2><h3 id="硬件架构"><a href="#硬件架构" class="headerlink" title="硬件架构"></a>硬件架构</h3><p>系统由以下核心组件组成：</p>
+<ol>
+<li><strong>LDO芯片</strong>：作为核心稳压元件</li>
+<li><strong>输入滤波</strong>：过滤输入电压的噪声</li>
+<li><strong>输出滤波</strong>：过滤输出电压的纹波</li>
+<li><strong>电压调节</strong>：通过电位器调节输出电压</li>
+<li><strong>保护电路</strong>：提供过流、过热、短路保护</li>
+</ol>
+<h3 id="电路原理图"><a href="#电路原理图" class="headerlink" title="电路原理图"></a>电路原理图</h3><p>以下是系统的电路原理图，展示了各组件的连接关系：</p>
+<img src="/images/可调LDO电源/原理图.png" alt="可调LDO电源电路原理图" style="width: 80%; height: auto; display: block; margin: 0 auto;">
+
+<h3 id="PCB-布局设计"><a href="#PCB-布局设计" class="headerlink" title="PCB 布局设计"></a>PCB 布局设计</h3><p>系统采用紧凑型PCB设计，布局合理，散热良好：</p>
+<img src="/images/可调LDO电源/layout.png" alt="可调LDO电源PCB布局" style="width: 80%; height: auto; display: block; margin: 0 auto;">
+
+<h3 id="电路板实物图"><a href="#电路板实物图" class="headerlink" title="电路板实物图"></a>电路板实物图</h3><p>以下是制作完成的电路板实物图：</p>
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+  <img src="/images/可调LDO电源/正面.png" alt="可调LDO电源电路板正面" style="width: 45%; height: auto;">
+  <img src="/images/可调LDO电源/背面.png" alt="可调LDO电源电路板背面" style="width: 45%; height: auto;">
+</div>
+
+<h2 id="技术规格"><a href="#技术规格" class="headerlink" title="技术规格"></a>技术规格</h2><table>
+<thead>
+<tr>
+<th>规格</th>
+<th>数值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>输入电压范围</td>
+<td>4.5V ~ 12V</td>
+</tr>
+<tr>
+<td>输出电压范围</td>
+<td>1.2V ~ 5.5V</td>
+</tr>
+<tr>
+<td>最大输出电流</td>
+<td>1A</td>
+</tr>
+<tr>
+<td>输出纹波</td>
+<td>&lt;5mV</td>
+</tr>
+<tr>
+<td>调节精度</td>
+<td>±0.05V</td>
+</tr>
+<tr>
+<td>工作温度</td>
+<td>-40℃ ~ +85℃</td>
+</tr>
+<tr>
+<td>尺寸</td>
+<td>25mm x 20mm</td>
+</tr>
+</tbody></table>
+<h2 id="实际应用场景"><a href="#实际应用场景" class="headerlink" title="实际应用场景"></a>实际应用场景</h2><h3 id="嵌入式系统"><a href="#嵌入式系统" class="headerlink" title="嵌入式系统"></a>嵌入式系统</h3><ul>
+<li><strong>核心电源</strong>：为微控制器和其他芯片提供稳定电源</li>
+<li><strong>传感器供电</strong>：为各种传感器提供合适的工作电压</li>
+<li><strong>模块供电</strong>：为各种功能模块提供稳定电源</li>
+</ul>
+<h3 id="智能硬件"><a href="#智能硬件" class="headerlink" title="智能硬件"></a>智能硬件</h3><ul>
+<li><strong>原型开发</strong>：为智能硬件原型提供可调电源</li>
+<li><strong>测试设备</strong>：作为测试设备的电源供应</li>
+<li><strong>产品应用</strong>：集成到最终产品中作为电源模块</li>
+</ul>
+<h3 id="电子实验"><a href="#电子实验" class="headerlink" title="电子实验"></a>电子实验</h3><ul>
+<li><strong>教学实验</strong>：作为电子电路教学实验的电源</li>
+<li><strong>DIY项目</strong>：为各种DIY项目提供电源</li>
+<li><strong>维修工具</strong>：作为电子设备维修的辅助工具</li>
+</ul>
+<h2 id="性能测试"><a href="#性能测试" class="headerlink" title="性能测试"></a>性能测试</h2><h3 id="负载调节测试"><a href="#负载调节测试" class="headerlink" title="负载调节测试"></a>负载调节测试</h3><ul>
+<li><strong>测试条件</strong>：输入电压5V，输出电压3.3V，负载电流从0A到1A</li>
+<li><strong>测试结果</strong>：输出电压变化&lt;0.01V</li>
+</ul>
+<h3 id="线性调节测试"><a href="#线性调节测试" class="headerlink" title="线性调节测试"></a>线性调节测试</h3><ul>
+<li><strong>测试条件</strong>：负载电流0.5A，输入电压从4.5V到12V</li>
+<li><strong>测试结果</strong>：输出电压变化&lt;0.01V</li>
+</ul>
+<h3 id="纹波测试"><a href="#纹波测试" class="headerlink" title="纹波测试"></a>纹波测试</h3><ul>
+<li><strong>测试条件</strong>：输入电压5V，输出电压3.3V，负载电流0.5A</li>
+<li><strong>测试结果</strong>：输出纹波&lt;5mV</li>
+</ul>
+<h3 id="温度测试"><a href="#温度测试" class="headerlink" title="温度测试"></a>温度测试</h3><ul>
+<li><strong>测试条件</strong>：输入电压5V，输出电压3.3V，负载电流1A</li>
+<li><strong>测试结果</strong>：芯片温度&lt;60℃</li>
+</ul>
+<h2 id="项目总结"><a href="#项目总结" class="headerlink" title="项目总结"></a>项目总结</h2><p>本项目成功开发了一款高性能可调LDO电源模块，具有以下特点：</p>
+<ol>
+<li><strong>高性能</strong>：输出电压稳定，纹波小</li>
+<li><strong>可调性</strong>：通过电位器方便调节输出电压</li>
+<li><strong>可靠性</strong>：内置多种保护功能</li>
+<li><strong>小巧紧凑</strong>：体积小，便于集成</li>
+<li><strong>易于使用</strong>：接线简单，调节方便</li>
+</ol>
+<p>该电源模块不仅满足了基本的电源供应需求，还通过精心的设计和优化，提供了稳定、可靠的电源解决方案，适合各种需要高质量电源的应用场景。</p>
+
   </div>
 
-  <div class="post-card__footer">
-    <div class="post-card__tags">
-      
-        
-          <a href="/tags/%E7%A1%AC%E4%BB%B6%E8%AE%BE%E8%AE%A1/">#硬件设计</a>
-        
-          <a href="/tags/%E6%8B%93%E5%B1%95%E5%9D%9E/">#拓展坞</a>
-        
-          <a href="/tags/%E6%8E%A5%E5%8F%A3%E6%89%A9%E5%B1%95/">#接口扩展</a>
-        
-      
+  <footer class="post-footer">
+    
+  </footer>
+
+  <div class="comments-section terminal-panel">
+    <div class="terminal-panel__bar">
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-dot"></span>
+      <span class="terminal-panel__title">community/feedback</span>
     </div>
-    <div class="post-card__actions">
-      <a class="share-chip" href="/2025/10/29/2025-10-29-docking-station/">分享</a>
-      <a class="read-more" href="/2025/10/29/2025-10-29-docking-station/">阅读全文</a>
+    <div class="terminal-panel__body">
+      <div class="comment-form">
+        <textarea id="comment-input" placeholder="写下你的评论..."></textarea>
+        <button onclick="submitComment()">发表评论</button>
+      </div>
+      <div id="comments-list" class="comment-list"></div>
     </div>
   </div>
 </article>
 
+<script>
+  var postId = '2026/07/28/2025-10-27-adjustable-ldo-power-supply/';
+  
+  function loadComments() {
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var postComments = comments.filter(function(comment) {
+      return comment.postId === postId;
+    });
     
-  </div>
-</section>
-
-
-
+    var commentsList = document.getElementById('comments-list');
+    commentsList.innerHTML = '';
+    
+    postComments.forEach(function(comment) {
+      var commentElement = createCommentElement(comment);
+      commentsList.appendChild(commentElement);
+    });
+  }
+  
+  function createCommentElement(comment, isReply = false) {
+    var div = document.createElement('div');
+    div.className = 'comment' + (isReply ? ' comment-reply' : '');
+    div.setAttribute('data-comment-id', comment.id);
+    
+    var content = document.createElement('div');
+    content.className = 'comment-content';
+    content.textContent = comment.content;
+    
+    var meta = document.createElement('div');
+    meta.className = 'comment-meta';
+    meta.textContent = '匿名用户 • ' + comment.date;
+    
+    var actions = document.createElement('div');
+    actions.className = 'comment-actions';
+    
+    var replyButton = document.createElement('button');
+    replyButton.textContent = '回复';
+    replyButton.onclick = function() {
+      showReplyForm(comment.id);
+    };
+    actions.appendChild(replyButton);
+    
+    div.appendChild(content);
+    div.appendChild(meta);
+    div.appendChild(actions);
+    
+    if (comment.replies && comment.replies.length > 0) {
+      var repliesContainer = document.createElement('div');
+      repliesContainer.className = 'comment-replies';
+      
+      comment.replies.forEach(function(reply) {
+        var replyElement = createCommentElement(reply, true);
+        repliesContainer.appendChild(replyElement);
+      });
+      
+      div.appendChild(repliesContainer);
+    }
+    
+    return div;
+  }
+  
+  function submitComment(parentId = null) {
+    var input = document.getElementById('comment-input');
+    var content = input.value.trim();
+    
+    if (!content) {
+      alert('请输入评论内容');
+      return;
+    }
+    
+    var comments = JSON.parse(localStorage.getItem('comments') || '[]');
+    var newComment = {
+      id: Date.now(),
+      postId: postId,
+      content: content,
+      date: new Date().toLocaleString('zh-CN'),
+      replies: []
+    };
+    
+    if (parentId) {
+      var parentComment = comments.find(function(comment) {
+        return comment.id === parentId;
+      });
+      
+      if (parentComment) {
+        parentComment.replies.push({
+          id: Date.now(),
+          content: content,
+          date: new Date().toLocaleString('zh-CN')
+        });
+      }
+    } else {
+      comments.push(newComment);
+    }
+    
+    localStorage.setItem('comments', JSON.stringify(comments));
+    input.value = '';
+    
+    if (parentId) {
+      hideReplyForm();
+    }
+    
+    loadComments();
+    updateCommentCount();
+  }
+  
+  function showReplyForm(commentId) {
+    var existingForm = document.getElementById('reply-form-' + commentId);
+    if (existingForm) {
+      existingForm.remove();
+      return;
+    }
+    
+    var commentElement = document.querySelector('[data-comment-id="' + commentId + '"]');
+    if (!commentElement) return;
+    
+    var replyForm = document.createElement('div');
+    replyForm.id = 'reply-form-' + commentId;
+    replyForm.className = 'reply-form';
+    
+    var textarea = document.createElement('textarea');
+    textarea.placeholder = '回复评论...';
+    textarea.id = 'reply-input-' + commentId;
+    
+    var button = document.createElement('button');
+    button.textContent = '回复';
+    button.onclick = function() {
+      var input = document.getElementById('reply-input-' + commentId);
+      if (input.value.trim()) {
+        submitComment(commentId);
+      }
+    };
+    
+    var cancelButton = document.createElement('button');
+    cancelButton.textContent = '取消';
+    cancelButton.onclick = function() {
+      hideReplyForm();
+    };
+    
+    replyForm.appendChild(textarea);
+    replyForm.appendChild(button);
+    replyForm.appendChild(cancelButton);
+    
+    commentElement.appendChild(replyForm);
+  }
+  
+  function hideReplyForm() {
+    var replyForms = document.querySelectorAll('.reply-form');
+    replyForms.forEach(function(form) {
+      form.remove();
+    });
+  }
+  
+  document.addEventListener('DOMContentLoaded', loadComments);
+</script>
         </main>
       </div>
 
