@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI 视频创作工具 - 面向短视频脚本、分镜和内容生产的创作助手">
+  <title>AI 视频创作 | 开发者工具箱</title>
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <style>
+    :root {
+      --bg: #030712;
+      --panel: rgba(8, 15, 31, 0.92);
+      --border: rgba(0, 229, 255, 0.24);
+      --text: #eaf7ff;
+      --muted: #8fb2c5;
+      --accent: #00e5ff;
+      --accent-2: #8b5cf6;
+      --success: #2dd4bf;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.38);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+      min-height: 100vh;
+      color: var(--text);
+      background: radial-gradient(circle at top left, rgba(0,229,255,0.16), transparent 24%), radial-gradient(circle at right, rgba(139,92,246,0.16), transparent 26%), linear-gradient(135deg, #02050c, #060b17);
+      padding: 24px;
+    }
+    .page {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+    }
+    .topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 24px; }
+    .pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(0,229,255,0.1); color: var(--accent); border: 1px solid rgba(0,229,255,0.2); font-size: 0.9rem; }
+    .back { color: var(--text); text-decoration: none; padding: 8px 12px; border-radius: 999px; border: 1px solid rgba(255,255,255,0.1); }
+    h1 { font-size: 1.8rem; margin-bottom: 8px; }
+    p { color: var(--muted); line-height: 1.7; }
+    .grid { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 18px; margin-top: 18px; }
+    .card { border: 1px solid rgba(255,255,255,0.08); border-radius: 18px; padding: 18px; background: rgba(255,255,255,0.03); }
+    .card h2 { margin-bottom: 10px; font-size: 1.2rem; }
+    textarea, input { width: 100%; border: 1px solid rgba(255,255,255,0.12); background: rgba(255,255,255,0.04); color: var(--text); border-radius: 12px; padding: 12px; margin-top: 8px; font-size: 1rem; }
+    textarea { min-height: 120px; resize: vertical; }
+    .btn { margin-top: 12px; display: inline-block; padding: 10px 14px; border-radius: 999px; background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #04111b; font-weight: 700; border: none; cursor: pointer; }
+    .result { margin-top: 12px; padding: 14px; border-radius: 12px; background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.2); color: #c9fff6; }
+    ul { padding-left: 18px; color: var(--muted); display: flex; flex-direction: column; gap: 8px; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .chip { padding: 6px 10px; border-radius: 999px; background: rgba(139,92,246,0.12); color: #d7c8ff; font-size: 0.9rem; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } body { padding: 12px; } .page { padding: 16px; } }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="topbar">
+      <div>
+        <span class="pill">AI VIDEO WORKFLOW</span>
+        <h1>AI 视频创作助手</h1>
+        <p>把脚本、分镜、旁白和发布节奏整理成一份适合短视频创作的执行草案。</p>
+      </div>
+      <a class="back" href="./index.html">← 返回工具箱</a>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>创作输入</h2>
+        <label>主题方向</label>
+        <input id="topic" type="text" placeholder="例如：嵌入式开发教程、AI 工具宣传片、产品介绍短片" />
+        <label style="display:block;margin-top:12px;">核心脚本</label>
+        <textarea id="script" placeholder="输入你想表达的核心内容，最好包含开头钩子、过程说明和收尾转化语。"></textarea>
+        <button class="btn" type="button" onclick="buildPlan()">生成视频创作方案</button>
+        <div id="result" class="result">等待输入后，系统会生成适合短视频的章节结构、画面建议与发布策略。</div>
+      </div>
+      <div class="card">
+        <h2>可直接使用的输出</h2>
+        <ul>
+          <li>开场 3-5 秒钩子建议</li>
+          <li>每个镜头的文字说明与节奏提示</li>
+          <li>配音、字幕和封面文案建议</li>
+          <li>适配抖音、B 站、公众号视频号的发布方向</li>
+        </ul>
+        <div class="chip-row">
+          <span class="chip">短视频脚本</span>
+          <span class="chip">分镜提示</span>
+          <span class="chip">素材建议</span>
+          <span class="chip">发布节奏</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function buildPlan() {
+      const topic = document.getElementById('topic').value.trim();
+      const script = document.getElementById('script').value.trim();
+      const result = document.getElementById('result');
+      if (!topic && !script) {
+        result.innerHTML = '请至少输入一个主题方向或核心脚本。';
+        return;
+      }
+      const topicText = topic || '通用内容创作';
+      const scriptText = script || '以清晰的价值主张和视觉节奏展开叙事。';
+      result.innerHTML = `
+        <strong>主题：</strong>${topicText}<br><br>
+        <strong>创作结构：</strong><br>
+        1. 开头钩子：用 1 个强句抓取注意力<br>
+        2. 价值呈现：用 3 个短段落解释核心亮点<br>
+        3. 视觉切换：每 4-6 秒换一个镜头或字幕块<br>
+        4. 收尾引导：给出明确行动提示或评论引导<br><br>
+        <strong>脚本要点：</strong>${scriptText}<br><br>
+        <strong>推荐输出：</strong>短视频文案、字幕稿、封面标题和发布时的 3 个标签。
+      `;
+    }
+  </script>
+</body>
+</html>
